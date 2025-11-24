@@ -720,8 +720,9 @@
     <script>
       let forumDataXML = `<forum_data>$1</forum_data>`;
       if (forumDataXML.includes('$1')) {
-        const $forumData = $(window.frameElement).closest('.mes_text').find('forum_data');
-        if ($forumData.length) forumDataXML = `<forum_data>${$forumData.text()}</forum_data>`;
+        const $parent = $(window.frameElement).parent();
+        const $forumData = $parent.find('forum_data');
+        if ($forumData.length) forumDataXML = `<forum_data>${$forumData.html()}</forum_data>`;
       }
       const IMAGE_BASE_URL = 'https://gitgud.io/opus5/wife_forum/-/raw/master/';
 
