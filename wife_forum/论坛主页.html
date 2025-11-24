@@ -718,7 +718,12 @@
     </div>
 
     <script>
-      const forumDataXML = window.forumDataXML || `<forum_data>$1</forum_data>`;
+      let forumDataXML = `<forum_data>$1</forum_data>`;
+      if (forumDataXML.includes('$1')) {
+        const parentText = $(window.frameElement).closest('.mes_text').text();
+        const match = parentText.match(/<forum_data>([\s\S]*?)<\/forum_data>/);
+        if (match) forumDataXML = `<forum_data>${match[1]}</forum_data>`;
+      }
       const IMAGE_BASE_URL = 'https://gitgud.io/opus5/wife_forum/-/raw/master/';
 
       function parseForumDataXML(xmlText) {
