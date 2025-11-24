@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>私信 - 妻悦论坛</title>
+    <link
+      rel="stylesheet"
+      href="https://fontsapi.zeoseven.com/292/main/result.css"
+    />
+  </head>
+
+  <body>
+    <style>
+      :root {
+        --dark-red: #c92a2a;
+        --blood-red: #e03131;
+        --light-red: #ff6b6b;
+        --dark-gray: #1a1a1a;
+        --gray: #2a2a2a;
+        --light-gray: #3a3a3a;
+        --text-main: #e0e0e0;
+        --text-dim: #999;
+        --text-dimmer: #666;
+        --gold: #ffd700;
+        --border: rgba(220, 20, 60, 0.2);
+        --hover-bg: rgba(220, 20, 60, 0.08);
+      }
+
+      [data-theme="light"] {
+        --dark-red: #c92a2a;
+        --blood-red: #e03131;
+        --light-red: #ff6b6b;
+        --dark-gray: #f5f5f5;
+        --gray: #ececec;
+        --light-gray: #e0e0e0;
+        --text-main: #2a2a2a;
+        --text-dim: #666;
+        --text-dimmer: #999;
+        --gold: #d97706;
+        --border: rgba(220, 20, 60, 0.15);
+        --hover-bg: rgba(220, 20, 60, 0.05);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        color: var(--text-main);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      .message-container {
+        width: 100%;
+        max-width: 820px;
+        margin: 0 auto;
+        background: var(--dark-gray);
+        font-size: var(--base-font-size, 14px);
+        min-height: 600px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .message-container.font-medium {
+        --base-font-size: 16px;
+      }
+
+      .message-container.font-large {
+        --base-font-size: 18px;
+      }
+
+      .message-container.font-xlarge {
+        --base-font-size: 20px;
+      }
+
+      .message-header {
+        background: var(--blood-red);
+        padding: 10px 16px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        border-bottom: 1px solid var(--border);
+        flex-shrink: 0;
+      }
+
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .back-button {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: #fff;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background 0.2s;
+        font-size: 0.85em;
+        font-weight: 500;
+        outline: none;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .back-button:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      .contact-name {
+        font-size: 1em;
+        font-weight: 600;
+        color: #fff;
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .theme-toggle {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: #fff;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background 0.2s;
+        font-size: 0.85em;
+        font-weight: 500;
+        outline: none;
+      }
+
+      .theme-toggle:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      .messages-area {
+        flex: 1;
+        overflow-y: auto;
+        padding: 16px;
+        background: var(--dark-gray);
+      }
+
+      .message-item {
+        margin-bottom: 16px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .message-item.sent {
+        align-items: flex-end;
+      }
+
+      .message-item.received {
+        align-items: flex-start;
+      }
+
+      .message-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 6px;
+        font-size: 0.82em;
+        color: var(--text-dim);
+      }
+
+      .message-sender {
+        font-weight: 600;
+        color: var(--text-main);
+      }
+
+      .message-item.sent .message-sender {
+        color: var(--gold);
+      }
+
+      .message-bubble {
+        max-width: 70%;
+        padding: 10px 14px;
+        border-radius: 12px;
+        word-wrap: break-word;
+        line-height: 1.5;
+      }
+
+      .message-item.sent .message-bubble {
+        background: var(--blood-red);
+        color: #fff;
+        border-bottom-right-radius: 4px;
+      }
+
+      .message-item.received .message-bubble {
+        background: var(--gray);
+        color: var(--text-main);
+        border-bottom-left-radius: 4px;
+      }
+
+      .message-image {
+        max-width: 200px;
+        max-height: 200px;
+        width: auto;
+        height: auto;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: transform 0.2s;
+        object-fit: cover;
+      }
+
+      .message-image:hover {
+        transform: scale(1.05);
+      }
+
+      .message-image.nsfw-blur {
+        filter: blur(15px);
+      }
+
+      .message-image:hover.nsfw-blur {
+        filter: blur(8px);
+      }
+
+      .input-area {
+        background: var(--gray);
+        padding: 12px 16px;
+        border-top: 1px solid var(--border);
+        flex-shrink: 0;
+      }
+
+      .input-hint {
+        text-align: center;
+        font-size: 0.8em;
+        color: var(--text-dim);
+        margin-top: 8px;
+        padding: 4px 8px;
+        background: rgba(220, 20, 60, 0.1);
+        border-radius: 4px;
+        font-weight: 500;
+      }
+
+      .input-wrapper {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .message-input {
+        flex: 1;
+        background: var(--light-gray);
+        border: 1px solid var(--border);
+        color: var(--text-main);
+        padding: 8px 12px;
+        border-radius: 20px;
+        font-size: 0.95em;
+        outline: none;
+        resize: none;
+        min-height: 36px;
+        max-height: 100px;
+        font-family: inherit;
+      }
+
+      .message-input:focus {
+        border-color: var(--blood-red);
+      }
+
+      .send-button {
+        background: var(--blood-red);
+        border: none;
+        color: #fff;
+        padding: 8px 16px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: background 0.2s;
+        font-size: 0.9em;
+        font-weight: 500;
+        outline: none;
+        white-space: nowrap;
+      }
+
+      .send-button:hover {
+        background: var(--dark-red);
+      }
+
+      .send-button:disabled {
+        background: var(--light-gray);
+        cursor: not-allowed;
+        opacity: 0.5;
+      }
+
+      .lightbox {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.95);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+      }
+
+      .lightbox.active {
+        display: flex;
+      }
+
+      .lightbox-image {
+        max-width: 90vw;
+        max-height: 90vh;
+        object-fit: contain;
+        border-radius: 8px;
+        opacity: 0;
+        transform: scale(0.9);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+      }
+
+      .lightbox-image.loaded {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      .lightbox-loader {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .lightbox-loader.hidden {
+        display: none;
+      }
+
+      .lightbox-spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid rgba(255, 255, 255, 0.2);
+        border-top-color: var(--blood-red);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      .lightbox-loader-text {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.9em;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .message-container {
+          font-size: var(--base-font-size, 13px);
+        }
+
+        .message-container.font-medium {
+          --base-font-size: 15px;
+        }
+
+        .message-container.font-large {
+          --base-font-size: 17px;
+        }
+
+        .message-container.font-xlarge {
+          --base-font-size: 19px;
+        }
+
+        .message-bubble {
+          max-width: 85%;
+        }
+      }
+
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: rgba(220, 20, 60, 0.3);
+        border-radius: 3px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(220, 20, 60, 0.5);
+      }
+
+      * {
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .loading {
+        text-align: center;
+        padding: 50px;
+        color: var(--text-dim);
+        font-size: 1.1em;
+      }
+
+      .unread-badge {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        background: var(--blood-red);
+        color: #fff;
+        padding: 2px 6px;
+        border-radius: 10px;
+        font-size: 0.7em;
+        font-weight: 600;
+      }
+    </style>
+
+    <div class="message-container" id="message-container">
+      <div class="loading">界面加载失败,请重roll聊天试试...</div>
+    </div>
+
+    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+      <div class="lightbox-loader" id="lightbox-loader">
+        <div class="lightbox-spinner"></div>
+        <div class="lightbox-loader-text">加载图片中...</div>
+      </div>
+      <img class="lightbox-image" id="lightbox-image" src="" alt="" />
+    </div>
+
+    <script>
+      const messageDataXML = `<message_data>$1</message_data>`;
+      const IMAGE_BASE_URL = "https://gitgud.io/opus5/wife_forum/-/raw/master/";
+
+      function parseMessageDataXML(xmlText) {
+        console.log("========== 私信数据解析开始 ==========");
+        console.log("XML数据长度:", xmlText.length);
+
+        const data = {
+          contactName: "",
+          messages: [],
+        };
+
+        try {
+          const messageDataRegex = /<message_data>([\s\S]*?)<\/message_data>/gi;
+          const messageDataBlocks = [];
+          let blockMatch;
+
+          while ((blockMatch = messageDataRegex.exec(xmlText)) !== null) {
+            messageDataBlocks.push(blockMatch[1]);
+          }
+
+          console.log("找到 message_data 块数量:", messageDataBlocks.length);
+
+          if (messageDataBlocks.length === 0) {
+            messageDataBlocks.push(xmlText);
+          }
+
+          messageDataBlocks.forEach((block, index) => {
+            console.log(`解析第 ${index + 1} 个 message_data 块`);
+
+            if (index === 0) {
+              const contactMatch = block.match(/\[联系人\|([^\]]+)\]/);
+              if (contactMatch) data.contactName = contactMatch[1];
+            }
+
+            const messagesMatch = block.match(
+              /<messages>([\s\S]*?)<\/messages>/i
+            );
+            if (messagesMatch && messagesMatch[1]) {
+              const messageRegex =
+                /\[消息\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\|]*)\|([^\]]*)\]/g;
+              let messageMatch;
+              while (
+                (messageMatch = messageRegex.exec(messagesMatch[1])) !== null
+              ) {
+                const message = {
+                  sender: messageMatch[1],
+                  time: messageMatch[2],
+                  type: messageMatch[3],
+                  content: messageMatch[4],
+                  nsfw: messageMatch[5] === "true",
+                };
+
+                if (message.type === "image" && message.content) {
+                  message.imageUrl = IMAGE_BASE_URL + message.content;
+                }
+
+                data.messages.push(message);
+              }
+            }
+          });
+
+          console.log("解析完成 - 总消息数:", data.messages.length);
+          console.log("========== 私信数据解析完成 ==========");
+          return data;
+        } catch (error) {
+          console.error("解析私信数据出错:", error);
+          return data;
+        }
+      }
+
+      let currentContactName = "";
+
+      function renderMessages(data) {
+        console.log("开始渲染私信...");
+
+        const container = document.getElementById("message-container");
+
+        if (!data.contactName) {
+          container.innerHTML =
+            '<div class="loading">界面加载失败,应该是掉格式了,请重roll聊天试试...</div>';
+          return;
+        }
+
+        currentContactName = data.contactName;
+
+        let messagesHTML = "";
+        data.messages.forEach((msg) => {
+          const isSent = msg.sender === "我";
+          const messageClass = isSent ? "sent" : "received";
+
+          let contentHTML = "";
+          if (msg.type === "image") {
+            contentHTML = `
+              <img src="${msg.imageUrl}"
+                   class="message-image ${msg.nsfw ? "nsfw-blur" : ""}"
+                   onclick="openLightbox('${
+                     msg.imageUrl
+                   }'); event.stopPropagation();"
+                   alt="">
+            `;
+          } else {
+            contentHTML = msg.content.replace(/\n/g, "<br>");
+          }
+
+          messagesHTML += `
+            <div class="message-item ${messageClass}">
+              <div class="message-meta">
+                <span class="message-sender">${msg.sender}</span>
+                <span class="message-time">🕒 ${msg.time}</span>
+              </div>
+              <div class="message-bubble">
+                ${contentHTML}
+              </div>
+            </div>
+          `;
+        });
+
+        container.innerHTML = `
+          <header class="message-header">
+            <div class="header-content">
+              <button class="back-button" onclick="goBack()">
+                ← 返回
+              </button>
+              <div class="contact-name">💬 ${data.contactName}</div>
+              <button class="theme-toggle" onclick="cycleFontSize()">
+                <span id="font-size-icon">A</span>
+              </button>
+              <button class="theme-toggle" onclick="toggleTheme()">
+                <span id="theme-icon">🌙</span>
+              </button>
+            </div>
+          </header>
+
+          <div class="messages-area" id="messages-area">
+            ${messagesHTML || '<div class="loading">暂无消息</div>'}
+          </div>
+
+          <div class="input-area">
+            <div class="input-wrapper">
+              <textarea
+                class="message-input"
+                id="message-input"
+                placeholder="输入消息..."
+                rows="1"></textarea>
+              <button class="send-button" onclick="sendMessage()">发送</button>
+            </div>
+            <div class="input-hint">Enter 发送 | Shift+Enter 换行</div>
+          </div>
+        `;
+
+        setTimeout(() => {
+          const messagesArea = document.getElementById("messages-area");
+          if (messagesArea) {
+            messagesArea.scrollTop = messagesArea.scrollHeight;
+          }
+        }, 100);
+
+        const input = document.getElementById("message-input");
+        if (input) {
+          input.addEventListener("input", function () {
+            this.style.height = "auto";
+            this.style.height = Math.min(this.scrollHeight, 100) + "px";
+          });
+
+          input.addEventListener("keydown", function (e) {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              sendMessage();
+            }
+          });
+        }
+
+        console.log("私信渲染完成");
+      }
+
+      function cycleFontSize() {
+        const container = document.getElementById("message-container");
+        const icon = document.getElementById("font-size-icon");
+        const fontSizes = ["small", "medium", "large", "xlarge"];
+        const fontIcons = ["A", "A+", "A++", "A+++"];
+
+        let currentSize = localStorage.getItem("forum-font-size") || "small";
+        let currentIndex = fontSizes.indexOf(currentSize);
+        let nextIndex = (currentIndex + 1) % fontSizes.length;
+        let nextSize = fontSizes[nextIndex];
+
+        container.classList.remove("font-medium", "font-large", "font-xlarge");
+        if (nextSize !== "small") {
+          container.classList.add("font-" + nextSize);
+        }
+
+        icon.textContent = fontIcons[nextIndex];
+        localStorage.setItem("forum-font-size", nextSize);
+      }
+
+      function toggleTheme() {
+        const body = document.body;
+        const icon = document.getElementById("theme-icon");
+        const isLight = body.getAttribute("data-theme") === "light";
+
+        if (isLight) {
+          body.removeAttribute("data-theme");
+          icon.textContent = "🌙";
+          localStorage.setItem("forum-theme", "dark");
+        } else {
+          body.setAttribute("data-theme", "light");
+          icon.textContent = "☀️";
+          localStorage.setItem("forum-theme", "light");
+        }
+      }
+
+      function syncThemeFromStorage(e) {
+        if (e.key === "forum-theme") {
+          const body = document.body;
+          const icon = document.getElementById("theme-icon");
+
+          if (e.newValue === "light") {
+            body.setAttribute("data-theme", "light");
+            if (icon) icon.textContent = "☀️";
+          } else {
+            body.removeAttribute("data-theme");
+            if (icon) icon.textContent = "🌙";
+          }
+        }
+
+        if (e.key === "forum-font-size") {
+          const container = document.getElementById("message-container");
+          const icon = document.getElementById("font-size-icon");
+          const fontSizes = ["small", "medium", "large", "xlarge"];
+          const fontIcons = ["A", "A+", "A++", "A+++"];
+
+          container.classList.remove(
+            "font-medium",
+            "font-large",
+            "font-xlarge"
+          );
+          if (e.newValue && e.newValue !== "small") {
+            container.classList.add("font-" + e.newValue);
+          }
+
+          let index = fontSizes.indexOf(e.newValue || "small");
+          if (icon) icon.textContent = fontIcons[index];
+        }
+      }
+
+      function openLightbox(imageUrl) {
+        const lightbox = document.getElementById("lightbox");
+        const lightboxImage = document.getElementById("lightbox-image");
+        const loader = document.getElementById("lightbox-loader");
+        const loaderText = loader.querySelector(".lightbox-loader-text");
+
+        const loadingTexts = [
+          "正在加载图片...",
+          "正在获取高清图片...",
+          "正在下载图片资源...",
+          "正在解析图片数据...",
+          "正在加载原图...",
+          "正在读取图片缓存...",
+          "正在连接图片服务器...",
+          "正在传输图片数据...",
+        ];
+
+        const randomText =
+          loadingTexts[Math.floor(Math.random() * loadingTexts.length)];
+        loaderText.textContent = randomText;
+
+        lightboxImage.onload = null;
+        lightboxImage.onerror = null;
+        lightboxImage.classList.remove("loaded");
+        lightboxImage.src = "";
+        loader.classList.remove("hidden");
+        lightbox.classList.add("active");
+
+        const loadTime = 500 + Math.random() * 500;
+
+        setTimeout(() => {
+          lightboxImage.onload = function () {
+            loader.classList.add("hidden");
+            lightboxImage.classList.add("loaded");
+          };
+
+          lightboxImage.onerror = function () {
+            loader.classList.add("hidden");
+            loaderText.textContent = "图片加载失败";
+          };
+
+          lightboxImage.src = imageUrl;
+        }, loadTime);
+      }
+
+      function closeLightbox() {
+        const lightbox = document.getElementById("lightbox");
+        const lightboxImage = document.getElementById("lightbox-image");
+        const loader = document.getElementById("lightbox-loader");
+
+        lightbox.classList.remove("active");
+        lightboxImage.classList.remove("loaded");
+        lightboxImage.onload = null;
+        lightboxImage.onerror = null;
+        lightboxImage.src = "";
+        loader.classList.remove("hidden");
+      }
+
+      function goBack() {
+        const cmd = `/send 返回论坛 | /trigger`;
+        if (typeof triggerSlash === "function") {
+          triggerSlash(cmd);
+        }
+      }
+
+      function sendMessage() {
+        const input = document.getElementById("message-input");
+        const message = input.value.trim();
+
+        if (!message) return;
+
+        const formattedMessage = `回复私信 ${currentContactName} 的私信：${message}`;
+        const cmd = `/send ${formattedMessage} | /trigger`;
+        if (typeof triggerSlash === "function") {
+          triggerSlash(cmd);
+        }
+
+        input.value = "";
+        input.style.height = "auto";
+      }
+
+      window.addEventListener("storage", syncThemeFromStorage);
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const theme = localStorage.getItem("forum-theme");
+        if (theme === "light") {
+          document.body.setAttribute("data-theme", "light");
+        }
+
+        const fontSize = localStorage.getItem("forum-font-size") || "small";
+        const container = document.getElementById("message-container");
+        const fontIcon = document.getElementById("font-size-icon");
+        const fontSizes = ["small", "medium", "large", "xlarge"];
+        const fontIcons = ["A", "A+", "A++", "A+++"];
+
+        if (fontSize !== "small") {
+          container.classList.add("font-" + fontSize);
+        }
+
+        let index = fontSizes.indexOf(fontSize);
+        if (fontIcon) {
+          fontIcon.textContent = fontIcons[index];
+        }
+
+        console.log("页面加载完成,开始解析私信数据");
+        try {
+          const data = parseMessageDataXML(messageDataXML);
+          renderMessages(data);
+
+          if (theme === "light") {
+            const icon = document.getElementById("theme-icon");
+            if (icon) {
+              icon.textContent = "☀️";
+            }
+          }
+        } catch (error) {
+          console.error("渲染失败:", error);
+          document.getElementById("message-container").innerHTML =
+            '<div class="loading">数据加载失败,请刷新重试</div>';
+        }
+      });
+    </script>
+  </body>
+</html>
