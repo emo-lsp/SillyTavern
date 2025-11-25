@@ -1,13 +1,10 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>约炮区主页 - 妻悦论坛</title>
-    <link
-      rel="stylesheet"
-      href="https://fontsapi.zeoseven.com/292/main/result.css"
-    />
+    <link rel="stylesheet" href="https://fontsapi.zeoseven.com/292/main/result.css" />
   </head>
 
   <body>
@@ -27,7 +24,7 @@
         --hover-bg: rgba(220, 20, 60, 0.08);
       }
 
-      [data-theme="light"] {
+      [data-theme='light'] {
         --dark-red: #c92a2a;
         --blood-red: #e03131;
         --light-red: #ff6b6b;
@@ -49,8 +46,12 @@
       }
 
       body {
-        font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont,
-          "Segoe UI", sans-serif;
+        font-family:
+          'Noto Sans SC',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
         color: var(--text-main);
         line-height: 1.6;
         -webkit-font-smoothing: antialiased;
@@ -335,23 +336,22 @@
     </div>
 
     <script>
-      const hookupListDataXML = `<hookup_list_data>$1</hookup_list_data>`;
+      const chat_message = getChatMessages(getCurrentMessageId())[0];
+      const match = chat_message.message.match(/<hookup_list_data>([\s\S]*?)<\/hookup_list_data>/);
+      const hookupListDataXML = match ? match[0] : '<hookup_list_data></hookup_list_data>';
 
       function parseHookupListDataXML(xmlText) {
-        console.log("========== 约炮区列表数据解析开始 ==========");
-        console.log("XML数据长度:", xmlText.length);
+        console.log('========== 约炮区列表数据解析开始 ==========');
+        console.log('XML数据长度:', xmlText.length);
 
         const data = {
           posts: [],
         };
 
         try {
-          const postsMatch = xmlText.match(
-            /<hookup_posts>([\s\S]*?)<\/hookup_posts>/i
-          );
+          const postsMatch = xmlText.match(/<hookup_posts>([\s\S]*?)<\/hookup_posts>/i);
           if (postsMatch && postsMatch[1]) {
-            const postRegex =
-              /\[约炮帖\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\]]+)\]/g;
+            const postRegex = /\[约炮帖\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\]]+)\]/g;
             let postMatch;
             while ((postMatch = postRegex.exec(postsMatch[1])) !== null) {
               data.posts.push({
@@ -365,22 +365,22 @@
             }
           }
 
-          console.log("解析完成 - 约炮帖数量:", data.posts.length);
-          console.log("========== 约炮区列表数据解析完成 ==========");
+          console.log('解析完成 - 约炮帖数量:', data.posts.length);
+          console.log('========== 约炮区列表数据解析完成 ==========');
           return data;
         } catch (error) {
-          console.error("解析约炮区列表数据出错:", error);
+          console.error('解析约炮区列表数据出错:', error);
           return data;
         }
       }
 
-      let currentFilter = "all";
+      let currentFilter = 'all';
       let allPosts = [];
 
       function renderHookupList(data) {
-        console.log("开始渲染约炮区列表...");
+        console.log('开始渲染约炮区列表...');
 
-        const container = document.getElementById("hookup-list-container");
+        const container = document.getElementById('hookup-list-container');
 
         if (data.posts.length === 0) {
           container.innerHTML = `
@@ -405,13 +405,10 @@
 
         allPosts = data.posts;
 
-        const locations = [
-          ...new Set(data.posts.map((p) => p.location)),
-        ].sort();
+        const locations = [...new Set(data.posts.map(p => p.location))].sort();
 
-        let filterTagsHTML =
-          '<span class="filter-tag active" onclick="filterByLocation(\'all\')">全部</span>';
-        locations.forEach((loc) => {
+        let filterTagsHTML = '<span class="filter-tag active" onclick="filterByLocation(\'all\')">全部</span>';
+        locations.forEach(loc => {
           filterTagsHTML += `<span class="filter-tag" onclick="filterByLocation('${loc}')">${loc}</span>`;
         });
 
@@ -442,19 +439,19 @@
 
         renderPosts(data.posts);
 
-        console.log("约炮区列表渲染完成");
+        console.log('约炮区列表渲染完成');
       }
 
       function renderPosts(posts) {
-        const postsList = document.getElementById("posts-list");
+        const postsList = document.getElementById('posts-list');
 
         if (posts.length === 0) {
           postsList.innerHTML = '<div class="loading">该地区暂无约炮信息</div>';
           return;
         }
 
-        let postsHTML = "";
-        posts.forEach((post) => {
+        let postsHTML = '';
+        posts.forEach(post => {
           postsHTML += `
             <div class="hookup-post-card" onclick="viewHookupPost('${post.title}')">
               <div class="card-content">
@@ -481,141 +478,141 @@
       function filterByLocation(location) {
         currentFilter = location;
 
-        document.querySelectorAll(".filter-tag").forEach((tag) => {
-          tag.classList.remove("active");
+        document.querySelectorAll('.filter-tag').forEach(tag => {
+          tag.classList.remove('active');
         });
-        event.target.classList.add("active");
+        event.target.classList.add('active');
 
-        if (location === "all") {
+        if (location === 'all') {
           renderPosts(allPosts);
         } else {
-          const filtered = allPosts.filter((p) => p.location === location);
+          const filtered = allPosts.filter(p => p.location === location);
           renderPosts(filtered);
         }
 
-        console.log("筛选地区:", location);
+        console.log('筛选地区:', location);
       }
 
       function cycleFontSize() {
-        const container = document.getElementById("hookup-list-container");
-        const icon = document.getElementById("font-size-icon");
-        const fontSizes = ["small", "medium", "large", "xlarge"];
-        const fontIcons = ["A", "A+", "A++", "A+++"];
+        const container = document.getElementById('hookup-list-container');
+        const icon = document.getElementById('font-size-icon');
+        const fontSizes = ['small', 'medium', 'large', 'xlarge'];
+        const fontIcons = ['A', 'A+', 'A++', 'A+++'];
 
-        let currentSize = localStorage.getItem("forum-font-size") || "small";
+        let currentSize = localStorage.getItem('forum-font-size') || 'small';
         let currentIndex = fontSizes.indexOf(currentSize);
         let nextIndex = (currentIndex + 1) % fontSizes.length;
         let nextSize = fontSizes[nextIndex];
 
-        container.classList.remove("font-medium", "font-large", "font-xlarge");
-        if (nextSize !== "small") {
-          container.classList.add("font-" + nextSize);
+        container.classList.remove('font-medium', 'font-large', 'font-xlarge');
+        if (nextSize !== 'small') {
+          container.classList.add('font-' + nextSize);
         }
 
         icon.textContent = fontIcons[nextIndex];
-        localStorage.setItem("forum-font-size", nextSize);
+        localStorage.setItem('forum-font-size', nextSize);
       }
 
       function toggleTheme() {
         const body = document.body;
-        const icon = document.getElementById("theme-icon");
-        const isLight = body.getAttribute("data-theme") === "light";
+        const icon = document.getElementById('theme-icon');
+        const isLight = body.getAttribute('data-theme') === 'light';
 
         if (isLight) {
-          body.removeAttribute("data-theme");
-          icon.textContent = "🌙";
-          localStorage.setItem("forum-theme", "dark");
+          body.removeAttribute('data-theme');
+          icon.textContent = '🌙';
+          localStorage.setItem('forum-theme', 'dark');
         } else {
-          body.setAttribute("data-theme", "light");
-          icon.textContent = "☀️";
-          localStorage.setItem("forum-theme", "light");
+          body.setAttribute('data-theme', 'light');
+          icon.textContent = '☀️';
+          localStorage.setItem('forum-theme', 'light');
         }
       }
 
       function syncThemeFromStorage(e) {
-        if (e.key === "forum-theme") {
+        if (e.key === 'forum-theme') {
           const body = document.body;
-          const icon = document.getElementById("theme-icon");
+          const icon = document.getElementById('theme-icon');
 
-          if (e.newValue === "light") {
-            body.setAttribute("data-theme", "light");
-            if (icon) icon.textContent = "☀️";
+          if (e.newValue === 'light') {
+            body.setAttribute('data-theme', 'light');
+            if (icon) icon.textContent = '☀️';
           } else {
-            body.removeAttribute("data-theme");
-            if (icon) icon.textContent = "🌙";
+            body.removeAttribute('data-theme');
+            if (icon) icon.textContent = '🌙';
           }
         }
 
-        if (e.key === "forum-font-size") {
-          const container = document.getElementById("hookup-list-container");
-          const icon = document.getElementById("font-size-icon");
-          const fontSizes = ["small", "medium", "large", "xlarge"];
-          const fontIcons = ["A", "A+", "A++", "A+++"];
+        if (e.key === 'forum-font-size') {
+          const container = document.getElementById('hookup-list-container');
+          const icon = document.getElementById('font-size-icon');
+          const fontSizes = ['small', 'medium', 'large', 'xlarge'];
+          const fontIcons = ['A', 'A+', 'A++', 'A+++'];
 
-          container.classList.remove("font-medium", "font-large", "font-xlarge");
-          if (e.newValue && e.newValue !== "small") {
-            container.classList.add("font-" + e.newValue);
+          container.classList.remove('font-medium', 'font-large', 'font-xlarge');
+          if (e.newValue && e.newValue !== 'small') {
+            container.classList.add('font-' + e.newValue);
           }
 
-          let index = fontSizes.indexOf(e.newValue || "small");
+          let index = fontSizes.indexOf(e.newValue || 'small');
           if (icon) icon.textContent = fontIcons[index];
         }
       }
 
       function goBack() {
         const cmd = `/send 返回论坛 | /trigger`;
-        if (typeof triggerSlash === "function") {
+        if (typeof triggerSlash === 'function') {
           triggerSlash(cmd);
         }
       }
 
       function viewHookupPost(title) {
         const cmd = `/send 查看约炮帖:${title} | /trigger`;
-        if (typeof triggerSlash === "function") {
+        if (typeof triggerSlash === 'function') {
           triggerSlash(cmd);
         }
       }
 
-      window.addEventListener("storage", syncThemeFromStorage);
+      window.addEventListener('storage', syncThemeFromStorage);
 
-      document.addEventListener("DOMContentLoaded", function () {
-        const theme = localStorage.getItem("forum-theme");
-        if (theme === "light") {
-          document.body.setAttribute("data-theme", "light");
+      setTimeout(function () {
+        const theme = localStorage.getItem('forum-theme');
+        if (theme === 'light') {
+          document.body.setAttribute('data-theme', 'light');
         }
 
-        const fontSize = localStorage.getItem("forum-font-size") || "small";
-        const container = document.getElementById("hookup-list-container");
-        const fontSizes = ["small", "medium", "large", "xlarge"];
-        const fontIcons = ["A", "A+", "A++", "A+++"];
+        const fontSize = localStorage.getItem('forum-font-size') || 'small';
+        const container = document.getElementById('hookup-list-container');
+        const fontSizes = ['small', 'medium', 'large', 'xlarge'];
+        const fontIcons = ['A', 'A+', 'A++', 'A+++'];
 
-        if (fontSize !== "small") {
-          container.classList.add("font-" + fontSize);
+        if (fontSize !== 'small') {
+          container.classList.add('font-' + fontSize);
         }
 
-        console.log("页面加载完成,开始解析约炮区列表数据");
+        console.log('页面加载完成,开始解析约炮区列表数据');
         try {
           const data = parseHookupListDataXML(hookupListDataXML);
           renderHookupList(data);
 
-          if (theme === "light") {
-            const icon = document.getElementById("theme-icon");
+          if (theme === 'light') {
+            const icon = document.getElementById('theme-icon');
             if (icon) {
-              icon.textContent = "☀️";
+              icon.textContent = '☀️';
             }
           }
 
           let index = fontSizes.indexOf(fontSize);
-          const fontIcon = document.getElementById("font-size-icon");
+          const fontIcon = document.getElementById('font-size-icon');
           if (fontIcon) {
             fontIcon.textContent = fontIcons[index];
           }
         } catch (error) {
-          console.error("渲染失败:", error);
-          document.getElementById("hookup-list-container").innerHTML =
+          console.error('渲染失败:', error);
+          document.getElementById('hookup-list-container').innerHTML =
             '<div class="loading">数据加载失败,请刷新重试</div>';
         }
-      });
+      }, 0);
     </script>
   </body>
 </html>
