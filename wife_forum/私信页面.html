@@ -1,13 +1,10 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>私信 - 妻悦论坛</title>
-    <link
-      rel="stylesheet"
-      href="https://fontsapi.zeoseven.com/292/main/result.css"
-    />
+    <link rel="stylesheet" href="https://fontsapi.zeoseven.com/292/main/result.css" />
   </head>
 
   <body>
@@ -27,7 +24,7 @@
         --hover-bg: rgba(220, 20, 60, 0.08);
       }
 
-      [data-theme="light"] {
+      [data-theme='light'] {
         --dark-red: #c92a2a;
         --blood-red: #e03131;
         --light-red: #ff6b6b;
@@ -49,8 +46,12 @@
       }
 
       body {
-        font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont,
-          "Segoe UI", sans-serif;
+        font-family:
+          'Noto Sans SC',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
         color: var(--text-main);
         line-height: 1.6;
         -webkit-font-smoothing: antialiased;
@@ -318,7 +319,9 @@
         border-radius: 8px;
         opacity: 0;
         transform: scale(0.9);
-        transition: opacity 0.3s ease, transform 0.3s ease;
+        transition:
+          opacity 0.3s ease,
+          transform 0.3s ease;
       }
 
       .lightbox-image.loaded {
@@ -435,15 +438,17 @@
     </div>
 
     <script>
-      const messageDataXML = `<message_data>$1</message_data>`;
-      const IMAGE_BASE_URL = "https://gitgud.io/opus5/wife_forum/-/raw/master/";
+      const chat_message = getChatMessages(getCurrentMessageId())[0];
+      const match = chat_message.message.match(/<message_data>([\s\S]*?)<\/message_data>/);
+      const messageDataXML = match ? match[0] : '<message_data></message_data>';
+      const IMAGE_BASE_URL = 'https://gitgud.io/opus5/wife_forum/-/raw/master/';
 
       function parseMessageDataXML(xmlText) {
-        console.log("========== 私信数据解析开始 ==========");
-        console.log("XML数据长度:", xmlText.length);
+        console.log('========== 私信数据解析开始 ==========');
+        console.log('XML数据长度:', xmlText.length);
 
         const data = {
-          contactName: "",
+          contactName: '',
           messages: [],
         };
 
@@ -456,7 +461,7 @@
             messageDataBlocks.push(blockMatch[1]);
           }
 
-          console.log("找到 message_data 块数量:", messageDataBlocks.length);
+          console.log('找到 message_data 块数量:', messageDataBlocks.length);
 
           if (messageDataBlocks.length === 0) {
             messageDataBlocks.push(xmlText);
@@ -470,25 +475,20 @@
               if (contactMatch) data.contactName = contactMatch[1];
             }
 
-            const messagesMatch = block.match(
-              /<messages>([\s\S]*?)<\/messages>/i
-            );
+            const messagesMatch = block.match(/<messages>([\s\S]*?)<\/messages>/i);
             if (messagesMatch && messagesMatch[1]) {
-              const messageRegex =
-                /\[消息\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\|]*)\|([^\]]*)\]/g;
+              const messageRegex = /\[消息\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\|]*)\|([^\]]*)\]/g;
               let messageMatch;
-              while (
-                (messageMatch = messageRegex.exec(messagesMatch[1])) !== null
-              ) {
+              while ((messageMatch = messageRegex.exec(messagesMatch[1])) !== null) {
                 const message = {
                   sender: messageMatch[1],
                   time: messageMatch[2],
                   type: messageMatch[3],
                   content: messageMatch[4],
-                  nsfw: messageMatch[5] === "true",
+                  nsfw: messageMatch[5] === 'true',
                 };
 
-                if (message.type === "image" && message.content) {
+                if (message.type === 'image' && message.content) {
                   message.imageUrl = IMAGE_BASE_URL + message.content;
                 }
 
@@ -497,47 +497,44 @@
             }
           });
 
-          console.log("解析完成 - 总消息数:", data.messages.length);
-          console.log("========== 私信数据解析完成 ==========");
+          console.log('解析完成 - 总消息数:', data.messages.length);
+          console.log('========== 私信数据解析完成 ==========');
           return data;
         } catch (error) {
-          console.error("解析私信数据出错:", error);
+          console.error('解析私信数据出错:', error);
           return data;
         }
       }
 
-      let currentContactName = "";
+      let currentContactName = '';
 
       function renderMessages(data) {
-        console.log("开始渲染私信...");
+        console.log('开始渲染私信...');
 
-        const container = document.getElementById("message-container");
+        const container = document.getElementById('message-container');
 
         if (!data.contactName) {
-          container.innerHTML =
-            '<div class="loading">界面加载失败,应该是掉格式了,请重roll聊天试试...</div>';
+          container.innerHTML = '<div class="loading">界面加载失败,应该是掉格式了,请重roll聊天试试...</div>';
           return;
         }
 
         currentContactName = data.contactName;
 
-        let messagesHTML = "";
-        data.messages.forEach((msg) => {
-          const isSent = msg.sender === "我";
-          const messageClass = isSent ? "sent" : "received";
+        let messagesHTML = '';
+        data.messages.forEach(msg => {
+          const isSent = msg.sender === '我';
+          const messageClass = isSent ? 'sent' : 'received';
 
-          let contentHTML = "";
-          if (msg.type === "image") {
+          let contentHTML = '';
+          if (msg.type === 'image') {
             contentHTML = `
               <img src="${msg.imageUrl}"
-                   class="message-image ${msg.nsfw ? "nsfw-blur" : ""}"
-                   onclick="openLightbox('${
-                     msg.imageUrl
-                   }'); event.stopPropagation();"
+                   class="message-image ${msg.nsfw ? 'nsfw-blur' : ''}"
+                   onclick="openLightbox('${msg.imageUrl}'); event.stopPropagation();"
                    alt="">
             `;
           } else {
-            contentHTML = msg.content.replace(/\n/g, "<br>");
+            contentHTML = msg.content.replace(/\n/g, '<br>');
           }
 
           messagesHTML += `
@@ -587,139 +584,134 @@
         `;
 
         setTimeout(() => {
-          const messagesArea = document.getElementById("messages-area");
+          const messagesArea = document.getElementById('messages-area');
           if (messagesArea) {
             messagesArea.scrollTop = messagesArea.scrollHeight;
           }
         }, 100);
 
-        const input = document.getElementById("message-input");
+        const input = document.getElementById('message-input');
         if (input) {
-          input.addEventListener("input", function () {
-            this.style.height = "auto";
-            this.style.height = Math.min(this.scrollHeight, 100) + "px";
+          input.addEventListener('input', function () {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 100) + 'px';
           });
 
-          input.addEventListener("keydown", function (e) {
-            if (e.key === "Enter" && !e.shiftKey) {
+          input.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
               e.preventDefault();
               sendMessage();
             }
           });
         }
 
-        console.log("私信渲染完成");
+        console.log('私信渲染完成');
       }
 
       function cycleFontSize() {
-        const container = document.getElementById("message-container");
-        const icon = document.getElementById("font-size-icon");
-        const fontSizes = ["small", "medium", "large", "xlarge"];
-        const fontIcons = ["A", "A+", "A++", "A+++"];
+        const container = document.getElementById('message-container');
+        const icon = document.getElementById('font-size-icon');
+        const fontSizes = ['small', 'medium', 'large', 'xlarge'];
+        const fontIcons = ['A', 'A+', 'A++', 'A+++'];
 
-        let currentSize = localStorage.getItem("forum-font-size") || "small";
+        let currentSize = localStorage.getItem('forum-font-size') || 'small';
         let currentIndex = fontSizes.indexOf(currentSize);
         let nextIndex = (currentIndex + 1) % fontSizes.length;
         let nextSize = fontSizes[nextIndex];
 
-        container.classList.remove("font-medium", "font-large", "font-xlarge");
-        if (nextSize !== "small") {
-          container.classList.add("font-" + nextSize);
+        container.classList.remove('font-medium', 'font-large', 'font-xlarge');
+        if (nextSize !== 'small') {
+          container.classList.add('font-' + nextSize);
         }
 
         icon.textContent = fontIcons[nextIndex];
-        localStorage.setItem("forum-font-size", nextSize);
+        localStorage.setItem('forum-font-size', nextSize);
       }
 
       function toggleTheme() {
         const body = document.body;
-        const icon = document.getElementById("theme-icon");
-        const isLight = body.getAttribute("data-theme") === "light";
+        const icon = document.getElementById('theme-icon');
+        const isLight = body.getAttribute('data-theme') === 'light';
 
         if (isLight) {
-          body.removeAttribute("data-theme");
-          icon.textContent = "🌙";
-          localStorage.setItem("forum-theme", "dark");
+          body.removeAttribute('data-theme');
+          icon.textContent = '🌙';
+          localStorage.setItem('forum-theme', 'dark');
         } else {
-          body.setAttribute("data-theme", "light");
-          icon.textContent = "☀️";
-          localStorage.setItem("forum-theme", "light");
+          body.setAttribute('data-theme', 'light');
+          icon.textContent = '☀️';
+          localStorage.setItem('forum-theme', 'light');
         }
       }
 
       function syncThemeFromStorage(e) {
-        if (e.key === "forum-theme") {
+        if (e.key === 'forum-theme') {
           const body = document.body;
-          const icon = document.getElementById("theme-icon");
+          const icon = document.getElementById('theme-icon');
 
-          if (e.newValue === "light") {
-            body.setAttribute("data-theme", "light");
-            if (icon) icon.textContent = "☀️";
+          if (e.newValue === 'light') {
+            body.setAttribute('data-theme', 'light');
+            if (icon) icon.textContent = '☀️';
           } else {
-            body.removeAttribute("data-theme");
-            if (icon) icon.textContent = "🌙";
+            body.removeAttribute('data-theme');
+            if (icon) icon.textContent = '🌙';
           }
         }
 
-        if (e.key === "forum-font-size") {
-          const container = document.getElementById("message-container");
-          const icon = document.getElementById("font-size-icon");
-          const fontSizes = ["small", "medium", "large", "xlarge"];
-          const fontIcons = ["A", "A+", "A++", "A+++"];
+        if (e.key === 'forum-font-size') {
+          const container = document.getElementById('message-container');
+          const icon = document.getElementById('font-size-icon');
+          const fontSizes = ['small', 'medium', 'large', 'xlarge'];
+          const fontIcons = ['A', 'A+', 'A++', 'A+++'];
 
-          container.classList.remove(
-            "font-medium",
-            "font-large",
-            "font-xlarge"
-          );
-          if (e.newValue && e.newValue !== "small") {
-            container.classList.add("font-" + e.newValue);
+          container.classList.remove('font-medium', 'font-large', 'font-xlarge');
+          if (e.newValue && e.newValue !== 'small') {
+            container.classList.add('font-' + e.newValue);
           }
 
-          let index = fontSizes.indexOf(e.newValue || "small");
+          let index = fontSizes.indexOf(e.newValue || 'small');
           if (icon) icon.textContent = fontIcons[index];
         }
       }
 
       function openLightbox(imageUrl) {
-        const lightbox = document.getElementById("lightbox");
-        const lightboxImage = document.getElementById("lightbox-image");
-        const loader = document.getElementById("lightbox-loader");
-        const loaderText = loader.querySelector(".lightbox-loader-text");
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImage = document.getElementById('lightbox-image');
+        const loader = document.getElementById('lightbox-loader');
+        const loaderText = loader.querySelector('.lightbox-loader-text');
 
         const loadingTexts = [
-          "正在加载图片...",
-          "正在获取高清图片...",
-          "正在下载图片资源...",
-          "正在解析图片数据...",
-          "正在加载原图...",
-          "正在读取图片缓存...",
-          "正在连接图片服务器...",
-          "正在传输图片数据...",
+          '正在加载图片...',
+          '正在获取高清图片...',
+          '正在下载图片资源...',
+          '正在解析图片数据...',
+          '正在加载原图...',
+          '正在读取图片缓存...',
+          '正在连接图片服务器...',
+          '正在传输图片数据...',
         ];
 
-        const randomText =
-          loadingTexts[Math.floor(Math.random() * loadingTexts.length)];
+        const randomText = loadingTexts[Math.floor(Math.random() * loadingTexts.length)];
         loaderText.textContent = randomText;
 
         lightboxImage.onload = null;
         lightboxImage.onerror = null;
-        lightboxImage.classList.remove("loaded");
-        lightboxImage.src = "";
-        loader.classList.remove("hidden");
-        lightbox.classList.add("active");
+        lightboxImage.classList.remove('loaded');
+        lightboxImage.src = '';
+        loader.classList.remove('hidden');
+        lightbox.classList.add('active');
 
         const loadTime = 500 + Math.random() * 500;
 
         setTimeout(() => {
           lightboxImage.onload = function () {
-            loader.classList.add("hidden");
-            lightboxImage.classList.add("loaded");
+            loader.classList.add('hidden');
+            lightboxImage.classList.add('loaded');
           };
 
           lightboxImage.onerror = function () {
-            loader.classList.add("hidden");
-            loaderText.textContent = "图片加载失败";
+            loader.classList.add('hidden');
+            loaderText.textContent = '图片加载失败';
           };
 
           lightboxImage.src = imageUrl;
@@ -727,57 +719,57 @@
       }
 
       function closeLightbox() {
-        const lightbox = document.getElementById("lightbox");
-        const lightboxImage = document.getElementById("lightbox-image");
-        const loader = document.getElementById("lightbox-loader");
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImage = document.getElementById('lightbox-image');
+        const loader = document.getElementById('lightbox-loader');
 
-        lightbox.classList.remove("active");
-        lightboxImage.classList.remove("loaded");
+        lightbox.classList.remove('active');
+        lightboxImage.classList.remove('loaded');
         lightboxImage.onload = null;
         lightboxImage.onerror = null;
-        lightboxImage.src = "";
-        loader.classList.remove("hidden");
+        lightboxImage.src = '';
+        loader.classList.remove('hidden');
       }
 
       function goBack() {
         const cmd = `/send 返回论坛 | /trigger`;
-        if (typeof triggerSlash === "function") {
+        if (typeof triggerSlash === 'function') {
           triggerSlash(cmd);
         }
       }
 
       function sendMessage() {
-        const input = document.getElementById("message-input");
+        const input = document.getElementById('message-input');
         const message = input.value.trim();
 
         if (!message) return;
 
         const formattedMessage = `回复私信 ${currentContactName} 的私信：${message}`;
         const cmd = `/send ${formattedMessage} | /trigger`;
-        if (typeof triggerSlash === "function") {
+        if (typeof triggerSlash === 'function') {
           triggerSlash(cmd);
         }
 
-        input.value = "";
-        input.style.height = "auto";
+        input.value = '';
+        input.style.height = 'auto';
       }
 
-      window.addEventListener("storage", syncThemeFromStorage);
+      window.addEventListener('storage', syncThemeFromStorage);
 
-      document.addEventListener("DOMContentLoaded", function () {
-        const theme = localStorage.getItem("forum-theme");
-        if (theme === "light") {
-          document.body.setAttribute("data-theme", "light");
+      setTimeout(function () {
+        const theme = localStorage.getItem('forum-theme');
+        if (theme === 'light') {
+          document.body.setAttribute('data-theme', 'light');
         }
 
-        const fontSize = localStorage.getItem("forum-font-size") || "small";
-        const container = document.getElementById("message-container");
-        const fontIcon = document.getElementById("font-size-icon");
-        const fontSizes = ["small", "medium", "large", "xlarge"];
-        const fontIcons = ["A", "A+", "A++", "A+++"];
+        const fontSize = localStorage.getItem('forum-font-size') || 'small';
+        const container = document.getElementById('message-container');
+        const fontIcon = document.getElementById('font-size-icon');
+        const fontSizes = ['small', 'medium', 'large', 'xlarge'];
+        const fontIcons = ['A', 'A+', 'A++', 'A+++'];
 
-        if (fontSize !== "small") {
-          container.classList.add("font-" + fontSize);
+        if (fontSize !== 'small') {
+          container.classList.add('font-' + fontSize);
         }
 
         let index = fontSizes.indexOf(fontSize);
@@ -785,23 +777,22 @@
           fontIcon.textContent = fontIcons[index];
         }
 
-        console.log("页面加载完成,开始解析私信数据");
+        console.log('页面加载完成,开始解析私信数据');
         try {
           const data = parseMessageDataXML(messageDataXML);
           renderMessages(data);
 
-          if (theme === "light") {
-            const icon = document.getElementById("theme-icon");
+          if (theme === 'light') {
+            const icon = document.getElementById('theme-icon');
             if (icon) {
-              icon.textContent = "☀️";
+              icon.textContent = '☀️';
             }
           }
         } catch (error) {
-          console.error("渲染失败:", error);
-          document.getElementById("message-container").innerHTML =
-            '<div class="loading">数据加载失败,请刷新重试</div>';
+          console.error('渲染失败:', error);
+          document.getElementById('message-container').innerHTML = '<div class="loading">数据加载失败,请刷新重试</div>';
         }
-      });
+      }, 0);
     </script>
   </body>
 </html>
