@@ -365,7 +365,10 @@
 
       setTimeout(function () {
         initTheme();
-        createOptions('$1');
+        const chat_message = getChatMessages(getCurrentMessageId())[0];
+        const match = chat_message.message.match(/<options>((?:(?!<options>).)*?)<\/options>/s);
+        const optionsData = match ? match[1] : '';
+        createOptions(optionsData);
       }, 0);
     </script>
   </body>
