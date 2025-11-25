@@ -325,6 +325,10 @@
         border-bottom: none;
       }
 
+      .summary-item.hidden {
+        display: none;
+      }
+
       .summary-label {
         color: var(--text-dim);
       }
@@ -351,6 +355,10 @@
         display: flex;
         justify-content: space-between;
         padding: 5px 0;
+      }
+
+      .info-item.hidden {
+        display: none;
       }
 
       .info-label {
@@ -528,7 +536,7 @@
 
       <div class="header">
         <div class="header-content">
-          <h1>妻悦论坛 - 人妻定制</h1>
+          <h1>妻悦论坛 - 定制系统</h1>
           <button class="theme-toggle" onclick="toggleTheme()">
             <span id="theme-icon">🌙</span>
           </button>
@@ -544,9 +552,10 @@
           <div class="page-title">欢迎来到妻悦论坛</div>
           <div class="page-desc">
             这里是淫妻爱好者的秘密据点<br />
-            作为圈内单男,你将通过以下步骤定制你的人妻对象<br />
+            作为圈内单男,你将通过以下步骤定制你的约炮对象<br />
             <span style="color: var(--gold); font-weight: 500"
-              >注意：女朋友/已婚人妻指的是对方男性的对象，而非你的</span
+              >注意：女朋友/已婚人妻指的是对方男性的对象，而非你的<br />
+              独身女性则是独自来论坛约炮的女性</span
             ><br />
             每一步的选择都会被自动保存,随时可以返回修改
           </div>
@@ -572,20 +581,31 @@
           <div class="options-grid">
             <div
               class="option-card"
-              onclick="selectOption('relationshipType', '女朋友', this)"
+              onclick="selectRelationshipType('女朋友', this)"
             >
               <div class="icon">💕</div>
               <div class="label">女朋友</div>
-              <div class="desc">情侣关系,未婚状态</div>
+              <div class="desc">
+                情侣关系,未婚状态<br />男方主动献出或共同探索
+              </div>
             </div>
 
             <div
               class="option-card"
-              onclick="selectOption('relationshipType', '已婚人妻', this)"
+              onclick="selectRelationshipType('已婚人妻', this)"
             >
               <div class="icon">💍</div>
               <div class="label">已婚人妻</div>
-              <div class="desc">夫妻关系,已婚状态</div>
+              <div class="desc">夫妻关系,已婚状态<br />丈夫知情并参与其中</div>
+            </div>
+
+            <div
+              class="option-card"
+              onclick="selectRelationshipType('独身女性', this)"
+            >
+              <div class="icon">🦋</div>
+              <div class="label">独身女性</div>
+              <div class="desc">单身或伴侣不知情<br />独自在论坛寻找单男</div>
             </div>
           </div>
 
@@ -728,6 +748,15 @@
 
             <div
               class="option-card"
+              onclick="selectOption('personality', '独立强势', this)"
+            >
+              <div class="icon">👑</div>
+              <div class="label">独立强势</div>
+              <div class="desc">主导关系,明确需求</div>
+            </div>
+
+            <div
+              class="option-card"
               onclick="selectCustomOption('personality', this)"
             >
               <div class="icon">✏️</div>
@@ -833,7 +862,7 @@
         <div class="page" id="page5">
           <div class="page-title">关系设定</div>
           <div class="page-desc">你们之间的特殊关系</div>
-          <div class="options-grid">
+          <div class="options-grid" id="relationOptionsGrid">
             <div
               class="option-card"
               onclick="selectOption('relation', '论坛约炮', this)"
@@ -877,6 +906,24 @@
               <div class="icon">💔</div>
               <div class="label">前女友</div>
               <div class="desc">曾经的恋人</div>
+            </div>
+
+            <div
+              class="option-card relation-solo"
+              onclick="selectOption('relation', '陌生约炮', this)"
+            >
+              <div class="icon">🎲</div>
+              <div class="label">陌生约炮</div>
+              <div class="desc">此前无任何交集</div>
+            </div>
+
+            <div
+              class="option-card relation-solo"
+              onclick="selectOption('relation', '熟人偷情', this)"
+            >
+              <div class="icon">🔥</div>
+              <div class="label">熟人偷情</div>
+              <div class="desc">同事/朋友/邻居,背着伴侣来约</div>
             </div>
 
             <div
@@ -959,6 +1006,15 @@
 
             <div
               class="option-card"
+              onclick="selectOption('career', '自由职业', this)"
+            >
+              <div class="icon">🎨</div>
+              <div class="label">自由职业</div>
+              <div class="desc">时间自由,生活随性</div>
+            </div>
+
+            <div
+              class="option-card"
               onclick="selectCustomOption('career', this)"
             >
               <div class="icon">✏️</div>
@@ -987,68 +1043,11 @@
         </div>
 
         <div class="page" id="page7">
-          <div class="page-title">生活状态</div>
-          <div class="page-desc">情侣/夫妻为何进入淫妻圈</div>
-          <div class="options-grid">
-            <div
-              class="option-card"
-              onclick="selectOption('lifeStatus', '主动献出', this)"
-            >
-              <div class="icon">🎭</div>
-              <div class="label">主动献出</div>
-              <div class="desc">男方有窥视癖,主动在论坛发帖寻找单男</div>
-            </div>
-
-            <div
-              class="option-card"
-              onclick="selectOption('lifeStatus', '共同探索', this)"
-            >
-              <div class="icon">💑</div>
-              <div class="label">共同探索</div>
-              <div class="desc">双方都对淫妻玩法感兴趣,共同寻找单男</div>
-            </div>
-
-            <div
-              class="option-card"
-              onclick="selectOption('lifeStatus', '欲求不满', this)"
-            >
-              <div class="icon">🔥</div>
-              <div class="label">欲求不满</div>
-              <div class="desc">男方性能力不足,女方主动提出找单男</div>
-            </div>
-
-            <div
-              class="option-card"
-              onclick="selectOption('lifeStatus', '怂恿诱导', this)"
-            >
-              <div class="icon">😈</div>
-              <div class="label">怂恿诱导</div>
-              <div class="desc">男方长期洗脑,女方半推半就接受</div>
-            </div>
-
-            <div
-              class="option-card"
-              onclick="selectOption('lifeStatus', '经济交换', this)"
-            >
-              <div class="icon">💸</div>
-              <div class="label">经济交换</div>
-              <div class="desc">经济困难,男方默许女方用身体换钱</div>
-            </div>
-
-            <div
-              class="option-card"
-              onclick="selectCustomOption('lifeStatus', this)"
-            >
-              <div class="icon">✏️</div>
-              <div class="label">自定义</div>
-              <input
-                type="text"
-                class="custom-input"
-                placeholder="输入自定义状态"
-                onclick="event.stopPropagation()"
-                data-category="lifeStatus"
-              />
-            </div>
+          <div class="page-title" id="lifeStatusTitle">生活状态</div>
+          <div class="page-desc" id="lifeStatusDesc">
+            情侣/夫妻为何进入淫妻圈
+          </div>
+          <div class="options-grid" id="lifeStatusOptionsGrid">
           </div>
 
           <div class="nav-buttons" id="navButtons7">
@@ -1115,6 +1114,15 @@
 
             <div
               class="option-card"
+              onclick="selectOption('pastExperience', '约炮老手', this)"
+            >
+              <div class="icon">🎯</div>
+              <div class="label">约炮老手</div>
+              <div class="desc">长期在论坛活动,经验丰富</div>
+            </div>
+
+            <div
+              class="option-card"
               onclick="selectCustomOption('pastExperience', this)"
             >
               <div class="icon">✏️</div>
@@ -1143,68 +1151,11 @@
         </div>
 
         <div class="page" id="page9">
-          <div class="page-title">男方设定</div>
-          <div class="page-desc">男方在淫妻活动中的角色</div>
-          <div class="options-grid">
-            <div
-              class="option-card"
-              onclick="selectOption('maleSetting', '旁观型', this)"
-            >
-              <div class="icon">👁️</div>
-              <div class="label">旁观型</div>
-              <div class="desc">全程观看,享受视觉刺激</div>
-            </div>
-
-            <div
-              class="option-card"
-              onclick="selectOption('maleSetting', '半放养型', this)"
-            >
-              <div class="icon">📹</div>
-              <div class="label">半放养型</div>
-              <div class="desc">不在场但要求录制</div>
-            </div>
-
-            <div
-              class="option-card"
-              onclick="selectOption('maleSetting', '完全放养型', this)"
-            >
-              <div class="icon">🚪</div>
-              <div class="label">完全放养型</div>
-              <div class="desc">不监控,只要求事后口述</div>
-            </div>
-
-            <div
-              class="option-card"
-              onclick="selectOption('maleSetting', '参与型', this)"
-            >
-              <div class="icon">👥</div>
-              <div class="label">参与型</div>
-              <div class="desc">和单男一起,享受3P</div>
-            </div>
-
-            <div
-              class="option-card"
-              onclick="selectOption('maleSetting', '受虐型', this)"
-            >
-              <div class="icon">😔</div>
-              <div class="label">受虐型</div>
-              <div class="desc">享受被羞辱,甚至舔精</div>
-            </div>
-
-            <div
-              class="option-card"
-              onclick="selectCustomOption('maleSetting', this)"
-            >
-              <div class="icon">✏️</div>
-              <div class="label">自定义</div>
-              <input
-                type="text"
-                class="custom-input"
-                placeholder="输入自定义设定"
-                onclick="event.stopPropagation()"
-                data-category="maleSetting"
-              />
-            </div>
+          <div class="page-title" id="maleSettingTitle">男方设定</div>
+          <div class="page-desc" id="maleSettingDesc">
+            男方在淫妻活动中的角色
+          </div>
+          <div class="options-grid" id="maleSettingOptionsGrid">
           </div>
 
           <div class="nav-buttons" id="navButtons9">
@@ -1267,6 +1218,15 @@
               <div class="icon">👥</div>
               <div class="label">多人运动</div>
               <div class="desc">刺激升级,群交狂欢</div>
+            </div>
+
+            <div
+              class="option-card"
+              onclick="selectOption('herKink', '主导掌控', this)"
+            >
+              <div class="icon">👠</div>
+              <div class="label">主导掌控</div>
+              <div class="desc">喜欢在性爱中占据主导</div>
             </div>
 
             <div
@@ -1349,6 +1309,15 @@
 
             <div
               class="option-card"
+              onclick="selectOption('myKink', '配合主导', this)"
+            >
+              <div class="icon">🤝</div>
+              <div class="label">配合主导</div>
+              <div class="desc">配合女方节奏,满足其掌控欲</div>
+            </div>
+
+            <div
+              class="option-card"
               onclick="selectCustomOption('myKink', this)"
             >
               <div class="icon">✏️</div>
@@ -1420,7 +1389,7 @@
               <span class="summary-value" id="summaryPastExperience">-</span>
             </div>
 
-            <div class="summary-item">
+            <div class="summary-item" id="summaryMaleSettingRow">
               <span class="summary-label">男方设定</span>
               <span class="summary-value" id="summaryMaleSetting">-</span>
             </div>
@@ -1494,7 +1463,7 @@
             <span class="info-value" id="infoPastExperience">-</span>
           </div>
 
-          <div class="info-item">
+          <div class="info-item" id="infoMaleSettingRow">
             <span class="info-label">男方设定</span>
             <span class="info-value" id="infoMaleSetting">-</span>
           </div>
@@ -1529,6 +1498,69 @@
         myKink: "",
       };
 
+      // 生活状态选项配置
+      const lifeStatusOptions = {
+        couple: [
+          {
+            value: "主动献出",
+            icon: "🎭",
+            desc: "男方有窥视癖,主动在论坛发帖寻找单男",
+          },
+          {
+            value: "共同探索",
+            icon: "💑",
+            desc: "双方都对淫妻玩法感兴趣,共同寻找单男",
+          },
+          {
+            value: "欲求不满",
+            icon: "🔥",
+            desc: "男方性能力不足,女方主动提出找单男",
+          },
+          {
+            value: "怂恿诱导",
+            icon: "😈",
+            desc: "男方长期洗脑,女方半推半就接受",
+          },
+          {
+            value: "经济交换",
+            icon: "💸",
+            desc: "经济困难,男方默许女方用身体换钱",
+          },
+        ],
+        solo: [
+          {
+            value: "背叛偷情",
+            icon: "🤫",
+            desc: "背着男友或丈夫,独自在论坛约炮",
+          },
+          {
+            value: "纯粹寻欢",
+            icon: "🦋",
+            desc: "性欲旺盛,主动寻找单男满足需求",
+          },
+          {
+            value: "报复出轨",
+            icon: "💔",
+            desc: "发现男方出轨或冷落,以此报复",
+          },
+          { value: "单身约炮", icon: "🎯", desc: "单身状态,追求纯粹的性快感" },
+        ],
+      };
+
+      const maleSettingOptions = {
+        couple: [
+          { value: "旁观型", icon: "👁️", desc: "全程观看,享受视觉刺激" },
+          { value: "半放养型", icon: "📹", desc: "不在场但要求录制" },
+          { value: "完全放养型", icon: "🚪", desc: "不监控,只要求事后口述" },
+          { value: "参与型", icon: "👥", desc: "和单男一起,享受3P" },
+          { value: "受虐型", icon: "😔", desc: "享受被羞辱,甚至舔精" },
+        ],
+        solo: [
+          { value: "不知情型", icon: "❓", desc: "男方完全不知道女方的行为" },
+          { value: "无男方", icon: "🚫", desc: "单身状态,没有伴侣" },
+        ],
+      };
+
       function clearAllData() {
         localStorage.removeItem("wifeSelection");
         Object.keys(selections).forEach((key) => (selections[key] = ""));
@@ -1552,6 +1584,15 @@
         document.getElementById("page" + pageNum).classList.add("active");
         currentPage = pageNum;
         updateProgress();
+
+        if (pageNum === 7) {
+          generateLifeStatusOptions();
+        }
+
+        if (pageNum === 9) {
+          generateMaleSettingOptions();
+        }
+
         if (pageNum === 12) {
           updateSummary();
         }
@@ -1574,6 +1615,40 @@
         if (navButtons) {
           navButtons.scrollIntoView({ behavior: "smooth", block: "center" });
         }
+      }
+
+      function selectRelationshipType(value, element) {
+        const parent = element.parentElement;
+        parent.querySelectorAll(".option-card").forEach((card) => {
+          card.classList.remove("selected");
+        });
+        element.classList.add("selected");
+        selections.relationshipType = value;
+
+        selections.lifeStatus = "";
+        selections.maleSetting = "";
+
+        saveData();
+        const btn = document.getElementById("nextBtn1");
+        if (btn) {
+          btn.disabled = false;
+        }
+
+        updateRelationOptions();
+
+        setTimeout(scrollToNavButtons, 100);
+      }
+
+      function updateRelationOptions() {
+        const isSolo = selections.relationshipType === "独身女性";
+        const soloOnlyCards = document.querySelectorAll(".relation-solo");
+        const coupleOnlyCards = document.querySelectorAll(
+          ".option-card:not(.relation-solo)"
+        );
+
+        soloOnlyCards.forEach((card) => {
+          card.style.display = isSolo ? "block" : "block";
+        });
       }
 
       function selectOption(category, value, element) {
@@ -1630,7 +1705,113 @@
         setTimeout(scrollToNavButtons, 100);
       }
 
+      function generateLifeStatusOptions() {
+        const isSolo = selections.relationshipType === "独身女性";
+        const options = isSolo
+          ? lifeStatusOptions.solo
+          : lifeStatusOptions.couple;
+        const grid = document.getElementById("lifeStatusOptionsGrid");
+        const title = document.getElementById("lifeStatusTitle");
+        const desc = document.getElementById("lifeStatusDesc");
+
+        if (isSolo) {
+          title.textContent = "约炮动机";
+          desc.textContent = "她为何来论坛寻找单男";
+        } else {
+          title.textContent = "生活状态";
+          desc.textContent = "情侣/夫妻为何进入淫妻圈";
+        }
+
+        let html = "";
+        options.forEach((opt) => {
+          const isSelected =
+            selections.lifeStatus === opt.value ? "selected" : "";
+          html += `
+            <div class="option-card ${isSelected}" onclick="selectOption('lifeStatus', '${opt.value}', this)">
+              <div class="icon">${opt.icon}</div>
+              <div class="label">${opt.value}</div>
+              <div class="desc">${opt.desc}</div>
+            </div>
+          `;
+        });
+
+        html += `
+          <div class="option-card" onclick="selectCustomOption('lifeStatus', this)">
+            <div class="icon">✏️</div>
+            <div class="label">自定义</div>
+            <input
+              type="text"
+              class="custom-input"
+              placeholder="输入自定义状态"
+              onclick="event.stopPropagation()"
+              data-category="lifeStatus"
+            />
+          </div>
+        `;
+
+        grid.innerHTML = html;
+
+        const btn = document.getElementById("nextBtn7");
+        if (btn) {
+          btn.disabled = !selections.lifeStatus;
+        }
+      }
+
+      function generateMaleSettingOptions() {
+        const isSolo = selections.relationshipType === "独身女性";
+        const options = isSolo
+          ? maleSettingOptions.solo
+          : maleSettingOptions.couple;
+        const grid = document.getElementById("maleSettingOptionsGrid");
+        const title = document.getElementById("maleSettingTitle");
+        const desc = document.getElementById("maleSettingDesc");
+
+        if (isSolo) {
+          title.textContent = "伴侣状态";
+          desc.textContent = "她的伴侣情况";
+        } else {
+          title.textContent = "男方设定";
+          desc.textContent = "男方在淫妻活动中的角色";
+        }
+
+        let html = "";
+        options.forEach((opt) => {
+          const isSelected =
+            selections.maleSetting === opt.value ? "selected" : "";
+          html += `
+            <div class="option-card ${isSelected}" onclick="selectOption('maleSetting', '${opt.value}', this)">
+              <div class="icon">${opt.icon}</div>
+              <div class="label">${opt.value}</div>
+              <div class="desc">${opt.desc}</div>
+            </div>
+          `;
+        });
+
+        html += `
+          <div class="option-card" onclick="selectCustomOption('maleSetting', this)">
+            <div class="icon">✏️</div>
+            <div class="label">自定义</div>
+            <input
+              type="text"
+              class="custom-input"
+              placeholder="输入自定义设定"
+              onclick="event.stopPropagation()"
+              data-category="maleSetting"
+            />
+          </div>
+        `;
+
+        grid.innerHTML = html;
+
+        const btn = document.getElementById("nextBtn9");
+        if (btn) {
+          btn.disabled = !selections.maleSetting;
+        }
+      }
+
       function updateSummary() {
+        const isSolo = selections.relationshipType === "独身女性";
+
         document.getElementById("summaryRelationshipType").textContent =
           selections.relationshipType || "-";
         document.getElementById("summaryBody").textContent =
@@ -1653,9 +1834,21 @@
           selections.herKink || "-";
         document.getElementById("summaryMyKink").textContent =
           selections.myKink || "-";
+
+        const maleSettingRow = document.getElementById("summaryMaleSettingRow");
+        if (maleSettingRow) {
+          const label = maleSettingRow.querySelector(".summary-label");
+          if (isSolo) {
+            label.textContent = "伴侣状态";
+          } else {
+            label.textContent = "男方设定";
+          }
+        }
       }
 
       function updateBottomInfo() {
+        const isSolo = selections.relationshipType === "独身女性";
+
         document.getElementById("infoRelationshipType").textContent =
           selections.relationshipType || "-";
         document.getElementById("infoBody").textContent =
@@ -1677,14 +1870,31 @@
           selections.herKink || "-";
         document.getElementById("infoMyKink").textContent =
           selections.myKink || "-";
+
+        const maleSettingRow = document.getElementById("infoMaleSettingRow");
+        if (maleSettingRow) {
+          const label = maleSettingRow.querySelector(".info-label");
+          if (isSolo) {
+            label.textContent = "伴侣状态";
+          } else {
+            label.textContent = "男方设定";
+          }
+        }
       }
 
       function submitSelection() {
+        const isSolo = selections.relationshipType === "独身女性";
+
         showInfoModal(
           "开始游戏",
           "准备生成内容...<br><br>建议在AI生成完毕后，手动刷新网页以隐藏首楼",
           function () {
-            const message = `【开始选择】关系类型是${selections.relationshipType}。我想要一个${selections.body}、${selections.personality}、年龄在${selections.age}、职业是${selections.career}的女人,我和她的关系是${selections.relation}。情侣/夫妻进入淫妻圈的原因是${selections.lifeStatus},她的过往经历是${selections.pastExperience},男方在淫妻活动中的角色是${selections.maleSetting}。她的性癖是${selections.herKink},我的性癖是${selections.myKink}。严格按照<status_current_variables>中的等级和<wife_forum_glossary>的内容进行创作并生成约炮帖。`;
+            let message;
+            if (isSolo) {
+              message = `【开始选择】关系类型是${selections.relationshipType}。我想要一个${selections.body}、${selections.personality}、年龄在${selections.age}、职业是${selections.career}的女人,我和她的关系是${selections.relation}。她来论坛的原因是${selections.lifeStatus},她的过往经历是${selections.pastExperience},伴侣状态是${selections.maleSetting}。她的性癖是${selections.herKink},我的性癖是${selections.myKink}。严格按照<status_current_variables>中的等级和<wife_forum_glossary>的内容进行创作并生成约炮帖。`;
+            } else {
+              message = `【开始选择】关系类型是${selections.relationshipType}。我想要一个${selections.body}、${selections.personality}、年龄在${selections.age}、职业是${selections.career}的女人,我和她的关系是${selections.relation}。情侣/夫妻进入淫妻圈的原因是${selections.lifeStatus},她的过往经历是${selections.pastExperience},男方在淫妻活动中的角色是${selections.maleSetting}。她的性癖是${selections.herKink},我的性癖是${selections.myKink}。严格按照<status_current_variables>中的等级和<wife_forum_glossary>的内容进行创作并生成约炮帖。`;
+            }
             const command = `/send ${message} | /trigger`;
             if (typeof triggerSlash === "function") {
               triggerSlash(command);
@@ -1761,7 +1971,7 @@
 
       function randomSelection() {
         const options = {
-          relationshipType: ["女朋友", "已婚人妻"],
+          relationshipType: ["女朋友", "已婚人妻", "独身女性"],
           body: ["丰满御姐", "纤细少妇", "微胖人妻", "健美辣妈", "娇小玲珑"],
           personality: [
             "温柔贤惠",
@@ -1769,16 +1979,25 @@
             "风骚浪荡",
             "清纯保守",
             "知性优雅",
+            "独立强势",
           ],
           age: ["25-30岁", "30-35岁", "35-40岁", "40-45岁", "45岁以上"],
-          relation: ["论坛约炮", "邻居偷情", "好友对象", "上司对象", "前女友"],
-          career: ["白领丽人", "全职主妇", "教师", "医护人员", "企业老板"],
-          lifeStatus: [
-            "主动献出",
-            "共同探索",
-            "欲求不满",
-            "怂恿诱导",
-            "经济交换",
+          relation: [
+            "论坛约炮",
+            "邻居偷情",
+            "好友对象",
+            "上司对象",
+            "前女友",
+            "陌生约炮",
+            "熟人偷情",
+          ],
+          career: [
+            "白领丽人",
+            "全职主妇",
+            "教师",
+            "医护人员",
+            "企业老板",
+            "自由职业",
           ],
           pastExperience: [
             "清纯女友",
@@ -1786,121 +2005,147 @@
             "放荡过往",
             "曾经出轨",
             "被调教过",
+            "约炮老手",
           ],
-          maleSetting: ["旁观型", "半放养型", "完全放养型", "参与型", "受虐型"],
-          myKink: ["温柔缠绵", "粗暴征服", "羞辱调教", "拍摄记录", "当面绿帽"],
+          myKink: [
+            "温柔缠绵",
+            "粗暴征服",
+            "羞辱调教",
+            "拍摄记录",
+            "当面绿帽",
+            "配合主导",
+          ],
         };
 
         const personalityBehaviorMap = {
           温柔贤惠: {
             herKink: ["被动承受", "口交爱好"],
-            lifeStatus: ["主动献出", "共同探索", "怂恿诱导"],
+            coupleLifeStatus: ["主动献出", "共同探索", "怂恿诱导"],
+            soloLifeStatus: ["背叛偷情"],
           },
           高冷傲娇: {
             herKink: ["被动承受", "主动索取", "后庭开发"],
-            lifeStatus: ["共同探索", "怂恿诱导", "经济交换"],
+            coupleLifeStatus: ["共同探索", "怂恿诱导", "经济交换"],
+            soloLifeStatus: ["报复出轨", "背叛偷情"],
           },
           风骚浪荡: {
             herKink: ["主动索取", "口交爱好", "后庭开发", "多人运动"],
-            lifeStatus: ["共同探索", "欲求不满", "经济交换"],
+            coupleLifeStatus: ["共同探索", "欲求不满", "经济交换"],
+            soloLifeStatus: ["纯粹寻欢", "单身约炮"],
           },
           清纯保守: {
             herKink: ["被动承受"],
-            lifeStatus: ["主动献出", "怂恿诱导"],
+            coupleLifeStatus: ["主动献出", "怂恿诱导"],
+            soloLifeStatus: ["背叛偷情"],
           },
           知性优雅: {
             herKink: ["被动承受", "主动索取", "口交爱好"],
-            lifeStatus: ["共同探索", "欲求不满", "经济交换"],
+            coupleLifeStatus: ["共同探索", "主动献出"],
+            soloLifeStatus: ["纯粹寻欢", "报复出轨"],
+          },
+          独立强势: {
+            herKink: ["主动索取", "主导掌控", "多人运动"],
+            coupleLifeStatus: ["共同探索", "欲求不满"],
+            soloLifeStatus: ["纯粹寻欢", "单身约炮"],
           },
         };
 
-        selections.relationshipType =
-          options.relationshipType[
-            Math.floor(Math.random() * options.relationshipType.length)
-          ];
-        selections.body =
-          options.body[Math.floor(Math.random() * options.body.length)];
-        selections.personality =
-          options.personality[
-            Math.floor(Math.random() * options.personality.length)
-          ];
-        selections.age =
-          options.age[Math.floor(Math.random() * options.age.length)];
-        selections.relation =
-          options.relation[Math.floor(Math.random() * options.relation.length)];
-        selections.career =
-          options.career[Math.floor(Math.random() * options.career.length)];
-        selections.pastExperience =
-          options.pastExperience[
-            Math.floor(Math.random() * options.pastExperience.length)
-          ];
-        selections.maleSetting =
-          options.maleSetting[
-            Math.floor(Math.random() * options.maleSetting.length)
-          ];
-        selections.myKink =
-          options.myKink[Math.floor(Math.random() * options.myKink.length)];
+        Object.keys(options).forEach((key) => {
+          selections[key] =
+            options[key][Math.floor(Math.random() * options[key].length)];
+        });
 
-        const personalityRules = personalityBehaviorMap[selections.personality];
+        const isSolo = selections.relationshipType === "独身女性";
+        const personality = selections.personality;
+        const behaviorMap =
+          personalityBehaviorMap[personality] ||
+          personalityBehaviorMap["风骚浪荡"];
+
+        if (isSolo) {
+          const soloLifeStatusOptions =
+            behaviorMap.soloLifeStatus ||
+            lifeStatusOptions.solo.map((o) => o.value);
+          selections.lifeStatus =
+            soloLifeStatusOptions[
+              Math.floor(Math.random() * soloLifeStatusOptions.length)
+            ];
+
+          if (selections.lifeStatus === "单身约炮") {
+            selections.maleSetting = "无男方";
+          } else {
+            selections.maleSetting = "不知情型";
+          }
+
+          const soloRelations = ["陌生约炮", "熟人偷情", "论坛约炮"];
+          selections.relation =
+            soloRelations[Math.floor(Math.random() * soloRelations.length)];
+        } else {
+          const coupleLifeStatusOptions =
+            behaviorMap.coupleLifeStatus ||
+            lifeStatusOptions.couple.map((o) => o.value);
+          selections.lifeStatus =
+            coupleLifeStatusOptions[
+              Math.floor(Math.random() * coupleLifeStatusOptions.length)
+            ];
+
+          const maleSettingOpts = [
+            "旁观型",
+            "半放养型",
+            "完全放养型",
+            "参与型",
+            "受虐型",
+          ];
+          selections.maleSetting =
+            maleSettingOpts[Math.floor(Math.random() * maleSettingOpts.length)];
+        }
+
+        const herKinkOptions = behaviorMap.herKink || ["被动承受", "主动索取"];
         selections.herKink =
-          personalityRules.herKink[
-            Math.floor(Math.random() * personalityRules.herKink.length)
-          ];
-        selections.lifeStatus =
-          personalityRules.lifeStatus[
-            Math.floor(Math.random() * personalityRules.lifeStatus.length)
-          ];
+          herKinkOptions[Math.floor(Math.random() * herKinkOptions.length)];
+
+        if (selections.herKink === "主导掌控" && Math.random() > 0.5) {
+          selections.myKink = "配合主导";
+        }
 
         saveData();
+
+        document.querySelectorAll(".page").forEach((page) => {
+          page.querySelectorAll(".option-card").forEach((card) => {
+            card.classList.remove("selected");
+          });
+        });
+
         showPage(12);
       }
 
       function toggleTheme() {
         const body = document.body;
         const icon = document.getElementById("theme-icon");
-        const isLight = body.getAttribute("data-theme") === "light";
-
-        if (isLight) {
+        if (body.getAttribute("data-theme") === "light") {
           body.removeAttribute("data-theme");
           icon.textContent = "🌙";
-          localStorage.setItem("forum-theme", "dark");
         } else {
           body.setAttribute("data-theme", "light");
           icon.textContent = "☀️";
-          localStorage.setItem("forum-theme", "light");
         }
       }
 
-      function syncThemeFromStorage(e) {
-        if (e.key === "forum-theme") {
-          const body = document.body;
-          const icon = document.getElementById("theme-icon");
-
-          if (e.newValue === "light") {
-            body.setAttribute("data-theme", "light");
-            if (icon) icon.textContent = "☀️";
-          } else {
-            body.removeAttribute("data-theme");
-            if (icon) icon.textContent = "🌙";
+      document.querySelectorAll(".custom-input").forEach((input) => {
+        input.addEventListener("keydown", function (e) {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            const category = this.getAttribute("data-category");
+            if (this.value.trim()) {
+              selections[category] = this.value.trim();
+              saveData();
+              nextPage();
+            }
           }
-        }
-      }
-
-      window.addEventListener("storage", syncThemeFromStorage);
-
-      window.addEventListener("load", function () {
-        clearAllData();
-        updateProgress();
-
-        const theme = localStorage.getItem("forum-theme");
-        if (theme === "light") {
-          document.body.setAttribute("data-theme", "light");
-          const icon = document.getElementById("theme-icon");
-          if (icon) {
-            icon.textContent = "☀️";
-          }
-        }
+        });
       });
+
+      updateProgress();
+      updateBottomInfo();
     </script>
   </body>
 </html>
