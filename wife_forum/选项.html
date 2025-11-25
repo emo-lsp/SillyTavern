@@ -1,361 +1,372 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>快速回复选项</title>
-    <link rel="preconnect" href="https://fontsapi.zeoseven.com" crossorigin>
-    <link href="https://fontsapi.zeoseven.com/292/main/result.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fontsapi.zeoseven.com" crossorigin />
+    <link href="https://fontsapi.zeoseven.com/292/main/result.css" rel="stylesheet" />
     <style>
-        :root {
-            --corner-radius: 12px;
-            --spacing-xxs: 4px;
-            --spacing-xs: 6px;
-            --spacing-s: 10px;
-            --spacing-m: 14px;
-            --spacing-l: 18px;
+      :root {
+        --corner-radius: 12px;
+        --spacing-xxs: 4px;
+        --spacing-xs: 6px;
+        --spacing-s: 10px;
+        --spacing-m: 14px;
+        --spacing-l: 18px;
 
-            --dark-red: #c92a2a;
-            --blood-red: #e03131;
-            --light-red: #ff6b6b;
-            --bg-primary: #f5f5f5;
-            --bg-secondary: #ececec;
-            --text-primary: #2a2a2a;
-            --text-secondary: #666;
-            --border-color: rgba(220, 20, 60, 0.15);
-            --shadow-light: rgba(0, 0, 0, 0.08);
-            --shadow-medium: rgba(0, 0, 0, 0.12);
-            --hover-bg: #e0e0e0;
+        --dark-red: #c92a2a;
+        --blood-red: #e03131;
+        --light-red: #ff6b6b;
+        --bg-primary: #f5f5f5;
+        --bg-secondary: #ececec;
+        --text-primary: #2a2a2a;
+        --text-secondary: #666;
+        --border-color: rgba(220, 20, 60, 0.15);
+        --shadow-light: rgba(0, 0, 0, 0.08);
+        --shadow-medium: rgba(0, 0, 0, 0.12);
+        --hover-bg: #e0e0e0;
+      }
+
+      [data-theme='dark'] {
+        --dark-red: #c92a2a;
+        --blood-red: #e03131;
+        --light-red: #ff6b6b;
+        --bg-primary: #1a1a1a;
+        --bg-secondary: #2a2a2a;
+        --text-primary: #e0e0e0;
+        --text-secondary: #999;
+        --border-color: rgba(220, 20, 60, 0.2);
+        --shadow-light: rgba(0, 0, 0, 0.3);
+        --shadow-medium: rgba(0, 0, 0, 0.5);
+        --hover-bg: #3a3a3a;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          'Noto Sans SC',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
+        color: var(--text-primary);
+        padding: 12px;
+        background: transparent;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      #options-wrapper {
+        max-width: 520px;
+        margin: 0 auto;
+        position: relative;
+      }
+
+      .options-container {
+        border-radius: var(--corner-radius);
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+        background: var(--bg-primary);
+        position: relative;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        transform-origin: center top;
+        contain: content;
+      }
+
+      .options-container.removing {
+        animation: removeContainer 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      }
+
+      @keyframes removeContainer {
+        to {
+          opacity: 0;
+          transform: scale(0.95) translateY(-10px);
+          filter: blur(10px);
         }
+      }
 
-        [data-theme="dark"] {
-            --dark-red: #c92a2a;
-            --blood-red: #e03131;
-            --light-red: #ff6b6b;
-            --bg-primary: #1a1a1a;
-            --bg-secondary: #2a2a2a;
-            --text-primary: #e0e0e0;
-            --text-secondary: #999;
-            --border-color: rgba(220, 20, 60, 0.2);
-            --shadow-light: rgba(0, 0, 0, 0.3);
-            --shadow-medium: rgba(0, 0, 0, 0.5);
-            --hover-bg: #3a3a3a;
-        }
+      .options-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 18px;
+        background: linear-gradient(135deg, var(--dark-red) 0%, var(--blood-red) 100%);
+        position: relative;
+      }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
 
-        body {
-            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            color: var(--text-primary);
-            padding: 12px;
-            background: transparent;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
+      .options-icon {
+        font-size: 20px;
+      }
 
-        #options-wrapper {
-            max-width: 520px;
-            margin: 0 auto;
-            position: relative;
-        }
+      .options-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #fff;
+        letter-spacing: 0.5px;
+      }
 
-        .options-container {
-            border-radius: var(--corner-radius);
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-            background: var(--bg-primary);
-            position: relative;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            transform-origin: center top;
-            contain: content;
-        }
+      .theme-toggle {
+        width: 28px;
+        height: 28px;
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+        color: #fff;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
 
-        .options-container.removing {
-            animation: removeContainer 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
+      .theme-toggle:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: scale(1.05);
+      }
 
-        @keyframes removeContainer {
-            to {
-                opacity: 0;
-                transform: scale(0.95) translateY(-10px);
-                filter: blur(10px);
-            }
-        }
+      .options-grid {
+        padding: 16px 18px;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
 
-        .options-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 18px;
-            background: linear-gradient(135deg, var(--dark-red) 0%, var(--blood-red) 100%);
-            position: relative;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .options-icon {
-            font-size: 20px;
-        }
-
-        .options-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #fff;
-            letter-spacing: 0.5px;
-        }
-
-        .theme-toggle {
-            width: 28px;
-            height: 28px;
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 6px;
-            color: #fff;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .theme-toggle:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: scale(1.05);
-        }
-
+      @media (min-width: 480px) {
         .options-grid {
-            padding: 16px 18px;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
+          grid-template-columns: 1fr 1fr;
         }
+      }
 
-        @media (min-width: 480px) {
-            .options-grid {
-                grid-template-columns: 1fr 1fr;
-            }
+      .option-item {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 12px 14px;
+        cursor: pointer;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+        font-weight: 500;
+        font-size: 14px;
+        color: var(--text-primary);
+        white-space: pre-wrap;
+        opacity: 0;
+        animation: fadeIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px) scale(0.9);
         }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
 
+      .option-item.sending {
+        animation: sendEffect 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      }
+
+      @keyframes sendEffect {
+        0% {
+          transform: scale(1);
+        }
+        40% {
+          transform: scale(1.1);
+          background: var(--blood-red);
+          color: #fff;
+          box-shadow: 0 0 20px var(--blood-red);
+        }
+        100% {
+          transform: scale(0);
+          opacity: 0;
+          filter: blur(10px);
+        }
+      }
+
+      .option-item:hover {
+        background: var(--hover-bg);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        border-color: var(--light-red);
+      }
+
+      .success-message {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.8);
+        background: var(--blood-red);
+        color: #fff;
+        padding: 16px 32px;
+        border-radius: 999px;
+        font-weight: 600;
+        box-shadow: 0 4px 20px var(--shadow-medium);
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      .success-message.show {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+        animation: successPulse 1s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      @keyframes successPulse {
+        0% {
+          box-shadow: 0 0 0 0 var(--blood-red);
+        }
+        50% {
+          box-shadow: 0 0 0 20px transparent;
+        }
+        100% {
+          box-shadow: 0 0 0 0 transparent;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .options-grid {
+          grid-template-columns: 1fr;
+          gap: 8px;
+          padding: 14px 16px;
+        }
         .option-item {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 12px 14px;
-            cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            text-align: center;
-            font-weight: 500;
-            font-size: 14px;
-            color: var(--text-primary);
-            white-space: pre-wrap;
-            opacity: 0;
-            animation: fadeIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+          padding: 10px 12px;
         }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px) scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .option-item.sending {
-            animation: sendEffect 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-
-        @keyframes sendEffect {
-            0% {
-                transform: scale(1);
-            }
-            40% {
-                transform: scale(1.1);
-                background: var(--blood-red);
-                color: #fff;
-                box-shadow: 0 0 20px var(--blood-red);
-            }
-            100% {
-                transform: scale(0);
-                opacity: 0;
-                filter: blur(10px);
-            }
-        }
-
-        .option-item:hover {
-            background: var(--hover-bg);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            border-color: var(--light-red);
-        }
-
-        .success-message {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.8);
-            background: var(--blood-red);
-            color: #fff;
-            padding: 16px 32px;
-            border-radius: 999px;
-            font-weight: 600;
-            box-shadow: 0 4px 20px var(--shadow-medium);
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .success-message.show {
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
-            animation: successPulse 1s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes successPulse {
-            0% {
-                box-shadow: 0 0 0 0 var(--blood-red);
-            }
-            50% {
-                box-shadow: 0 0 0 20px transparent;
-            }
-            100% {
-                box-shadow: 0 0 0 0 transparent;
-            }
-        }
-
-        @media (max-width: 640px) {
-            .options-grid {
-                grid-template-columns: 1fr;
-                gap: 8px;
-                padding: 14px 16px;
-            }
-            .option-item {
-                padding: 10px 12px;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div id="options-wrapper">
-        <div class="options-container" id="options-container">
-            <div class="options-header">
-                <div class="header-left">
-                    <div class="options-icon">💬</div>
-                    <div class="options-title">快速回复选项</div>
-                </div>
-                <button class="theme-toggle" onclick="toggleTheme(event)">🌓</button>
-            </div>
-            <div class="options-grid" id="options-grid">
-            </div>
+      <div class="options-container" id="options-container">
+        <div class="options-header">
+          <div class="header-left">
+            <div class="options-icon">💬</div>
+            <div class="options-title">快速回复选项</div>
+          </div>
+          <button class="theme-toggle" onclick="toggleTheme(event)">🌓</button>
         </div>
+        <div class="options-grid" id="options-grid"></div>
+      </div>
     </div>
 
     <div class="success-message" id="success-message">已发送</div>
 
     <script>
-        const triggerQuickReply = (text) => {
-            if (!text || ['…', '...'].includes(text.trim()) || text.trim().length === 0) return;
-            if (typeof triggerSlash === 'function') {
-                triggerSlash(`/send ${text}|/trigger`);
-            } else {
-                console.log('SillyTavern environment not detected. Would send:', text);
-            }
-        };
-
-        function toggleTheme(event) {
-            event.stopPropagation();
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('forum-theme', newTheme);
+      const triggerQuickReply = text => {
+        if (!text || ['…', '...'].includes(text.trim()) || text.trim().length === 0) return;
+        if (typeof triggerSlash === 'function') {
+          triggerSlash(`/send ${text}|/trigger`);
+        } else {
+          console.log('SillyTavern environment not detected. Would send:', text);
         }
+      };
 
-        function syncThemeFromStorage(e) {
-            if (e.key === 'forum-theme') {
-                const newTheme = e.newValue || 'dark';
-                document.documentElement.setAttribute('data-theme', newTheme);
-            }
+      function toggleTheme(event) {
+        event.stopPropagation();
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('forum-theme', newTheme);
+      }
+
+      function syncThemeFromStorage(e) {
+        if (e.key === 'forum-theme') {
+          const newTheme = e.newValue || 'dark';
+          document.documentElement.setAttribute('data-theme', newTheme);
         }
+      }
 
-        function removeOptionsContainer() {
-            const container = document.getElementById('options-container');
-            const wrapper = document.getElementById('options-wrapper');
+      function removeOptionsContainer() {
+        const container = document.getElementById('options-container');
+        const wrapper = document.getElementById('options-wrapper');
 
-            container.classList.add('removing');
+        container.classList.add('removing');
 
-            setTimeout(() => {
-                wrapper.remove();
-            }, 400);
-        }
+        setTimeout(() => {
+          wrapper.remove();
+        }, 400);
+      }
 
-        function showSuccessMessage() {
-            const message = document.getElementById('success-message');
-            message.classList.add('show');
+      function showSuccessMessage() {
+        const message = document.getElementById('success-message');
+        message.classList.add('show');
 
-            setTimeout(() => {
-                message.classList.remove('show');
-            }, 1200);
-        }
+        setTimeout(() => {
+          message.classList.remove('show');
+        }, 1200);
+      }
 
-        function initTheme() {
-            const savedTheme = localStorage.getItem('forum-theme') || 'dark';
-            document.documentElement.setAttribute('data-theme', savedTheme);
-        }
+      function initTheme() {
+        const savedTheme = localStorage.getItem('forum-theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      }
 
-        function createOptions(optionsString) {
-            const optionsGrid = document.getElementById('options-grid');
-            const fragment = document.createDocumentFragment();
+      function createOptions(optionsString) {
+        const optionsGrid = document.getElementById('options-grid');
+        const fragment = document.createDocumentFragment();
 
-            const options = optionsString.split('|').map(opt => opt.trim()).filter(opt => opt.length > 0);
+        const options = optionsString
+          .split('|')
+          .map(opt => opt.trim())
+          .filter(opt => opt.length > 0);
 
-            options.forEach((option, index) => {
-                const optionElement = document.createElement('div');
-                optionElement.className = 'option-item';
+        options.forEach((option, index) => {
+          const optionElement = document.createElement('div');
+          optionElement.className = 'option-item';
 
-                if (option.length > 20) {
-                    optionElement.style.fontSize = '13px';
-                }
+          if (option.length > 20) {
+            optionElement.style.fontSize = '13px';
+          }
 
-                optionElement.textContent = option;
-                optionElement.style.animationDelay = `${index * 0.05}s`;
-                fragment.appendChild(optionElement);
-            });
-
-            optionsGrid.appendChild(fragment);
-        }
-
-        document.getElementById('options-grid').addEventListener('click', function(event) {
-            const optionItem = event.target.closest('.option-item');
-            if (!optionItem) return;
-
-            optionItem.classList.add('sending');
-
-            const optionText = optionItem.textContent.trim();
-            triggerQuickReply(optionText);
-
-            showSuccessMessage();
-
-            setTimeout(() => {
-                removeOptionsContainer();
-            }, 500);
+          optionElement.textContent = option;
+          optionElement.style.animationDelay = `${index * 0.05}s`;
+          fragment.appendChild(optionElement);
         });
 
-        window.addEventListener('storage', syncThemeFromStorage);
+        optionsGrid.appendChild(fragment);
+      }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            initTheme();
-            createOptions('$1');
-        });
+      document.getElementById('options-grid').addEventListener('click', function (event) {
+        const optionItem = event.target.closest('.option-item');
+        if (!optionItem) return;
+
+        optionItem.classList.add('sending');
+
+        const optionText = optionItem.textContent.trim();
+        triggerQuickReply(optionText);
+
+        showSuccessMessage();
+
+        setTimeout(() => {
+          removeOptionsContainer();
+        }, 500);
+      });
+
+      window.addEventListener('storage', syncThemeFromStorage);
+
+      setTimeout(function () {
+        initTheme();
+        createOptions('$1');
+      }, 0);
     </script>
-</body>
+  </body>
 </html>
