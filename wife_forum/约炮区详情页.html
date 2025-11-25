@@ -1,13 +1,10 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>约炮区详情页 - 妻悦论坛</title>
-    <link
-      rel="stylesheet"
-      href="https://fontsapi.zeoseven.com/292/main/result.css"
-    />
+    <link rel="stylesheet" href="https://fontsapi.zeoseven.com/292/main/result.css" />
   </head>
 
   <body>
@@ -27,7 +24,7 @@
         --hover-bg: rgba(220, 20, 60, 0.08);
       }
 
-      [data-theme="light"] {
+      [data-theme='light'] {
         --dark-red: #c92a2a;
         --blood-red: #e03131;
         --light-red: #ff6b6b;
@@ -49,8 +46,12 @@
       }
 
       body {
-        font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont,
-          "Segoe UI", sans-serif;
+        font-family:
+          'Noto Sans SC',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
         color: var(--text-main);
         line-height: 1.6;
         -webkit-font-smoothing: antialiased;
@@ -452,7 +453,9 @@
         border-radius: 12px;
         opacity: 0;
         transform: scale(0.9);
-        transition: opacity 0.3s ease, transform 0.3s ease;
+        transition:
+          opacity 0.3s ease,
+          transform 0.3s ease;
         cursor: zoom-out;
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
       }
@@ -572,29 +575,31 @@
     </div>
 
     <script>
-      const hookupDataXML = `<hookup_data>$1</hookup_data>`;
-      const IMAGE_BASE_URL = "https://gitgud.io/opus5/wife_forum/-/raw/master/";
+      const chat_message = getChatMessages(getCurrentMessageId())[0];
+      const match = chat_message.message.match(/<hookup_data>([\s\S]*?)<\/hookup_data>/);
+      const hookupDataXML = match ? match[0] : '<hookup_data></hookup_data>';
+      const IMAGE_BASE_URL = 'https://gitgud.io/opus5/wife_forum/-/raw/master/';
 
       function parseHookupDataXML(xmlText) {
-        console.log("========== 约炮数据解析开始 ==========");
-        console.log("XML数据长度:", xmlText.length);
+        console.log('========== 约炮数据解析开始 ==========');
+        console.log('XML数据长度:', xmlText.length);
 
         const data = {
-          title: "",
-          author: "",
-          time: "",
-          location: "",
-          appointmentTime: "",
-          playStyle: "",
-          requirements: "",
-          otherInfo: "",
-          views: "",
-          replies: "",
-          content: "",
-          wifeAge: "",
-          wifeHeight: "",
-          wifeWeight: "",
-          wifeBust: "",
+          title: '',
+          author: '',
+          time: '',
+          location: '',
+          appointmentTime: '',
+          playStyle: '',
+          requirements: '',
+          otherInfo: '',
+          views: '',
+          replies: '',
+          content: '',
+          wifeAge: '',
+          wifeHeight: '',
+          wifeWeight: '',
+          wifeBust: '',
           images: [],
         };
 
@@ -612,8 +617,7 @@
           if (locationMatch) data.location = locationMatch[1];
 
           const appointmentTimeMatch = xmlText.match(/\[约会时间\|([^\]]+)\]/);
-          if (appointmentTimeMatch)
-            data.appointmentTime = appointmentTimeMatch[1];
+          if (appointmentTimeMatch) data.appointmentTime = appointmentTimeMatch[1];
 
           const playStyleMatch = xmlText.match(/\[玩法偏好\|([^\]]+)\]/);
           if (playStyleMatch) data.playStyle = playStyleMatch[1];
@@ -650,58 +654,51 @@
             const imageRegex = /\[图片\|([^\|]*)\|([^\]]+)\]/g;
             let imageMatch;
             while ((imageMatch = imageRegex.exec(imagesMatch[1])) !== null) {
-              const imageUrl = imageMatch[1]
-                ? IMAGE_BASE_URL + imageMatch[1]
-                : "";
+              const imageUrl = imageMatch[1] ? IMAGE_BASE_URL + imageMatch[1] : '';
               if (imageUrl) {
                 data.images.push({
                   url: imageUrl,
-                  nsfw: imageMatch[2] === "true",
+                  nsfw: imageMatch[2] === 'true',
                 });
               }
             }
           }
 
-          console.log("解析完成 - 图片:", data.images.length);
-          console.log("========== 约炮数据解析完成 ==========");
+          console.log('解析完成 - 图片:', data.images.length);
+          console.log('========== 约炮数据解析完成 ==========');
           return data;
         } catch (error) {
-          console.error("解析约炮数据出错:", error);
+          console.error('解析约炮数据出错:', error);
           return data;
         }
       }
 
-      let currentPostTitle = "";
+      let currentPostTitle = '';
 
       function renderHookupPost(data) {
-        console.log("开始渲染约炮帖...");
+        console.log('开始渲染约炮帖...');
 
-        const container = document.getElementById("post-container");
+        const container = document.getElementById('post-container');
 
         if (!data.title) {
-          container.innerHTML =
-            '<div class="loading">界面加载失败,应该是掉格式了,请重roll聊天试试...</div>';
+          container.innerHTML = '<div class="loading">界面加载失败,应该是掉格式了,请重roll聊天试试...</div>';
           return;
         }
 
         currentPostTitle = data.title;
 
-        let imagesHTML = "";
+        let imagesHTML = '';
         if (data.images.length > 0) {
           imagesHTML = '<div class="post-images">';
-          data.images.forEach((img) => {
+          data.images.forEach(img => {
             imagesHTML += `
-              <div class="post-image-wrapper" onclick="openLightbox('${
-                img.url
-              }'); event.stopPropagation();">
-                <img src="${img.url}" class="post-image ${
-              img.nsfw ? "nsfw-blur" : ""
-            }" alt="">
-                ${img.nsfw ? '<span class="nsfw-badge">NSFW</span>' : ""}
+              <div class="post-image-wrapper" onclick="openLightbox('${img.url}'); event.stopPropagation();">
+                <img src="${img.url}" class="post-image ${img.nsfw ? 'nsfw-blur' : ''}" alt="">
+                ${img.nsfw ? '<span class="nsfw-badge">NSFW</span>' : ''}
               </div>
             `;
           });
-          imagesHTML += "</div>";
+          imagesHTML += '</div>';
         }
 
         container.innerHTML = `
@@ -748,9 +745,7 @@
               </div>
               <div class="requirement-item">
                 <div class="requirement-label">⏰ 时间:</div>
-                <div class="requirement-value highlight">${
-                  data.appointmentTime
-                }</div>
+                <div class="requirement-value highlight">${data.appointmentTime}</div>
               </div>
               <div class="requirement-item">
                 <div class="requirement-label">🎭 玩法:</div>
@@ -768,23 +763,20 @@
                 <div class="requirement-value">${data.otherInfo}</div>
               </div>
               `
-                  : ""
+                  : ''
               }
             </div>
 
             <div class="post-content-main">
               ${data.content
                 .split(/\\n|\n/)
-                .filter((p) => p.trim())
-                .map((p) => `<p>${p}</p>`)
-                .join("")}
+                .filter(p => p.trim())
+                .map(p => `<p>${p}</p>`)
+                .join('')}
             </div>
 
             ${
-              data.wifeAge ||
-              data.wifeHeight ||
-              data.wifeWeight ||
-              data.wifeBust
+              data.wifeAge || data.wifeHeight || data.wifeWeight || data.wifeBust
                 ? `
             <div class="wife-info-card">
               <div class="wife-info-title">
@@ -800,7 +792,7 @@
                   <span class="wife-stat-value">${data.wifeAge}</span>
                 </div>
                 `
-                    : ""
+                    : ''
                 }
                 ${
                   data.wifeHeight
@@ -810,7 +802,7 @@
                   <span class="wife-stat-value">${data.wifeHeight}</span>
                 </div>
                 `
-                    : ""
+                    : ''
                 }
                 ${
                   data.wifeWeight
@@ -820,7 +812,7 @@
                   <span class="wife-stat-value">${data.wifeWeight}</span>
                 </div>
                 `
-                    : ""
+                    : ''
                 }
                 ${
                   data.wifeBust
@@ -830,12 +822,12 @@
                   <span class="wife-stat-value">${data.wifeBust}</span>
                 </div>
                 `
-                    : ""
+                    : ''
                 }
               </div>
             </div>
             `
-                : ""
+                : ''
             }
 
             ${imagesHTML}
@@ -882,118 +874,113 @@
           </div>
         `;
 
-        console.log("约炮帖渲染完成");
+        console.log('约炮帖渲染完成');
       }
 
       function cycleFontSize() {
-        const container = document.getElementById("post-container");
-        const icon = document.getElementById("font-size-icon");
-        const fontSizes = ["small", "medium", "large", "xlarge"];
-        const fontIcons = ["A", "A+", "A++", "A+++"];
+        const container = document.getElementById('post-container');
+        const icon = document.getElementById('font-size-icon');
+        const fontSizes = ['small', 'medium', 'large', 'xlarge'];
+        const fontIcons = ['A', 'A+', 'A++', 'A+++'];
 
-        let currentSize = localStorage.getItem("forum-font-size") || "small";
+        let currentSize = localStorage.getItem('forum-font-size') || 'small';
         let currentIndex = fontSizes.indexOf(currentSize);
         let nextIndex = (currentIndex + 1) % fontSizes.length;
         let nextSize = fontSizes[nextIndex];
 
-        container.classList.remove("font-medium", "font-large", "font-xlarge");
-        if (nextSize !== "small") {
-          container.classList.add("font-" + nextSize);
+        container.classList.remove('font-medium', 'font-large', 'font-xlarge');
+        if (nextSize !== 'small') {
+          container.classList.add('font-' + nextSize);
         }
 
         icon.textContent = fontIcons[nextIndex];
-        localStorage.setItem("forum-font-size", nextSize);
+        localStorage.setItem('forum-font-size', nextSize);
       }
 
       function toggleTheme() {
         const body = document.body;
-        const icon = document.getElementById("theme-icon");
-        const isLight = body.getAttribute("data-theme") === "light";
+        const icon = document.getElementById('theme-icon');
+        const isLight = body.getAttribute('data-theme') === 'light';
 
         if (isLight) {
-          body.removeAttribute("data-theme");
-          icon.textContent = "🌙";
-          localStorage.setItem("forum-theme", "dark");
+          body.removeAttribute('data-theme');
+          icon.textContent = '🌙';
+          localStorage.setItem('forum-theme', 'dark');
         } else {
-          body.setAttribute("data-theme", "light");
-          icon.textContent = "☀️";
-          localStorage.setItem("forum-theme", "light");
+          body.setAttribute('data-theme', 'light');
+          icon.textContent = '☀️';
+          localStorage.setItem('forum-theme', 'light');
         }
       }
 
       function syncThemeFromStorage(e) {
-        if (e.key === "forum-theme") {
+        if (e.key === 'forum-theme') {
           const body = document.body;
-          const icon = document.getElementById("theme-icon");
+          const icon = document.getElementById('theme-icon');
 
-          if (e.newValue === "light") {
-            body.setAttribute("data-theme", "light");
-            if (icon) icon.textContent = "☀️";
+          if (e.newValue === 'light') {
+            body.setAttribute('data-theme', 'light');
+            if (icon) icon.textContent = '☀️';
           } else {
-            body.removeAttribute("data-theme");
-            if (icon) icon.textContent = "🌙";
+            body.removeAttribute('data-theme');
+            if (icon) icon.textContent = '🌙';
           }
         }
 
-        if (e.key === "forum-font-size") {
-          const container = document.getElementById("post-container");
-          const icon = document.getElementById("font-size-icon");
-          const fontSizes = ["small", "medium", "large", "xlarge"];
-          const fontIcons = ["A", "A+", "A++", "A+++"];
+        if (e.key === 'forum-font-size') {
+          const container = document.getElementById('post-container');
+          const icon = document.getElementById('font-size-icon');
+          const fontSizes = ['small', 'medium', 'large', 'xlarge'];
+          const fontIcons = ['A', 'A+', 'A++', 'A+++'];
 
-          container.classList.remove(
-            "font-medium",
-            "font-large",
-            "font-xlarge"
-          );
-          if (e.newValue && e.newValue !== "small") {
-            container.classList.add("font-" + e.newValue);
+          container.classList.remove('font-medium', 'font-large', 'font-xlarge');
+          if (e.newValue && e.newValue !== 'small') {
+            container.classList.add('font-' + e.newValue);
           }
 
-          let index = fontSizes.indexOf(e.newValue || "small");
+          let index = fontSizes.indexOf(e.newValue || 'small');
           if (icon) icon.textContent = fontIcons[index];
         }
       }
 
       function openLightbox(imageUrl) {
-        const lightbox = document.getElementById("lightbox");
-        const lightboxImage = document.getElementById("lightbox-image");
-        const loader = document.getElementById("lightbox-loader");
-        const loaderText = loader.querySelector(".lightbox-loader-text");
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImage = document.getElementById('lightbox-image');
+        const loader = document.getElementById('lightbox-loader');
+        const loaderText = loader.querySelector('.lightbox-loader-text');
 
         const loadingTexts = [
-          "正在加载图片...",
-          "正在获取高清图片...",
-          "正在下载图片资源...",
-          "正在解析图片数据...",
-          "正在加载原图...",
-          "正在读取图片缓存...",
-          "正在连接图片服务器...",
-          "正在传输图片数据...",
+          '正在加载图片...',
+          '正在获取高清图片...',
+          '正在下载图片资源...',
+          '正在解析图片数据...',
+          '正在加载原图...',
+          '正在读取图片缓存...',
+          '正在连接图片服务器...',
+          '正在传输图片数据...',
         ];
 
-        const randomText =
-          loadingTexts[Math.floor(Math.random() * loadingTexts.length)];
+        const randomText = loadingTexts[Math.floor(Math.random() * loadingTexts.length)];
         loaderText.textContent = randomText;
 
         lightboxImage.onload = null;
         lightboxImage.onerror = null;
-        lightboxImage.classList.remove("loaded");
-        lightboxImage.src = "";
-        loader.classList.remove("hidden");
-        lightbox.classList.add("active");
+        lightboxImage.classList.remove('loaded');
+        lightboxImage.src = '';
+        loader.classList.remove('hidden');
+        lightbox.classList.add('active');
 
         const loadTime = 500 + Math.random() * 500;
 
         setTimeout(() => {
           lightboxImage.onload = function () {
-            loader.classList.add("hidden");
-            lightboxImage.classList.add("loaded");
+            loader.classList.add('hidden');
+            lightboxImage.classList.add('loaded');
           };
 
           lightboxImage.onerror = function () {
-            loader.classList.add("hidden");
-            loaderText.textContent = "图片加载失败";
+            loader.classList.add('hidden');
+            loaderText.textContent = '图片加载失败';
           };
 
           lightboxImage.src = imageUrl;
@@ -1001,95 +988,94 @@
       }
 
       function closeLightbox() {
-        const lightbox = document.getElementById("lightbox");
-        const lightboxImage = document.getElementById("lightbox-image");
-        const loader = document.getElementById("lightbox-loader");
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImage = document.getElementById('lightbox-image');
+        const loader = document.getElementById('lightbox-loader');
 
-        lightbox.classList.remove("active");
-        lightboxImage.classList.remove("loaded");
+        lightbox.classList.remove('active');
+        lightboxImage.classList.remove('loaded');
         lightboxImage.onload = null;
         lightboxImage.onerror = null;
-        lightboxImage.src = "";
-        loader.classList.remove("hidden");
+        lightboxImage.src = '';
+        loader.classList.remove('hidden');
       }
 
       function goBack() {
         const cmd = `/send 返回论坛 | /trigger`;
-        if (typeof triggerSlash === "function") {
+        if (typeof triggerSlash === 'function') {
           triggerSlash(cmd);
         }
       }
 
       function submitReply() {
-        const textarea = document.getElementById("reply-textarea");
+        const textarea = document.getElementById('reply-textarea');
         const content = textarea.value.trim();
 
         if (!content) {
-          alert("回复内容不能为空");
+          alert('回复内容不能为空');
           return;
         }
 
         const replyMessage = `回复帖子《${currentPostTitle}》:${content}`;
         const cmd = `/send ${replyMessage} | /trigger`;
-        if (typeof triggerSlash === "function") {
+        if (typeof triggerSlash === 'function') {
           triggerSlash(cmd);
-          textarea.value = "";
+          textarea.value = '';
         } else {
-          console.error("triggerSlash 函数不可用");
-          alert("发送失败,请确保在正确的环境中使用");
+          console.error('triggerSlash 函数不可用');
+          alert('发送失败,请确保在正确的环境中使用');
         }
       }
 
-      window.addEventListener("storage", syncThemeFromStorage);
+      window.addEventListener('storage', syncThemeFromStorage);
 
-      document.addEventListener("DOMContentLoaded", function () {
-        const theme = localStorage.getItem("forum-theme");
-        if (theme === "light") {
-          document.body.setAttribute("data-theme", "light");
+      setTimeout(function () {
+        const theme = localStorage.getItem('forum-theme');
+        if (theme === 'light') {
+          document.body.setAttribute('data-theme', 'light');
         }
 
-        const fontSize = localStorage.getItem("forum-font-size") || "small";
-        const container = document.getElementById("post-container");
-        const fontSizes = ["small", "medium", "large", "xlarge"];
-        const fontIcons = ["A", "A+", "A++", "A+++"];
+        const fontSize = localStorage.getItem('forum-font-size') || 'small';
+        const container = document.getElementById('post-container');
+        const fontSizes = ['small', 'medium', 'large', 'xlarge'];
+        const fontIcons = ['A', 'A+', 'A++', 'A+++'];
 
-        if (fontSize !== "small") {
-          container.classList.add("font-" + fontSize);
+        if (fontSize !== 'small') {
+          container.classList.add('font-' + fontSize);
         }
 
-        console.log("页面加载完成,开始解析约炮数据");
+        console.log('页面加载完成,开始解析约炮数据');
         try {
           const data = parseHookupDataXML(hookupDataXML);
           renderHookupPost(data);
 
-          if (theme === "light") {
-            const icon = document.getElementById("theme-icon");
+          if (theme === 'light') {
+            const icon = document.getElementById('theme-icon');
             if (icon) {
-              icon.textContent = "☀️";
+              icon.textContent = '☀️';
             }
           }
 
           let index = fontSizes.indexOf(fontSize);
-          const fontIcon = document.getElementById("font-size-icon");
+          const fontIcon = document.getElementById('font-size-icon');
           if (fontIcon) {
             fontIcon.textContent = fontIcons[index];
           }
 
-          const textarea = document.getElementById("reply-textarea");
+          const textarea = document.getElementById('reply-textarea');
           if (textarea) {
-            textarea.addEventListener("keydown", function (e) {
-              if (e.key === "Enter" && !e.shiftKey) {
+            textarea.addEventListener('keydown', function (e) {
+              if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 submitReply();
               }
             });
           }
         } catch (error) {
-          console.error("渲染失败:", error);
-          document.getElementById("post-container").innerHTML =
-            '<div class="loading">数据加载失败,请刷新重试</div>';
+          console.error('渲染失败:', error);
+          document.getElementById('post-container').innerHTML = '<div class="loading">数据加载失败,请刷新重试</div>';
         }
-      });
+      }, 0);
     </script>
   </body>
 </html>
