@@ -1,13 +1,10 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>单男详情 - 妻悦论坛</title>
-    <link
-      rel="stylesheet"
-      href="https://fontsapi.zeoseven.com/292/main/result.css"
-    />
+    <link rel="stylesheet" href="https://fontsapi.zeoseven.com/292/main/result.css" />
   </head>
 
   <body>
@@ -27,7 +24,7 @@
         --hover-bg: rgba(220, 20, 60, 0.08);
       }
 
-      [data-theme="light"] {
+      [data-theme='light'] {
         --dark-red: #c92a2a;
         --blood-red: #e03131;
         --light-red: #ff6b6b;
@@ -49,8 +46,12 @@
       }
 
       body {
-        font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont,
-          "Segoe UI", sans-serif;
+        font-family:
+          'Noto Sans SC',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
         color: var(--text-main);
         line-height: 1.6;
         -webkit-font-smoothing: antialiased;
@@ -378,24 +379,26 @@
     </div>
 
     <script>
-      const profileDataXML = `<profile_data>$1</profile_data>`;
+      const chat_message = getChatMessages(getCurrentMessageId())[0];
+      const match = chat_message.message.match(/<profile_data>([\s\S]*?)<\/profile_data>/);
+      const profileDataXML = match ? match[0] : '<profile_data></profile_data>';
 
       function parseProfileDataXML(xmlText) {
-        console.log("========== 单男数据解析开始 ==========");
-        console.log("XML数据长度:", xmlText.length);
+        console.log('========== 单男数据解析开始 ==========');
+        console.log('XML数据长度:', xmlText.length);
 
         const data = {
-          name: "",
-          level: "",
-          location: "",
-          rating: "",
-          serviceCount: "",
-          experience: "",
-          age: "",
-          height: "",
-          size: "",
+          name: '',
+          level: '',
+          location: '',
+          rating: '',
+          serviceCount: '',
+          experience: '',
+          age: '',
+          height: '',
+          size: '',
           skills: [],
-          introduction: "",
+          introduction: '',
           reviews: [],
         };
 
@@ -441,8 +444,7 @@
 
           const reviewsMatch = xmlText.match(/<reviews>([\s\S]*?)<\/reviews>/i);
           if (reviewsMatch && reviewsMatch[1]) {
-            const reviewRegex =
-              /\[评价\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\]]+)\]/g;
+            const reviewRegex = /\[评价\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\]]+)\]/g;
             let reviewMatch;
             while ((reviewMatch = reviewRegex.exec(reviewsMatch[1])) !== null) {
               data.reviews.push({
@@ -454,38 +456,32 @@
             }
           }
 
-          console.log(
-            "解析完成 - 技能:",
-            data.skills.length,
-            "评价:",
-            data.reviews.length
-          );
-          console.log("========== 单男数据解析完成 ==========");
+          console.log('解析完成 - 技能:', data.skills.length, '评价:', data.reviews.length);
+          console.log('========== 单男数据解析完成 ==========');
           return data;
         } catch (error) {
-          console.error("解析单男数据出错:", error);
+          console.error('解析单男数据出错:', error);
           return data;
         }
       }
 
       function renderProfile(data) {
-        console.log("开始渲染单男资料...");
+        console.log('开始渲染单男资料...');
 
-        const container = document.getElementById("profile-container");
+        const container = document.getElementById('profile-container');
 
         if (!data.name) {
-          container.innerHTML =
-            '<div class="loading">界面加载失败,应该是掉格式了,请重roll聊天试试...</div>';
+          container.innerHTML = '<div class="loading">界面加载失败,应该是掉格式了,请重roll聊天试试...</div>';
           return;
         }
 
-        let skillsHTML = "";
-        data.skills.forEach((skill) => {
+        let skillsHTML = '';
+        data.skills.forEach(skill => {
           skillsHTML += `<span class="skill-tag">${skill}</span>`;
         });
 
-        let reviewsHTML = "";
-        data.reviews.forEach((review) => {
+        let reviewsHTML = '';
+        data.reviews.forEach(review => {
           reviewsHTML += `
             <div class="review-item">
               <div class="review-header">
@@ -586,9 +582,9 @@
             <div class="section-content">
               ${data.introduction
                 .split(/\\n|\n/)
-                .filter((p) => p.trim())
-                .map((p) => `<p>${p}</p>`)
-                .join("")}
+                .filter(p => p.trim())
+                .map(p => `<p>${p}</p>`)
+                .join('')}
             </div>
           </div>
 
@@ -601,110 +597,110 @@
           </div>
         `;
 
-        console.log("单男资料渲染完成");
+        console.log('单男资料渲染完成');
       }
 
       function cycleFontSize() {
-        const container = document.getElementById("profile-container");
-        const icon = document.getElementById("font-size-icon");
-        const fontSizes = ["small", "medium", "large", "xlarge"];
-        const fontIcons = ["A", "A+", "A++", "A+++"];
+        const container = document.getElementById('profile-container');
+        const icon = document.getElementById('font-size-icon');
+        const fontSizes = ['small', 'medium', 'large', 'xlarge'];
+        const fontIcons = ['A', 'A+', 'A++', 'A+++'];
 
-        let currentSize = localStorage.getItem("forum-font-size") || "small";
+        let currentSize = localStorage.getItem('forum-font-size') || 'small';
         let currentIndex = fontSizes.indexOf(currentSize);
         let nextIndex = (currentIndex + 1) % fontSizes.length;
         let nextSize = fontSizes[nextIndex];
 
-        container.classList.remove("font-medium", "font-large", "font-xlarge");
-        if (nextSize !== "small") {
-          container.classList.add("font-" + nextSize);
+        container.classList.remove('font-medium', 'font-large', 'font-xlarge');
+        if (nextSize !== 'small') {
+          container.classList.add('font-' + nextSize);
         }
 
         icon.textContent = fontIcons[nextIndex];
-        localStorage.setItem("forum-font-size", nextSize);
+        localStorage.setItem('forum-font-size', nextSize);
       }
 
       function toggleTheme() {
         const body = document.body;
-        const icon = document.getElementById("theme-icon");
-        const isLight = body.getAttribute("data-theme") === "light";
+        const icon = document.getElementById('theme-icon');
+        const isLight = body.getAttribute('data-theme') === 'light';
 
         if (isLight) {
-          body.removeAttribute("data-theme");
-          icon.textContent = "🌙";
-          localStorage.setItem("forum-theme", "dark");
+          body.removeAttribute('data-theme');
+          icon.textContent = '🌙';
+          localStorage.setItem('forum-theme', 'dark');
         } else {
-          body.setAttribute("data-theme", "light");
-          icon.textContent = "☀️";
-          localStorage.setItem("forum-theme", "light");
+          body.setAttribute('data-theme', 'light');
+          icon.textContent = '☀️';
+          localStorage.setItem('forum-theme', 'light');
         }
       }
 
       function syncThemeFromStorage(e) {
-        if (e.key === "forum-theme") {
+        if (e.key === 'forum-theme') {
           const body = document.body;
-          const icon = document.getElementById("theme-icon");
+          const icon = document.getElementById('theme-icon');
 
-          if (e.newValue === "light") {
-            body.setAttribute("data-theme", "light");
-            if (icon) icon.textContent = "☀️";
+          if (e.newValue === 'light') {
+            body.setAttribute('data-theme', 'light');
+            if (icon) icon.textContent = '☀️';
           } else {
-            body.removeAttribute("data-theme");
-            if (icon) icon.textContent = "🌙";
+            body.removeAttribute('data-theme');
+            if (icon) icon.textContent = '🌙';
           }
         }
 
-        if (e.key === "forum-font-size") {
-          const container = document.getElementById("profile-container");
-          const icon = document.getElementById("font-size-icon");
-          const fontSizes = ["small", "medium", "large", "xlarge"];
-          const fontIcons = ["A", "A+", "A++", "A+++"];
+        if (e.key === 'forum-font-size') {
+          const container = document.getElementById('profile-container');
+          const icon = document.getElementById('font-size-icon');
+          const fontSizes = ['small', 'medium', 'large', 'xlarge'];
+          const fontIcons = ['A', 'A+', 'A++', 'A+++'];
 
-          container.classList.remove("font-medium", "font-large", "font-xlarge");
-          if (e.newValue && e.newValue !== "small") {
-            container.classList.add("font-" + e.newValue);
+          container.classList.remove('font-medium', 'font-large', 'font-xlarge');
+          if (e.newValue && e.newValue !== 'small') {
+            container.classList.add('font-' + e.newValue);
           }
 
-          let index = fontSizes.indexOf(e.newValue || "small");
+          let index = fontSizes.indexOf(e.newValue || 'small');
           if (icon) icon.textContent = fontIcons[index];
         }
       }
 
       function goBack() {
         const cmd = `/send 返回论坛 | /trigger`;
-        if (typeof triggerSlash === "function") {
+        if (typeof triggerSlash === 'function') {
           triggerSlash(cmd);
         }
       }
 
-      window.addEventListener("storage", syncThemeFromStorage);
+      window.addEventListener('storage', syncThemeFromStorage);
 
-      document.addEventListener("DOMContentLoaded", function () {
-        const theme = localStorage.getItem("forum-theme");
-        if (theme === "light") {
-          document.body.setAttribute("data-theme", "light");
+      setTimeout(function () {
+        const theme = localStorage.getItem('forum-theme');
+        if (theme === 'light') {
+          document.body.setAttribute('data-theme', 'light');
         }
 
-        console.log("页面加载完成,开始解析单男数据");
+        console.log('页面加载完成,开始解析单男数据');
         try {
           const data = parseProfileDataXML(profileDataXML);
           renderProfile(data);
 
-          if (theme === "light") {
-            const icon = document.getElementById("theme-icon");
+          if (theme === 'light') {
+            const icon = document.getElementById('theme-icon');
             if (icon) {
-              icon.textContent = "☀️";
+              icon.textContent = '☀️';
             }
           }
 
-          const fontSize = localStorage.getItem("forum-font-size") || "small";
-          const container = document.getElementById("profile-container");
-          const fontIcon = document.getElementById("font-size-icon");
-          const fontSizes = ["small", "medium", "large", "xlarge"];
-          const fontIcons = ["A", "A+", "A++", "A+++"];
+          const fontSize = localStorage.getItem('forum-font-size') || 'small';
+          const container = document.getElementById('profile-container');
+          const fontIcon = document.getElementById('font-size-icon');
+          const fontSizes = ['small', 'medium', 'large', 'xlarge'];
+          const fontIcons = ['A', 'A+', 'A++', 'A+++'];
 
-          if (fontSize !== "small") {
-            container.classList.add("font-" + fontSize);
+          if (fontSize !== 'small') {
+            container.classList.add('font-' + fontSize);
           }
 
           let index = fontSizes.indexOf(fontSize);
@@ -712,11 +708,10 @@
             fontIcon.textContent = fontIcons[index];
           }
         } catch (error) {
-          console.error("渲染失败:", error);
-          document.getElementById("profile-container").innerHTML =
-            '<div class="loading">数据加载失败,请刷新重试</div>';
+          console.error('渲染失败:', error);
+          document.getElementById('profile-container').innerHTML = '<div class="loading">数据加载失败,请刷新重试</div>';
         }
-      });
+      }, 0);
     </script>
   </body>
 </html>
