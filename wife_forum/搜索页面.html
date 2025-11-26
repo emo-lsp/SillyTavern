@@ -405,9 +405,9 @@
       }
 
       .keyword-confirm-overlay.position-discovery {
-        align-items: center;
+        align-items: flex-end;
         padding-top: 0;
-        padding-bottom: 100px;
+        padding-bottom: 70px;
       }
 
       .keyword-confirm-box {
@@ -912,9 +912,15 @@
         document.getElementById(
           "keyword-confirm-text"
         ).textContent = `${keyword}`;
+        document.querySelector(".keyword-confirm-title").textContent = "查看热搜";
+        document.querySelector(".keyword-confirm-btn.confirm").textContent = "查看";
 
         const overlay = document.getElementById("keyword-confirm-overlay");
-        overlay.classList.remove("position-tag", "position-hot", "position-discovery");
+        overlay.classList.remove(
+          "position-tag",
+          "position-hot",
+          "position-discovery"
+        );
         overlay.classList.add("active", "position-hot");
       }
 
@@ -924,15 +930,26 @@
         document.getElementById(
           "keyword-confirm-text"
         ).textContent = `#${keyword}`;
+        document.querySelector(".keyword-confirm-title").textContent = "确认搜索";
+        document.querySelector(".keyword-confirm-btn.confirm").textContent = "搜索";
 
         const overlay = document.getElementById("keyword-confirm-overlay");
-        overlay.classList.remove("position-tag", "position-hot", "position-discovery");
+        overlay.classList.remove(
+          "position-tag",
+          "position-hot",
+          "position-discovery"
+        );
         overlay.classList.add("active", `position-${position}`);
       }
 
       function closeKeywordConfirm() {
         const overlay = document.getElementById("keyword-confirm-overlay");
-        overlay.classList.remove("active", "position-tag", "position-hot", "position-discovery");
+        overlay.classList.remove(
+          "active",
+          "position-tag",
+          "position-hot",
+          "position-discovery"
+        );
         pendingKeyword = "";
         pendingAction = "search";
       }
