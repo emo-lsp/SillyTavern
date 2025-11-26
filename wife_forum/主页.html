@@ -1,10 +1,13 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>妻悦论坛</title>
-    <link rel="stylesheet" href="https://fontsapi.zeoseven.com/292/main/result.css" />
+    <link
+      rel="stylesheet"
+      href="https://fontsapi.zeoseven.com/292/main/result.css"
+    />
   </head>
 
   <body>
@@ -24,7 +27,7 @@
         --hover-bg: rgba(220, 20, 60, 0.08);
       }
 
-      [data-theme='light'] {
+      [data-theme="light"] {
         --dark-red: #c92a2a;
         --blood-red: #e03131;
         --light-red: #ff6b6b;
@@ -46,12 +49,8 @@
       }
 
       body {
-        font-family:
-          'Noto Sans SC',
-          -apple-system,
-          BlinkMacSystemFont,
-          'Segoe UI',
-          sans-serif;
+        font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
         color: var(--text-main);
         line-height: 1.6;
         -webkit-font-smoothing: antialiased;
@@ -430,9 +429,7 @@
         border-radius: 8px;
         opacity: 0;
         transform: scale(0.9);
-        transition:
-          opacity 0.3s ease,
-          transform 0.3s ease;
+        transition: opacity 0.3s ease, transform 0.3s ease;
       }
 
       .lightbox-image.loaded {
@@ -719,22 +716,24 @@
 
     <script>
       const chat_message = getChatMessages(getCurrentMessageId())[0];
-      const match = chat_message.message.match(/<forum_data>([\s\S]*?)<\/forum_data>/);
-      const forumDataXML = match ? match[0] : '<forum_data></forum_data>';
-      const IMAGE_BASE_URL = 'https://gitgud.io/opus5/wife_forum/-/raw/master/';
+      const match = chat_message.message.match(
+        /<forum_data>([\s\S]*?)<\/forum_data>/
+      );
+      const forumDataXML = match ? match[0] : "<forum_data></forum_data>";
+      const IMAGE_BASE_URL = "https://gitgud.io/opus5/wife_forum/-/raw/master/";
 
       function parseForumDataXML(xmlText) {
-        console.log('========== 论坛数据解析开始 ==========');
-        console.log('XML数据长度:', xmlText.length);
+        console.log("========== 论坛数据解析开始 ==========");
+        console.log("XML数据长度:", xmlText.length);
 
         const data = {
-          title: '',
-          onlineCount: '',
-          todayPosts: '',
-          totalPosts: '',
-          totalUsers: '',
-          userName: '',
-          userLevel: '',
+          title: "",
+          onlineCount: "",
+          todayPosts: "",
+          totalPosts: "",
+          totalUsers: "",
+          userName: "",
+          userLevel: "",
           hotPosts: [],
           recentPosts: [],
           witnessPosts: [],
@@ -766,7 +765,9 @@
           const userLevelMatch = xmlText.match(/\[用户等级\|([^\]]+)\]/);
           if (userLevelMatch) data.userLevel = userLevelMatch[1];
 
-          const hotPostsMatch = xmlText.match(/<hot_posts>([\s\S]*?)<\/hot_posts>/i);
+          const hotPostsMatch = xmlText.match(
+            /<hot_posts>([\s\S]*?)<\/hot_posts>/i
+          );
           if (hotPostsMatch && hotPostsMatch[1]) {
             const postRegex = /\[热门帖子\|([^\|]+)\|([^\|]+)\|([^\]]+)\]/g;
             let postMatch;
@@ -779,7 +780,9 @@
             }
           }
 
-          const recentPostsMatch = xmlText.match(/<recent_posts>([\s\S]*?)<\/recent_posts>/i);
+          const recentPostsMatch = xmlText.match(
+            /<recent_posts>([\s\S]*?)<\/recent_posts>/i
+          );
           if (recentPostsMatch && recentPostsMatch[1]) {
             const postRegex = /\[最新帖子\|([^\|]+)\|([^\|]+)\|([^\]]+)\]/g;
             let postMatch;
@@ -792,28 +795,38 @@
             }
           }
 
-          const witnessMatch = xmlText.match(/<witness_posts>([\s\S]*?)<\/witness_posts>/i);
+          const witnessMatch = xmlText.match(
+            /<witness_posts>([\s\S]*?)<\/witness_posts>/i
+          );
           if (witnessMatch && witnessMatch[1]) {
-            const postRegex = /\[见证帖\|([^\|]+)\|([^\|]+)\|([^\|]*)\|([^\|]+)\|([^\]]+)\]/g;
+            const postRegex =
+              /\[见证帖\|([^\|]+)\|([^\|]+)\|([^\|]*)\|([^\|]+)\|([^\]]+)\]/g;
             let postMatch;
             while ((postMatch = postRegex.exec(witnessMatch[1])) !== null) {
-              const imageUrl = postMatch[3] ? IMAGE_BASE_URL + postMatch[3] : '';
+              const imageUrl = postMatch[3]
+                ? IMAGE_BASE_URL + postMatch[3]
+                : "";
               data.witnessPosts.push({
                 title: postMatch[1],
                 author: postMatch[2],
                 image: imageUrl,
-                nsfw: postMatch[4] === 'true',
+                nsfw: postMatch[4] === "true",
                 replies: postMatch[5],
               });
             }
           }
 
-          const datingMatch = xmlText.match(/<dating_posts>([\s\S]*?)<\/dating_posts>/i);
+          const datingMatch = xmlText.match(
+            /<dating_posts>([\s\S]*?)<\/dating_posts>/i
+          );
           if (datingMatch && datingMatch[1]) {
-            const postRegex = /\[约炮帖\|([^\|]+)\|([^\|]+)\|([^\|]*)\|([^\]]+)\]/g;
+            const postRegex =
+              /\[约炮帖\|([^\|]+)\|([^\|]+)\|([^\|]*)\|([^\]]+)\]/g;
             let postMatch;
             while ((postMatch = postRegex.exec(datingMatch[1])) !== null) {
-              const imageUrl = postMatch[3] ? IMAGE_BASE_URL + postMatch[3] : '';
+              const imageUrl = postMatch[3]
+                ? IMAGE_BASE_URL + postMatch[3]
+                : "";
               data.datingPosts.push({
                 title: postMatch[1],
                 author: postMatch[2],
@@ -823,9 +836,12 @@
             }
           }
 
-          const recordMatch = xmlText.match(/<record_posts>([\s\S]*?)<\/record_posts>/i);
+          const recordMatch = xmlText.match(
+            /<record_posts>([\s\S]*?)<\/record_posts>/i
+          );
           if (recordMatch && recordMatch[1]) {
-            const postRegex = /\[实录帖\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\]]+)\]/g;
+            const postRegex =
+              /\[实录帖\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\]]+)\]/g;
             let postMatch;
             while ((postMatch = postRegex.exec(recordMatch[1])) !== null) {
               data.recordPosts.push({
@@ -837,9 +853,12 @@
             }
           }
 
-          const singleMaleMatch = xmlText.match(/<single_males>([\s\S]*?)<\/single_males>/i);
+          const singleMaleMatch = xmlText.match(
+            /<single_males>([\s\S]*?)<\/single_males>/i
+          );
           if (singleMaleMatch && singleMaleMatch[1]) {
-            const maleRegex = /\[单男\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\]]+)\]/g;
+            const maleRegex =
+              /\[单男\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\]]+)\]/g;
             let maleMatch;
             while ((maleMatch = maleRegex.exec(singleMaleMatch[1])) !== null) {
               data.singleMales.push({
@@ -851,9 +870,12 @@
             }
           }
 
-          const literatureMatch = xmlText.match(/<literature_posts>([\s\S]*?)<\/literature_posts>/i);
+          const literatureMatch = xmlText.match(
+            /<literature_posts>([\s\S]*?)<\/literature_posts>/i
+          );
           if (literatureMatch && literatureMatch[1]) {
-            const postRegex = /\[文墨帖\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\]]+)\]/g;
+            const postRegex =
+              /\[文墨帖\|([^\|]+)\|([^\|]+)\|([^\|]+)\|([^\]]+)\]/g;
             let postMatch;
             while ((postMatch = postRegex.exec(literatureMatch[1])) !== null) {
               data.literaturePosts.push({
@@ -865,36 +887,52 @@
             }
           }
 
-          console.log('解析完成 - 热门:', data.hotPosts.length, '最新:', data.recentPosts.length);
-          console.log('见证区:', data.witnessPosts.length, '约炮区:', data.datingPosts.length);
-          console.log('实录区:', data.recordPosts.length, '单男区:', data.singleMales.length);
-          console.log('文墨区:', data.literaturePosts.length);
-          console.log('========== 论坛数据解析完成 ==========');
+          console.log(
+            "解析完成 - 热门:",
+            data.hotPosts.length,
+            "最新:",
+            data.recentPosts.length
+          );
+          console.log(
+            "见证区:",
+            data.witnessPosts.length,
+            "约炮区:",
+            data.datingPosts.length
+          );
+          console.log(
+            "实录区:",
+            data.recordPosts.length,
+            "单男区:",
+            data.singleMales.length
+          );
+          console.log("文墨区:", data.literaturePosts.length);
+          console.log("========== 论坛数据解析完成 ==========");
           return data;
         } catch (error) {
-          console.error('解析论坛数据出错:', error);
+          console.error("解析论坛数据出错:", error);
           return data;
         }
       }
 
       function renderForum(data) {
-        console.log('开始渲染论坛...');
+        console.log("开始渲染论坛...");
 
-        const container = document.getElementById('forum-container');
+        const container = document.getElementById("forum-container");
 
         if (!data.title) {
-          container.innerHTML = '<div class="loading">界面加载失败,应该是掉格式了,请重roll聊天试试...</div>';
+          container.innerHTML =
+            '<div class="loading">界面加载失败,应该是掉格式了,请重roll聊天试试...</div>';
           return;
         }
 
-        let hotPostsHTML = '';
+        let hotPostsHTML = "";
         data.hotPosts.forEach((post, index) => {
           hotPostsHTML += `
             <div class="post-item" onclick="viewPost('${post.title}')">
               <div class="post-icon">🔥</div>
               <div class="post-content">
                 <div class="post-title-row">
-                  ${index < 2 ? '<span class="hot-badge">热</span>' : ''}
+                  ${index < 2 ? '<span class="hot-badge">热</span>' : ""}
                   <div class="post-title">${post.title}</div>
                 </div>
                 <div class="post-meta">
@@ -908,8 +946,8 @@
           `;
         });
 
-        let recentPostsHTML = '';
-        data.recentPosts.forEach(post => {
+        let recentPostsHTML = "";
+        data.recentPosts.forEach((post) => {
           recentPostsHTML += `
             <div class="post-item" onclick="viewPost('${post.title}')">
               <div class="post-icon">📝</div>
@@ -926,19 +964,25 @@
           `;
         });
 
-        let witnessPostsHTML = '';
-        data.witnessPosts.forEach(post => {
+        let witnessPostsHTML = "";
+        data.witnessPosts.forEach((post) => {
           if (post.image) {
             witnessPostsHTML += `
-              <div class="post-item post-item-with-image" onclick="viewPost('${post.title}')">
-                <div class="post-thumbnail-wrapper" onclick="event.stopPropagation(); openLightbox('${post.image}');">
-                  <img src="${post.image}" class="post-thumbnail ${post.nsfw ? 'nsfw-blur' : ''}" alt="">
-                  ${post.nsfw ? '<span class="nsfw-badge">NSFW</span>' : ''}
+              <div class="post-item post-item-with-image" onclick="viewPost('${
+                post.title
+              }')">
+                <div class="post-thumbnail-wrapper" onclick="event.stopPropagation(); openLightbox('${
+                  post.image
+                }');">
+                  <img src="${post.image}" class="post-thumbnail ${
+              post.nsfw ? "nsfw-blur" : ""
+            }" alt="">
+                  ${post.nsfw ? '<span class="nsfw-badge">NSFW</span>' : ""}
                 </div>
                 <div class="post-content">
                   <div class="post-title-row">
                     <div class="post-title">${post.title}</div>
-                    ${post.nsfw ? '<span class="post-tag">18+</span>' : ''}
+                    ${post.nsfw ? '<span class="post-tag">18+</span>' : ""}
                   </div>
                   <div class="post-meta">
                     <span class="post-author">👤 ${post.author}</span>
@@ -967,8 +1011,8 @@
           }
         });
 
-        let datingPostsHTML = '';
-        data.datingPosts.forEach(post => {
+        let datingPostsHTML = "";
+        data.datingPosts.forEach((post) => {
           if (post.image) {
             datingPostsHTML += `
               <div class="post-item post-item-with-image" onclick="viewHookupPost('${post.title}')">
@@ -1004,8 +1048,8 @@
           }
         });
 
-        let recordPostsHTML = '';
-        data.recordPosts.forEach(post => {
+        let recordPostsHTML = "";
+        data.recordPosts.forEach((post) => {
           recordPostsHTML += `
             <div class="post-item" onclick="viewPost('${post.title}')">
               <div class="post-icon">📹</div>
@@ -1023,8 +1067,8 @@
           `;
         });
 
-        let singleMalesHTML = '';
-        data.singleMales.forEach(male => {
+        let singleMalesHTML = "";
+        data.singleMales.forEach((male) => {
           singleMalesHTML += `
             <div class="post-item" onclick="viewProfile('${male.name}')">
               <div class="post-icon">👨</div>
@@ -1044,8 +1088,8 @@
           `;
         });
 
-        let literaturePostsHTML = '';
-        data.literaturePosts.forEach(post => {
+        let literaturePostsHTML = "";
+        data.literaturePosts.forEach((post) => {
           literaturePostsHTML += `
             <div class="post-item" onclick="viewLiteraturePost('${post.title}')">
               <div class="post-icon">✍️</div>
@@ -1109,6 +1153,9 @@
             <div class="nav-row">
               <button class="nav-button" data-section="literature">
                 ✍️ 文墨区
+              </button>
+              <button class="nav-button" data-section="search">
+                🔍 搜索主页
               </button>
               <button class="nav-button" data-section="profile">
                 👤 个人主页
@@ -1229,6 +1276,31 @@
               </div>
             </div>
 
+            <div class="section-page" id="page-search">
+              <div class="section-header">
+                <span>🔍</span>
+                <span>搜索</span>
+              </div>
+              <div class="post-list">
+                <div class="post-item" style="justify-content: center; padding: 40px 16px;">
+                  <button onclick="openSearch(); event.stopPropagation();" style="
+                    background: var(--blood-red);
+                    color: #fff;
+                    border: none;
+                    padding: 12px 32px;
+                    border-radius: 6px;
+                    font-size: 1.1em;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    box-shadow: 0 2px 8px rgba(220, 20, 60, 0.3);
+                  " onmouseover="this.style.background='var(--dark-red)'; this.style.transform='scale(1.05)'" onmouseout="this.style.background='var(--blood-red)'; this.style.transform='scale(1)'">
+                    🔍 打开搜索页面
+                  </button>
+                </div>
+              </div>
+            </div>
+
             <div class="section-page" id="page-profile">
               <div class="section-header">
                 <span>👤</span>
@@ -1311,171 +1383,177 @@
           </div>
         `;
 
-        document.querySelectorAll('.nav-button').forEach(btn => {
-          btn.addEventListener('click', function () {
+        document.querySelectorAll(".nav-button").forEach((btn) => {
+          btn.addEventListener("click", function () {
             switchSection(this.dataset.section);
           });
         });
 
-        console.log('论坛渲染完成');
+        console.log("论坛渲染完成");
       }
 
       function switchSection(sectionName) {
-        const loader = document.getElementById('page-loader');
-        const loaderText = loader.querySelector('.loader-text');
+        const loader = document.getElementById("page-loader");
+        const loaderText = loader.querySelector(".loader-text");
 
         const loadingTexts = [
-          '正在加载板块内容...',
-          '正在获取最新帖子...',
-          '正在连接服务器...',
-          '正在刷新数据...',
-          '正在加载用户信息...',
-          '正在同步论坛数据...',
-          '正在读取缓存...',
-          '正在验证权限...',
-          '正在加载图片资源...',
-          '正在更新内容列表...',
+          "正在加载板块内容...",
+          "正在获取最新帖子...",
+          "正在连接服务器...",
+          "正在刷新数据...",
+          "正在加载用户信息...",
+          "正在同步论坛数据...",
+          "正在读取缓存...",
+          "正在验证权限...",
+          "正在加载图片资源...",
+          "正在更新内容列表...",
         ];
 
-        const randomText = loadingTexts[Math.floor(Math.random() * loadingTexts.length)];
+        const randomText =
+          loadingTexts[Math.floor(Math.random() * loadingTexts.length)];
         loaderText.textContent = randomText;
 
-        loader.classList.add('loading');
+        loader.classList.add("loading");
 
         const loadTime = 500 + Math.random() * 500;
 
         setTimeout(() => {
-          document.querySelectorAll('.nav-button').forEach(btn => {
-            btn.classList.remove('active');
+          document.querySelectorAll(".nav-button").forEach((btn) => {
+            btn.classList.remove("active");
             if (btn.dataset.section === sectionName) {
-              btn.classList.add('active');
+              btn.classList.add("active");
             }
           });
 
-          document.querySelectorAll('.section-page').forEach(page => {
-            page.classList.remove('active');
+          document.querySelectorAll(".section-page").forEach((page) => {
+            page.classList.remove("active");
           });
-          const targetPage = document.getElementById('page-' + sectionName);
+          const targetPage = document.getElementById("page-" + sectionName);
           if (targetPage) {
-            targetPage.classList.add('active');
+            targetPage.classList.add("active");
           }
 
-          console.log('切换到板块:', sectionName);
+          console.log("切换到板块:", sectionName);
 
           setTimeout(() => {
-            loader.classList.remove('loading');
+            loader.classList.remove("loading");
           }, 150);
         }, loadTime);
       }
 
       function toggleTheme() {
         const body = document.body;
-        const icon = document.getElementById('theme-icon');
-        const isLight = body.getAttribute('data-theme') === 'light';
+        const icon = document.getElementById("theme-icon");
+        const isLight = body.getAttribute("data-theme") === "light";
 
         if (isLight) {
-          body.removeAttribute('data-theme');
-          icon.textContent = '🌙';
-          localStorage.setItem('forum-theme', 'dark');
+          body.removeAttribute("data-theme");
+          icon.textContent = "🌙";
+          localStorage.setItem("forum-theme", "dark");
         } else {
-          body.setAttribute('data-theme', 'light');
-          icon.textContent = '☀️';
-          localStorage.setItem('forum-theme', 'light');
+          body.setAttribute("data-theme", "light");
+          icon.textContent = "☀️";
+          localStorage.setItem("forum-theme", "light");
         }
       }
 
       function cycleFontSize() {
-        const container = document.getElementById('forum-container');
-        const icon = document.getElementById('font-size-icon');
-        const fontSizes = ['small', 'medium', 'large', 'xlarge'];
-        const fontIcons = ['A', 'A+', 'A++', 'A+++'];
+        const container = document.getElementById("forum-container");
+        const icon = document.getElementById("font-size-icon");
+        const fontSizes = ["small", "medium", "large", "xlarge"];
+        const fontIcons = ["A", "A+", "A++", "A+++"];
 
-        let currentSize = localStorage.getItem('forum-font-size') || 'small';
+        let currentSize = localStorage.getItem("forum-font-size") || "small";
         let currentIndex = fontSizes.indexOf(currentSize);
         let nextIndex = (currentIndex + 1) % fontSizes.length;
         let nextSize = fontSizes[nextIndex];
 
-        container.classList.remove('font-medium', 'font-large', 'font-xlarge');
+        container.classList.remove("font-medium", "font-large", "font-xlarge");
 
-        if (nextSize !== 'small') {
-          container.classList.add('font-' + nextSize);
+        if (nextSize !== "small") {
+          container.classList.add("font-" + nextSize);
         }
 
         icon.textContent = fontIcons[nextIndex];
-        localStorage.setItem('forum-font-size', nextSize);
+        localStorage.setItem("forum-font-size", nextSize);
 
-        console.log('字体大小切换到:', nextSize);
+        console.log("字体大小切换到:", nextSize);
       }
 
       function syncThemeFromStorage(e) {
-        if (e.key === 'forum-theme') {
+        if (e.key === "forum-theme") {
           const body = document.body;
-          const icon = document.getElementById('theme-icon');
+          const icon = document.getElementById("theme-icon");
 
-          if (e.newValue === 'light') {
-            body.setAttribute('data-theme', 'light');
-            if (icon) icon.textContent = '☀️';
+          if (e.newValue === "light") {
+            body.setAttribute("data-theme", "light");
+            if (icon) icon.textContent = "☀️";
           } else {
-            body.removeAttribute('data-theme');
-            if (icon) icon.textContent = '🌙';
+            body.removeAttribute("data-theme");
+            if (icon) icon.textContent = "🌙";
           }
         }
 
-        if (e.key === 'forum-font-size') {
-          const container = document.getElementById('forum-container');
-          const icon = document.getElementById('font-size-icon');
-          const fontSizes = ['small', 'medium', 'large', 'xlarge'];
-          const fontIcons = ['A', 'A+', 'A++', 'A+++'];
+        if (e.key === "forum-font-size") {
+          const container = document.getElementById("forum-container");
+          const icon = document.getElementById("font-size-icon");
+          const fontSizes = ["small", "medium", "large", "xlarge"];
+          const fontIcons = ["A", "A+", "A++", "A+++"];
 
-          container.classList.remove('font-medium', 'font-large', 'font-xlarge');
+          container.classList.remove(
+            "font-medium",
+            "font-large",
+            "font-xlarge"
+          );
 
-          if (e.newValue && e.newValue !== 'small') {
-            container.classList.add('font-' + e.newValue);
+          if (e.newValue && e.newValue !== "small") {
+            container.classList.add("font-" + e.newValue);
           }
 
-          let index = fontSizes.indexOf(e.newValue || 'small');
+          let index = fontSizes.indexOf(e.newValue || "small");
           if (icon) icon.textContent = fontIcons[index];
         }
       }
 
       function openLightbox(imageUrl) {
-        const lightbox = document.getElementById('lightbox');
-        const lightboxImage = document.getElementById('lightbox-image');
-        const loader = document.getElementById('lightbox-loader');
-        const loaderText = loader.querySelector('.lightbox-loader-text');
+        const lightbox = document.getElementById("lightbox");
+        const lightboxImage = document.getElementById("lightbox-image");
+        const loader = document.getElementById("lightbox-loader");
+        const loaderText = loader.querySelector(".lightbox-loader-text");
 
         const loadingTexts = [
-          '正在加载图片...',
-          '正在获取高清图片...',
-          '正在下载图片资源...',
-          '正在解析图片数据...',
-          '正在加载原图...',
-          '正在读取图片缓存...',
-          '正在连接图片服务器...',
-          '正在传输图片数据...',
+          "正在加载图片...",
+          "正在获取高清图片...",
+          "正在下载图片资源...",
+          "正在解析图片数据...",
+          "正在加载原图...",
+          "正在读取图片缓存...",
+          "正在连接图片服务器...",
+          "正在传输图片数据...",
         ];
 
-        const randomText = loadingTexts[Math.floor(Math.random() * loadingTexts.length)];
+        const randomText =
+          loadingTexts[Math.floor(Math.random() * loadingTexts.length)];
         loaderText.textContent = randomText;
 
         lightboxImage.onload = null;
         lightboxImage.onerror = null;
-        lightboxImage.classList.remove('loaded');
-        lightboxImage.src = '';
-        loader.classList.remove('hidden');
-        lightbox.classList.add('active');
+        lightboxImage.classList.remove("loaded");
+        lightboxImage.src = "";
+        loader.classList.remove("hidden");
+        lightbox.classList.add("active");
 
         const loadTime = 500 + Math.random() * 500;
 
         setTimeout(() => {
           lightboxImage.onload = function () {
-            loader.classList.add('hidden');
-            lightboxImage.classList.add('loaded');
+            loader.classList.add("hidden");
+            lightboxImage.classList.add("loaded");
           };
 
           lightboxImage.onerror = function () {
-            loader.classList.add('hidden');
-            loaderText.textContent = '图片加载失败';
+            loader.classList.add("hidden");
+            loaderText.textContent = "图片加载失败";
           };
 
           lightboxImage.src = imageUrl;
@@ -1483,95 +1561,102 @@
       }
 
       function closeLightbox() {
-        const lightbox = document.getElementById('lightbox');
-        const lightboxImage = document.getElementById('lightbox-image');
-        const loader = document.getElementById('lightbox-loader');
+        const lightbox = document.getElementById("lightbox");
+        const lightboxImage = document.getElementById("lightbox-image");
+        const loader = document.getElementById("lightbox-loader");
 
-        lightbox.classList.remove('active');
-        lightboxImage.classList.remove('loaded');
+        lightbox.classList.remove("active");
+        lightboxImage.classList.remove("loaded");
         lightboxImage.onload = null;
         lightboxImage.onerror = null;
-        lightboxImage.src = '';
-        loader.classList.remove('hidden');
+        lightboxImage.src = "";
+        loader.classList.remove("hidden");
       }
 
       function viewPost(title) {
         const cmd = `/send 查看帖子:${title} | /trigger`;
-        if (typeof triggerSlash === 'function') {
+        if (typeof triggerSlash === "function") {
           triggerSlash(cmd);
         }
       }
 
       function viewLiteraturePost(title) {
         const cmd = `/send 查看文墨帖:${title} | /trigger`;
-        if (typeof triggerSlash === 'function') {
+        if (typeof triggerSlash === "function") {
           triggerSlash(cmd);
         }
       }
 
       function viewHookupPost(title) {
         const cmd = `/send 查看约炮帖:${title} | /trigger`;
-        if (typeof triggerSlash === 'function') {
+        if (typeof triggerSlash === "function") {
           triggerSlash(cmd);
         }
       }
 
       function viewProfile(name) {
         const cmd = `/send 查看单男:${name} | /trigger`;
-        if (typeof triggerSlash === 'function') {
+        if (typeof triggerSlash === "function") {
           triggerSlash(cmd);
         }
       }
 
       function enterShop() {
         const cmd = `/send 进入论坛商城 | /trigger`;
-        if (typeof triggerSlash === 'function') {
+        if (typeof triggerSlash === "function") {
           triggerSlash(cmd);
         }
       }
 
       function viewMessages() {
         const cmd = `/send 查看私信 | /trigger`;
-        if (typeof triggerSlash === 'function') {
+        if (typeof triggerSlash === "function") {
           triggerSlash(cmd);
         }
       }
 
       function viewPersonalProfile() {
         const cmd = `/send 查看个人主页 | /trigger`;
-        if (typeof triggerSlash === 'function') {
+        if (typeof triggerSlash === "function") {
           triggerSlash(cmd);
         }
       }
 
-      window.addEventListener('storage', syncThemeFromStorage);
+      function openSearch() {
+        const cmd = `/send 搜索页面 | /trigger`;
+        if (typeof triggerSlash === "function") {
+          triggerSlash(cmd);
+        }
+      }
+
+      window.addEventListener("storage", syncThemeFromStorage);
 
       setTimeout(function () {
-        const theme = localStorage.getItem('forum-theme');
-        if (theme === 'light') {
-          document.body.setAttribute('data-theme', 'light');
+        const theme = localStorage.getItem("forum-theme");
+        if (theme === "light") {
+          document.body.setAttribute("data-theme", "light");
         }
 
-        console.log('页面加载完成,开始解析论坛数据');
+        console.log("页面加载完成,开始解析论坛数据");
         try {
           const data = parseForumDataXML(forumDataXML);
           renderForum(data);
 
-          if (theme === 'light') {
-            const icon = document.getElementById('theme-icon');
+          if (theme === "light") {
+            const icon = document.getElementById("theme-icon");
             if (icon) {
-              icon.textContent = '☀️';
+              icon.textContent = "☀️";
             }
           }
 
-          const fontSize = localStorage.getItem('forum-font-size') || 'small';
-          const container = document.getElementById('forum-container');
-          const fontIcon = document.getElementById('font-size-icon');
-          const fontSizes = ['small', 'medium', 'large', 'xlarge'];
-          const fontIcons = ['A', 'A+', 'A++', 'A+++'];
+          const fontSize = localStorage.getItem("forum-font-size") || "small";
+          const container = document.getElementById("forum-container");
+          const fontIcon = document.getElementById("font-size-icon");
+          const fontSizes = ["small", "medium", "large", "xlarge"];
+          const fontIcons = ["A", "A+", "A++", "A+++"];
 
-          if (fontSize !== 'small') {
-            container.classList.add('font-' + fontSize);
+          if (fontSize !== "small") {
+            container.classList.add("font-" + fontSize);
           }
 
           let index = fontSizes.indexOf(fontSize);
@@ -1579,8 +1664,9 @@
             fontIcon.textContent = fontIcons[index];
           }
         } catch (error) {
-          console.error('渲染失败:', error);
-          document.getElementById('forum-container').innerHTML = '<div class="loading">数据加载失败,请刷新重试</div>';
+          console.error("渲染失败:", error);
+          document.getElementById("forum-container").innerHTML =
+            '<div class="loading">数据加载失败,请刷新重试</div>';
         }
       }, 0);
     </script>
