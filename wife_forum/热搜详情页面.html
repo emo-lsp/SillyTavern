@@ -546,10 +546,108 @@
       * {
         -webkit-tap-highlight-color: transparent;
       }
+
+      .keyword-confirm-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 999;
+        justify-content: center;
+        align-items: flex-end;
+        padding-bottom: 70px;
+      }
+
+      .keyword-confirm-overlay.active {
+        display: flex;
+      }
+
+      .keyword-confirm-box {
+        background: var(--gray);
+        border-radius: 12px;
+        padding: 24px;
+        max-width: 320px;
+        width: 90%;
+        border: 1px solid var(--border);
+      }
+
+      .keyword-confirm-title {
+        color: var(--text-main);
+        font-size: 1.1em;
+        font-weight: 600;
+        margin-bottom: 12px;
+        text-align: center;
+      }
+
+      .keyword-confirm-keyword {
+        color: var(--blood-red);
+        font-size: 1.2em;
+        font-weight: 600;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .keyword-confirm-buttons {
+        display: flex;
+        gap: 12px;
+      }
+
+      .keyword-confirm-btn {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.95em;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .keyword-confirm-btn.cancel {
+        background: var(--light-gray);
+        color: var(--text-main);
+      }
+
+      .keyword-confirm-btn.cancel:hover {
+        background: var(--gray);
+      }
+
+      .keyword-confirm-btn.confirm {
+        background: var(--blood-red);
+        color: #fff;
+      }
+
+      .keyword-confirm-btn.confirm:hover {
+        background: var(--dark-red);
+      }
     </style>
 
     <div class="detail-container" id="detail-container">
       <div class="loading">界面加载失败,请重roll聊天试试...</div>
+    </div>
+
+    <div class="keyword-confirm-overlay" id="keyword-confirm-overlay">
+      <div class="keyword-confirm-box">
+        <div class="keyword-confirm-title">查看热搜</div>
+        <div class="keyword-confirm-keyword" id="keyword-confirm-text"></div>
+        <div class="keyword-confirm-buttons">
+          <button
+            class="keyword-confirm-btn cancel"
+            onclick="closeKeywordConfirm()"
+          >
+            取消
+          </button>
+          <button
+            class="keyword-confirm-btn confirm"
+            onclick="confirmKeywordSearch()"
+          >
+            查看
+          </button>
+        </div>
+      </div>
     </div>
 
     <script>
@@ -622,7 +720,7 @@
             ) {
               const replies = [];
               if (commentItem[4]) {
-                const replyParts = commentItem[4].split('>>');
+                const replyParts = commentItem[4].split(">>");
                 for (let i = 0; i < replyParts.length; i++) {
                   const replyText = replyParts[i].trim();
                   if (replyText) {
@@ -630,7 +728,7 @@
                     if (replyMatch) {
                       replies.push({
                         name: replyMatch[1].trim(),
-                        text: replyMatch[2].trim()
+                        text: replyMatch[2].trim(),
                       });
                     }
                   }
@@ -719,7 +817,8 @@
             repliesHTML = '<div class="comment-reply">';
             comment.replies.forEach((reply, index) => {
               const replyInitial = reply.name.charAt(0);
-              const targetName = index === 0 ? comment.name : comment.replies[index - 1].name;
+              const targetName =
+                index === 0 ? comment.name : comment.replies[index - 1].name;
               repliesHTML += `
                 <div class="reply-item">
                   <div class="reply-avatar">${replyInitial}</div>
@@ -734,11 +833,11 @@
                 </div>
               `;
             });
-            repliesHTML += '</div>';
+            repliesHTML += "</div>";
           }
 
           commentsHTML += `
-            <div class="comment-card ${hasReply ? 'has-reply' : ''}">
+            <div class="comment-card ${hasReply ? "has-reply" : ""}">
               <div class="comment-header">
                 <div class="comment-user">
                   <div class="comment-avatar">${initial}</div>
@@ -753,7 +852,11 @@
                     <span class="like-icon">❤️</span>
                     <span>${comment.likes}</span>
                   </div>
-                  ${hasReply ? `<div class="comment-action">💬 ${comment.replies.length}条回复</div>` : ''}
+                  ${
+                    hasReply
+                      ? `<div class="comment-action">💬 ${comment.replies.length}条回复</div>`
+                      : ""
+                  }
                 </div>
               </div>
               ${repliesHTML}
@@ -764,7 +867,7 @@
         let relatedHTML = "";
         data.relatedTopics.forEach((topic) => {
           relatedHTML += `
-            <div class="related-card" onclick="viewHotSearch('${topic.title}')">
+            <div class="related-card" onclick="viewHotSearchConfirm('${topic.title}'); event.stopPropagation();">
               <div class="related-title">${topic.title}</div>
               <div class="related-footer">
                 <span class="related-heat">${topic.heat}</span>
@@ -794,12 +897,16 @@
             <div class="hot-title">${data.title}</div>
             <div class="title-meta">
               <span class="hot-badge">${data.badge}</span>
-              ${data.author ? `
+              ${
+                data.author
+                  ? `
               <div class="author-info">
                 <div class="author-avatar">${data.author.charAt(0)}</div>
                 <span class="author-name">${data.author}</span>
               </div>
-              ` : ''}
+              `
+                  : ""
+              }
             </div>
           </div>
 
@@ -927,7 +1034,7 @@
       }
 
       function goBack() {
-        const cmd = `/send 返回搜索 | /trigger`;
+        const cmd = `/send 打开搜索页面 | /trigger`;
         if (typeof triggerSlash === "function") {
           triggerSlash(cmd);
         }
@@ -938,6 +1045,33 @@
         if (typeof triggerSlash === "function") {
           triggerSlash(cmd);
         }
+      }
+
+      let pendingKeyword = "";
+
+      function viewHotSearchConfirm(keyword) {
+        pendingKeyword = keyword;
+        document.getElementById(
+          "keyword-confirm-text"
+        ).textContent = `${keyword}`;
+        const overlay = document.getElementById("keyword-confirm-overlay");
+        overlay.classList.add("active");
+      }
+
+      function closeKeywordConfirm() {
+        const overlay = document.getElementById("keyword-confirm-overlay");
+        overlay.classList.remove("active");
+        pendingKeyword = "";
+      }
+
+      function confirmKeywordSearch() {
+        if (pendingKeyword) {
+          const cmd = `/send 查看热搜:${pendingKeyword} | /trigger`;
+          if (typeof triggerSlash === "function") {
+            triggerSlash(cmd);
+          }
+        }
+        closeKeywordConfirm();
       }
 
       window.addEventListener("storage", syncThemeFromStorage);
