@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>快速回复选项</title>
+    <style>
+        :root {
+            --corner-radius: 12px;
+            --spacing-xxs: 4px;
+            --spacing-xs: 6px;
+            --spacing-s: 10px;
+            --spacing-m: 14px;
+            --spacing-l: 18px;
+
+            --primary-gold: #c9a961;
+            --primary-jade: #5a8a7e;
+            --primary-red: #a73a3a;
+            --primary-purple: #7a5a8a;
+            --bg-primary: #faf8f5;
+            --bg-secondary: #fff9f0;
+            --text-primary: #3a3330;
+            --text-secondary: #6a635a;
+            --border-color: #d4c4b0;
+            --border-light: #e8ddd4;
+            --shadow-light: rgba(58, 51, 48, 0.1);
+            --shadow-medium: rgba(58, 51, 48, 0.15);
+            --accent-gold: #c9a961;
+            --hover-bg: #f5f1ea;
+        }
+
+        [data-theme="dark"] {
+            --primary-gold: #d4af37;
+            --primary-jade: #6fa393;
+            --primary-red: #c85450;
+            --primary-purple: #9a7ab0;
+            --bg-primary: #1a1815;
+            --bg-secondary: #252320;
+            --text-primary: #f0e8e0;
+            --text-secondary: #b8b0a8;
+            --border-color: #4a453f;
+            --border-light: #3a3530;
+            --shadow-light: rgba(0, 0, 0, 0.3);
+            --shadow-medium: rgba(0, 0, 0, 0.4);
+            --accent-gold: #d4af37;
+            --hover-bg: #2f2b28;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: "STSong", "SimSun", "宋体", serif;
+            color: var(--text-primary);
+            padding: var(--spacing-l);
+            transition: color 0.15s ease, background-color 0.15s ease;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        #options-wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            contain: layout style paint;
+        }
+
+        .options-container {
+            border-radius: var(--corner-radius);
+            box-shadow: 0 2px 8px var(--shadow-light);
+            border: 2px solid var(--border-color);
+            overflow: hidden;
+            background: var(--bg-secondary);
+            position: relative;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            transform-origin: center top;
+        }
+
+        .options-container.removing {
+            animation: removeContainer 0.2s ease forwards;
+        }
+
+        @keyframes removeContainer {
+            to {
+                opacity: 0;
+                transform: scale(0.95) translateY(-10px);
+            }
+        }
+
+        .options-container::before,
+        .options-container::after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .options-container::before {
+            top: -2px;
+            left: -2px;
+            border-top: 2px solid var(--primary-gold);
+            border-left: 2px solid var(--primary-gold);
+        }
+
+        .options-container::after {
+            right: -2px;
+            bottom: -2px;
+            border-right: 2px solid var(--primary-gold);
+            border-bottom: 2px solid var(--primary-gold);
+        }
+
+        .options-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: var(--spacing-m) var(--spacing-l);
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-light);
+            position: relative;
+        }
+
+        .options-title {
+            font-size: 18px;
+            font-weight: normal;
+            color: var(--primary-gold);
+            letter-spacing: 2px;
+            text-align: center;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            right: var(--spacing-l);
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: 999px;
+            padding: var(--spacing-xs) var(--spacing-s);
+            cursor: pointer;
+            font-size: 14px;
+            transition: transform 0.1s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-secondary);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            border-color: var(--primary-gold);
+            color: var(--primary-gold);
+        }
+
+        .theme-toggle:active {
+            transform: scale(0.95);
+        }
+
+        .options-grid {
+            padding: var(--spacing-l);
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--spacing-s);
+            contain: layout style paint;
+        }
+
+        @media (min-width: 480px) {
+            .options-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .option-item {
+            background: rgba(217, 197, 161, 0.05);
+            border: 1px solid var(--border-light);
+            border-radius: var(--corner-radius);
+            padding: var(--spacing-m);
+            cursor: pointer;
+            transition: transform 0.1s ease;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+            font-weight: normal;
+            font-size: 14px;
+            color: var(--text-primary);
+            white-space: pre-wrap;
+            opacity: 0;
+            animation: fadeIn 0.2s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .option-item.sending {
+            animation: sendEffect 0.25s ease forwards;
+        }
+
+        @keyframes sendEffect {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+                background: var(--primary-gold);
+                color: var(--bg-secondary);
+            }
+            100% {
+                transform: scale(0);
+                opacity: 0;
+            }
+        }
+
+        .option-item:hover {
+            background: var(--hover-bg);
+            transform: translateY(-1px);
+            border-color: var(--primary-gold);
+        }
+
+        .success-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: var(--primary-gold);
+            color: #fff;
+            padding: 16px 32px;
+            border-radius: 999px;
+            font-weight: normal;
+            letter-spacing: 2px;
+            box-shadow: 0 4px 20px var(--shadow-medium);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.15s ease, transform 0.15s ease;
+        }
+
+        .success-message.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="options-wrapper">
+        <div class="options-container" id="options-container">
+            <div class="options-header">
+                <div class="options-title">快速回复选项</div>
+                <div class="theme-toggle" onclick="toggleTheme()">🌓</div>
+            </div>
+            <div class="options-grid" id="options-grid">
+            </div>
+        </div>
+    </div>
+
+    <div class="success-message" id="success-message">已发送</div>
+
+    <script>
+        const UNIFIED_THEME_KEY = 'cangxuan_unified_theme';
+
+        function applyTheme(theme) {
+            const effectiveTheme = theme === 'dark' ? 'dark' : 'light';
+            document.body.setAttribute('data-theme', effectiveTheme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.body.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            applyTheme(newTheme);
+            localStorage.setItem(UNIFIED_THEME_KEY, newTheme);
+        }
+
+        function initTheme() {
+            const savedTheme = localStorage.getItem(UNIFIED_THEME_KEY);
+            applyTheme(savedTheme);
+        }
+
+        window.addEventListener('storage', (event) => {
+            if (event.key === UNIFIED_THEME_KEY) {
+                applyTheme(event.newValue);
+            }
+        });
+
+        const triggerQuickReply = (text) => {
+            if (!text || ['…', '...'].includes(text.trim()) || text.trim().length === 0) return;
+            if (typeof triggerSlash === 'function') {
+                triggerSlash(`/send ${text}|/trigger`);
+            } else {
+                console.log('SillyTavern environment not detected. Would send:', text);
+            }
+        };
+
+        function removeOptionsContainer() {
+            const container = document.getElementById('options-container');
+            const wrapper = document.getElementById('options-wrapper');
+
+            container.classList.add('removing');
+
+            setTimeout(() => {
+                wrapper.remove();
+            }, 200);
+        }
+
+        function showSuccessMessage() {
+            const message = document.getElementById('success-message');
+            message.classList.add('show');
+
+            setTimeout(() => {
+                message.classList.remove('show');
+            }, 800);
+        }
+
+        function createOptions(optionsString) {
+            const optionsGrid = document.getElementById('options-grid');
+            const fragment = document.createDocumentFragment();
+
+            const options = optionsString.split('|').map(opt => opt.trim()).filter(opt => opt.length > 0);
+
+            options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option-item';
+
+                if (option.length > 20) {
+                    optionElement.style.fontSize = '13px';
+                }
+
+                optionElement.textContent = option;
+                optionElement.style.animationDelay = `${index * 0.02}s`;
+                fragment.appendChild(optionElement);
+            });
+
+            optionsGrid.appendChild(fragment);
+        }
+
+        document.getElementById('options-grid').addEventListener('click', function(event) {
+            const optionItem = event.target.closest('.option-item');
+            if (!optionItem) return;
+
+            optionItem.classList.add('sending');
+
+            const optionText = optionItem.textContent.trim();
+            triggerQuickReply(optionText);
+
+            showSuccessMessage();
+
+            setTimeout(() => {
+                removeOptionsContainer();
+            }, 250);
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initTheme();
+            createOptions('$1');
+        });
+    </script>
+</body>
+</html>
