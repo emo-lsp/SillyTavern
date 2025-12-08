@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>快速回复选项</title>
+    <style>
+      [data-theme='light'] {
+        --bg-main: #ffffff;
+        --bg-surface: #f8f9fa;
+        --bg-elevated: #ffffff;
+        --border-color: #e0e0e0;
+        --text-primary: #2c2c2c;
+        --text-secondary: #666666;
+        --text-muted: #999999;
+        --shadow-color: rgba(0, 0, 0, 0.08);
+        --accent-color: #5b8fd9;
+        --accent-hover: #4a7ec8;
+      }
+
+      [data-theme='dark'] {
+        --bg-main: #1c1c1e;
+        --bg-surface: #2c2c2e;
+        --bg-elevated: #3a3a3c;
+        --border-color: #48484a;
+        --text-primary: #f2f2f7;
+        --text-secondary: #aeaeb2;
+        --text-muted: #8e8e93;
+        --shadow-color: rgba(0, 0, 0, 0.3);
+        --accent-color: #64b5f6;
+        --accent-hover: #5aa5e6;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+        background: transparent;
+        color: var(--text-primary);
+        padding: 16px;
+        transition: all 0.3s ease;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-tap-highlight-color: transparent;
+        text-rendering: optimizeLegibility;
+      }
+
+      #options-wrapper {
+        max-width: 680px;
+        margin: 0 auto;
+        position: relative;
+      }
+
+      .options-container {
+        background: var(--bg-main);
+        border-radius: 12px;
+        box-shadow: 0 4px 16px var(--shadow-color);
+        overflow: hidden;
+        position: relative;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        transform-origin: center top;
+      }
+
+      .options-container.removing {
+        animation: removeContainer 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      }
+
+      @keyframes removeContainer {
+        to {
+          opacity: 0;
+          transform: scale(0.95) translateY(-10px);
+          filter: blur(10px);
+        }
+      }
+
+      .options-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 18px;
+        background: var(--bg-surface);
+        border-bottom: 2px solid var(--border-color);
+        position: relative;
+      }
+
+      .options-title {
+        font-size: 17px;
+        font-weight: 600;
+        color: var(--text-primary);
+        letter-spacing: 0.03em;
+      }
+
+      .theme-selector {
+        display: flex;
+        gap: 4px;
+        padding: 3px;
+        background: var(--bg-main);
+        border-radius: 6px;
+        border: 1px solid var(--border-color);
+      }
+
+      .theme-option {
+        width: 28px;
+        height: 28px;
+        border: none;
+        background: transparent;
+        border-radius: 4px;
+        font-size: 13px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        opacity: 0.5;
+      }
+
+      .theme-option:hover {
+        opacity: 0.8;
+        background: var(--bg-elevated);
+      }
+
+      .theme-option.active {
+        opacity: 1;
+        background: var(--accent-color);
+        box-shadow: 0 2px 4px var(--shadow-color);
+      }
+
+      .options-grid {
+        padding: 18px;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      @media (min-width: 480px) {
+        .options-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      .option-item {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 14px;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+        font-weight: 500;
+        font-size: 14px;
+        color: var(--text-primary);
+        white-space: pre-wrap;
+        opacity: 0;
+        animation: fadeIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .option-item.sending {
+        animation: sendEffect 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      }
+
+      @keyframes sendEffect {
+        0% {
+          transform: scale(1);
+        }
+        40% {
+          transform: scale(1.1);
+          background: var(--accent-color);
+          color: white;
+          box-shadow: 0 0 20px var(--accent-color);
+        }
+        100% {
+          transform: scale(0);
+          opacity: 0;
+          filter: blur(10px);
+        }
+      }
+
+      .option-item:hover {
+        background: var(--bg-elevated);
+        box-shadow: 0 4px 12px var(--shadow-color);
+        border-color: var(--accent-color);
+      }
+
+      .success-message {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.8);
+        background: var(--accent-color);
+        color: white;
+        padding: 16px 32px;
+        border-radius: 999px;
+        font-weight: 600;
+        box-shadow: 0 4px 20px var(--shadow-color);
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        z-index: 9999;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      .success-message.show {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+        animation: successPulse 1s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      @keyframes successPulse {
+        0% {
+          box-shadow: 0 0 0 0 var(--accent-color);
+        }
+        50% {
+          box-shadow: 0 0 0 20px transparent;
+        }
+        100% {
+          box-shadow: 0 0 0 0 transparent;
+        }
+      }
+
+      .loading {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--text-secondary);
+        font-size: 14px;
+      }
+
+      @media (max-width: 600px) {
+        body {
+          padding: 8px;
+        }
+
+        .options-header {
+          padding: 10px 12px;
+        }
+
+        .options-title {
+          font-size: 16px;
+          font-weight: 500;
+        }
+
+        .options-grid {
+          padding: 10px;
+          gap: 8px;
+        }
+
+        .option-item {
+          padding: 12px 14px;
+          font-size: 15px;
+          border-radius: 6px;
+          line-height: 1.5;
+          font-weight: 400;
+          animation: none;
+          opacity: 1;
+          transform: none;
+        }
+
+        .theme-option {
+          width: 26px;
+          height: 26px;
+          font-size: 12px;
+        }
+
+        .loading {
+          padding: 30px 15px;
+          font-size: 14px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition-duration: 0.01ms !important;
+          animation-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="options-wrapper">
+      <div class="options-container" id="options-container">
+        <div class="options-header">
+          <div class="options-title">快速回复选项</div>
+          <div class="theme-selector">
+            <button class="theme-option" data-theme="light" title="浅色">☀️</button>
+            <button class="theme-option" data-theme="dark" title="深色">🌙</button>
+          </div>
+        </div>
+        <div class="options-grid" id="options-grid">
+          <div class="loading">界面加载失败，请重roll聊天试试...</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="success-message" id="success-message">已发送</div>
+
+    <script>
+      const chat_message = getChatMessages(getCurrentMessageId())[0];
+      const match = chat_message.message.match(/<options>([\s\S]*?)<\/options>/);
+      const optionsDataXML = match ? match[1] : '';
+
+      const triggerQuickReply = text => {
+        if (!text || ['…', '...'].includes(text.trim()) || text.trim().length === 0) return;
+        if (typeof triggerSlash === 'function') {
+          triggerSlash(`/send ${text}|/trigger`);
+        } else {
+          console.log('SillyTavern environment not detected. Would send:', text);
+        }
+      };
+
+      function applyTheme(theme) {
+        document.body.setAttribute('data-theme', theme);
+        document.querySelectorAll('.theme-option').forEach(btn => {
+          btn.classList.toggle('active', btn.getAttribute('data-theme') === theme);
+        });
+      }
+
+      function setTheme(theme) {
+        applyTheme(theme);
+        localStorage.setItem('jnx-status-theme', theme);
+
+        if (typeof BroadcastChannel !== 'undefined') {
+          const channel = new BroadcastChannel('jnx-theme-sync');
+          channel.postMessage({ theme });
+          channel.close();
+        }
+      }
+
+      function listenForThemeChanges() {
+        window.addEventListener('storage', e => {
+          if (e.key === 'jnx-status-theme' && (e.newValue === 'light' || e.newValue === 'dark')) {
+            applyTheme(e.newValue);
+          }
+        });
+
+        if (typeof BroadcastChannel !== 'undefined') {
+          const channel = new BroadcastChannel('jnx-theme-sync');
+          channel.onmessage = e => {
+            if (e.data && e.data.theme && (e.data.theme === 'light' || e.data.theme === 'dark')) {
+              applyTheme(e.data.theme);
+              localStorage.setItem('jnx-status-theme', e.data.theme);
+            }
+          };
+        }
+      }
+
+      function removeOptionsContainer() {
+        const container = document.getElementById('options-container');
+        const wrapper = document.getElementById('options-wrapper');
+
+        container.classList.add('removing');
+
+        setTimeout(() => {
+          wrapper.remove();
+        }, 400);
+      }
+
+      function showSuccessMessage() {
+        const message = document.getElementById('success-message');
+        message.classList.add('show');
+
+        setTimeout(() => {
+          message.classList.remove('show');
+        }, 1200);
+      }
+
+      function initTheme() {
+        const savedTheme = localStorage.getItem('jnx-status-theme');
+        const theme = savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : 'light';
+        applyTheme(theme);
+      }
+
+      function createOptions(optionsString) {
+        const optionsGrid = document.getElementById('options-grid');
+        optionsGrid.innerHTML = '';
+
+        if (!optionsString || optionsString.trim().length === 0) {
+          optionsGrid.innerHTML = '<div class="loading">没有可用的选项</div>';
+          return;
+        }
+
+        const options = optionsString
+          .split('|')
+          .map(opt => opt.trim())
+          .filter(opt => opt.length > 0);
+
+        if (options.length === 0) {
+          optionsGrid.innerHTML = '<div class="loading">没有可用的选项</div>';
+          return;
+        }
+
+        options.forEach((option, index) => {
+          const optionElement = document.createElement('div');
+          optionElement.className = 'option-item';
+
+          if (option.length > 20) {
+            optionElement.style.fontSize = '13px';
+          }
+
+          optionElement.textContent = option;
+          optionElement.style.animationDelay = `${index * 0.05}s`;
+          optionsGrid.appendChild(optionElement);
+        });
+      }
+
+      document.getElementById('options-grid').addEventListener('click', function (event) {
+        const optionItem = event.target.closest('.option-item');
+        if (!optionItem || optionItem.classList.contains('loading')) return;
+
+        optionItem.classList.add('sending');
+
+        const optionText = optionItem.textContent.trim();
+        triggerQuickReply(optionText);
+
+        showSuccessMessage();
+
+        setTimeout(() => {
+          removeOptionsContainer();
+        }, 500);
+      });
+
+      document.querySelector('.theme-selector').addEventListener('click', function (event) {
+        const themeBtn = event.target.closest('.theme-option');
+        if (!themeBtn) return;
+
+        const theme = themeBtn.getAttribute('data-theme');
+        if (theme === 'light' || theme === 'dark') {
+          setTheme(theme);
+        }
+      });
+
+      setTimeout(function () {
+        try {
+          initTheme();
+          listenForThemeChanges();
+          createOptions(optionsDataXML);
+        } catch (error) {
+          console.error('初始化失败:', error);
+          document.getElementById('options-grid').innerHTML = '<div class="loading">界面加载失败</div>';
+        }
+      }, 0);
+    </script>
+  </body>
+</html>
