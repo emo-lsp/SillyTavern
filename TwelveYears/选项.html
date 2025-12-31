@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>行动选项</title>
+    <style>
+      :root {
+        --paper: #ece7df;
+        --paper-deep: #e2d8cc;
+        --ink: #2b2b2f;
+        --ink-soft: #6b6b74;
+        --line: #cdbfb0;
+        --accent: #7f9aaf;
+        --accent-strong: #5f7f99;
+        --shadow: 0 18px 40px rgba(40, 34, 28, 0.25);
+      }
+
+      [data-theme='dark'] {
+        --paper: #1a1b20;
+        --paper-deep: #24252c;
+        --ink: #faf6f0;
+        --ink-soft: #e8dfd0;
+        --line: #5a524a;
+        --accent: #a8c4d8;
+        --accent-strong: #8fb0ca;
+        --shadow: 0 18px 40px rgba(7, 7, 9, 0.45);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        background: transparent !important;
+      }
+
+      body {
+        font-family: 'Noto Serif SC', 'Source Han Serif SC', 'STSong', serif;
+        color: var(--ink);
+      }
+
+      .options-app {
+        width: 100%;
+        background: transparent;
+        padding: 16px 16px 28px;
+      }
+
+      .options-shell {
+        max-width: 900px;
+        margin: 0 auto;
+        background: var(--paper);
+        border: 2px solid var(--line);
+        box-shadow: var(--shadow);
+        position: relative;
+        border-radius: 16px 12px 18px 14px;
+        overflow: hidden;
+      }
+
+      .options-shell.collapsed .options-body {
+        max-height: 0;
+        padding: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .options-shell.collapsed .option-card {
+        opacity: 0;
+      }
+
+      .options-shell.collapsed .options-header {
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+
+      .options-shell.collapsed .options-header:hover {
+        background: linear-gradient(120deg, rgba(127, 154, 175, 0.18), transparent 50%);
+      }
+
+      .collapse-indicator {
+        width: 24px;
+        height: 24px;
+        display: grid;
+        place-items: center;
+        font-size: 16px;
+        transition: transform 0.3s ease;
+        opacity: 0.6;
+        cursor: pointer;
+      }
+
+      .options-shell.collapsed .collapse-indicator {
+        transform: rotate(180deg);
+      }
+
+      .options-shell::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        background-image:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.25), transparent 40%),
+          repeating-linear-gradient(
+            0deg,
+            rgba(80, 80, 90, 0.06) 0,
+            rgba(80, 80, 90, 0.06) 1px,
+            transparent 1px,
+            transparent 28px
+          );
+        pointer-events: none;
+        border-radius: 16px 12px 18px 14px;
+      }
+
+      .options-shell::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        background-image:
+          radial-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1px),
+          radial-gradient(rgba(0, 0, 0, 0.06) 1px, transparent 1px);
+        background-size:
+          18px 18px,
+          22px 22px;
+        background-position:
+          0 0,
+          6px 10px;
+        opacity: 0.16;
+        pointer-events: none;
+        border-radius: 16px 12px 18px 14px;
+      }
+
+      .options-header {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: 12px;
+        padding: 16px;
+        border-bottom: 1px solid var(--line);
+        background: linear-gradient(120deg, rgba(127, 154, 175, 0.12), transparent 50%);
+        cursor: pointer;
+      }
+
+      .header-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .title-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: var(--paper-deep);
+        border: 1px solid var(--line);
+        display: grid;
+        place-items: center;
+        font-size: 20px;
+      }
+
+      .title-text {
+        font-size: 18px;
+        letter-spacing: 1px;
+        color: var(--ink);
+        font-weight: 500;
+      }
+
+      .mode-toggle {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        border: 1.5px solid var(--accent);
+        background: var(--paper-deep);
+        cursor: pointer;
+        transition: all 0.25s ease;
+        font-size: 12px;
+        color: var(--ink);
+        border-radius: 8px;
+        box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+      }
+
+      .mode-toggle:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.15);
+      }
+
+      .mode-toggle:active {
+        transform: translate(1px, 1px);
+        box-shadow: none;
+      }
+
+      .mode-icon {
+        font-size: 14px;
+      }
+
+      .mode-hint {
+        font-size: 10px;
+        color: var(--accent);
+        opacity: 0.8;
+        margin-left: 4px;
+      }
+
+      .theme-toggle {
+        width: 32px;
+        height: 32px;
+        border: 1px solid var(--line);
+        background: var(--paper-deep);
+        color: var(--ink);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: grid;
+        place-items: center;
+      }
+
+      .theme-toggle:hover {
+        transform: translateY(-2px);
+        border-color: var(--accent);
+      }
+
+      .options-body {
+        position: relative;
+        z-index: 1;
+        padding: 18px;
+        opacity: 1;
+        max-height: 1000px;
+        transition: all 0.3s ease;
+      }
+
+      .options-grid {
+        min-height: 0;
+        overflow: visible;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+      }
+
+      .option-card {
+        border: 1.5px solid var(--line);
+        background: rgba(255, 255, 255, 0.4);
+        padding: 14px 16px;
+        cursor: pointer;
+        position: relative;
+        transition: all 0.25s ease;
+        border-radius: 18px 12px 20px 14px;
+      }
+
+      .option-card:hover {
+        transform: translateX(6px);
+        background: rgba(255, 255, 255, 0.5);
+        border-color: var(--accent);
+      }
+
+      [data-theme='dark'] .option-card {
+        background: rgba(40, 42, 50, 0.6);
+      }
+
+      [data-theme='dark'] .option-card:hover {
+        background: rgba(50, 52, 62, 0.7);
+      }
+
+      .option-card:active {
+        transform: translateX(3px);
+      }
+
+      .option-card.clicked {
+        opacity: 0.6;
+        pointer-events: none;
+      }
+
+      .option-text {
+        font-size: 14px;
+        line-height: 1.6;
+        text-align: center;
+        color: var(--ink);
+      }
+
+      .success-toast {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateY(-20px);
+        background: var(--paper-deep);
+        border: 1.5px solid var(--accent);
+        padding: 12px 24px;
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+        opacity: 0;
+        transition: all 0.3s ease;
+        z-index: 1000;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+      }
+
+      .success-toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      @media (max-width: 760px) {
+        .options-shell {
+          border-radius: 14px 10px 16px 12px;
+        }
+
+        .options-shell::before,
+        .options-shell::after {
+          border-radius: 14px 10px 16px 12px;
+        }
+
+        .options-header {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+
+        .theme-toggle {
+          position: absolute;
+          top: 12px;
+          right: 12px;
+        }
+
+        .options-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 520px) {
+        .options-shell {
+          border-radius: 12px 10px 14px 10px;
+        }
+
+        .options-shell::before,
+        .options-shell::after {
+          border-radius: 12px 10px 14px 10px;
+        }
+
+        .options-header {
+          padding: 12px;
+          padding-right: 50px;
+        }
+
+        .title-icon {
+          width: 36px;
+          height: 36px;
+          font-size: 16px;
+        }
+
+        .title-text {
+          font-size: 15px;
+        }
+
+        .options-body {
+          padding: 14px;
+        }
+
+        .option-card {
+          padding: 12px 14px;
+        }
+
+        .option-text {
+          font-size: 13px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="options-app" id="app">
+      <div class="options-shell" id="shell">
+        <div class="options-header" id="header">
+          <div class="header-title">
+            <div class="title-icon">📋</div>
+            <div class="title-text">快速行动</div>
+            <div class="collapse-indicator">▼</div>
+          </div>
+          <div class="mode-toggle" id="modeToggle">
+            <span class="mode-icon" id="modeIcon">📝</span>
+            <span id="modeText">输入模式</span>
+            <span class="mode-hint">点击切换</span>
+          </div>
+          <button type="button" class="theme-toggle" id="themeToggle"></button>
+        </div>
+        <div class="options-body">
+          <div class="options-grid" id="optionsGrid"></div>
+        </div>
+      </div>
+    </div>
+    <div class="success-toast" id="toast"></div>
+
+    <script>
+      const chat_message = getChatMessages(getCurrentMessageId())[0];
+      const match = chat_message.message.match(/<options>([\s\S]*?)<\/options>/);
+      const optionsData = match ? match[1] : '';
+
+      const THEME_KEY = 'twelve-winter-summer-theme';
+      let currentTheme = localStorage.getItem(THEME_KEY) || 'light';
+      const themeChannel = new BroadcastChannel('twelve-winter-summer-theme-sync');
+
+      function applyTheme(theme) {
+        currentTheme = theme;
+        document.documentElement.setAttribute('data-theme', theme);
+        document.getElementById('app').setAttribute('data-theme', theme);
+        document.getElementById('themeToggle').textContent = theme === 'dark' ? '☀️' : '🌙';
+      }
+
+      function toggleTheme() {
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        localStorage.setItem(THEME_KEY, newTheme);
+        applyTheme(newTheme);
+        themeChannel.postMessage({ theme: newTheme });
+      }
+
+      themeChannel.onmessage = function (e) {
+        if (e.data && e.data.theme) {
+          applyTheme(e.data.theme);
+        }
+      };
+
+      window.addEventListener('storage', function (e) {
+        if (e.key === THEME_KEY && e.newValue) {
+          applyTheme(e.newValue);
+        }
+      });
+
+      const MODE_KEY = 'twelve-winter-summer-options-mode';
+      let sendMode = localStorage.getItem(MODE_KEY) || 'input';
+
+      function updateModeUI() {
+        const modeIcon = document.getElementById('modeIcon');
+        const modeText = document.getElementById('modeText');
+        if (sendMode === 'send') {
+          modeIcon.textContent = '📤';
+          modeText.textContent = '发送模式';
+        } else {
+          modeIcon.textContent = '📝';
+          modeText.textContent = '输入模式';
+        }
+      }
+
+      function toggleMode() {
+        sendMode = sendMode === 'send' ? 'input' : 'send';
+        localStorage.setItem(MODE_KEY, sendMode);
+        updateModeUI();
+      }
+
+      function parseOptions(optionsString) {
+        if (!optionsString || optionsString.trim() === '') {
+          return [];
+        }
+        return optionsString
+          .split('|')
+          .map(opt => opt.trim())
+          .filter(opt => opt.length > 0);
+      }
+
+      function renderOptions(options) {
+        const grid = document.getElementById('optionsGrid');
+        grid.innerHTML = '';
+
+        if (options.length === 0) {
+          grid.innerHTML = '<div style="text-align: center; color: var(--ink-soft); padding: 20px;">暂无选项</div>';
+          return;
+        }
+
+        options.forEach((option) => {
+          const card = document.createElement('div');
+          card.className = 'option-card';
+          card.innerHTML = `<div class="option-text">${option}</div>`;
+
+          card.addEventListener('click', function () {
+            handleOptionClick(option, card);
+          });
+
+          grid.appendChild(card);
+        });
+      }
+
+      function showToast(message) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.classList.add('show');
+
+        setTimeout(() => {
+          toast.classList.remove('show');
+        }, 2000);
+      }
+
+      function handleOptionClick(optionText, cardElement) {
+        cardElement.classList.add('clicked');
+
+        setTimeout(() => {
+          if (typeof triggerSlash === 'function') {
+            if (sendMode === 'send') {
+              triggerSlash(`/send ${optionText}|/trigger`);
+              showToast('✓ 已发送');
+            } else {
+              triggerSlash(`/setinput ${optionText}`);
+              showToast('✓ 已填入输入框');
+            }
+          } else {
+            showToast('⚠ 功能不可用');
+            console.error('triggerSlash 函数未定义');
+          }
+
+          setTimeout(() => {
+            const shell = document.getElementById('shell');
+            shell.classList.add('collapsed');
+          }, 400);
+        }, 150);
+      }
+
+      setTimeout(function () {
+        try {
+          applyTheme(currentTheme);
+          updateModeUI();
+
+          const options = parseOptions(optionsData);
+          renderOptions(options);
+
+          document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+          document.getElementById('modeToggle').addEventListener('click', toggleMode);
+
+          const shell = document.getElementById('shell');
+          document.getElementById('header').addEventListener('click', function (e) {
+            if (
+              e.target.id !== 'themeToggle' &&
+              e.target.id !== 'modeToggle' &&
+              !e.target.closest('#modeToggle') &&
+              !e.target.closest('#themeToggle')
+            ) {
+              shell.classList.toggle('collapsed');
+            }
+          });
+        } catch (error) {
+          console.error('初始化失败:', error);
+          document.getElementById('optionsGrid').innerHTML =
+            '<div style="text-align: center; color: var(--ink-soft); padding: 20px;">加载失败</div>';
+        }
+      }, 0);
+    </script>
+  </body>
+</html>
