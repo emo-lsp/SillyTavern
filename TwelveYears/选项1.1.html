@@ -60,18 +60,6 @@
         overflow: hidden;
       }
 
-      .options-shell.collapsed .options-body {
-        max-height: 0;
-        padding: 0;
-        opacity: 0;
-        overflow: hidden;
-        transition: all 0.3s ease;
-      }
-
-      .options-shell.collapsed .option-card {
-        opacity: 0;
-      }
-
       .options-shell.collapsed .options-header {
         cursor: pointer;
         transition: background 0.2s ease;
@@ -87,13 +75,8 @@
         display: grid;
         place-items: center;
         font-size: 16px;
-        transition: transform 0.3s ease;
         opacity: 0.6;
         cursor: pointer;
-      }
-
-      .options-shell.collapsed .collapse-indicator {
-        transform: rotate(180deg);
       }
 
       .options-shell::before {
@@ -225,10 +208,14 @@
       .options-body {
         position: relative;
         z-index: 1;
-        padding: 18px;
         opacity: 1;
-        max-height: 1000px;
-        transition: all 0.3s ease;
+        overflow: hidden;
+        will-change: height, opacity;
+        contain: layout paint;
+      }
+
+      .options-body-inner {
+        padding: 18px;
       }
 
       .options-grid {
@@ -290,7 +277,7 @@
         border-radius: 12px;
         box-shadow: var(--shadow);
         opacity: 0;
-        transition: all 0.3s ease;
+        transition: all 0.6s ease;
         z-index: 1000;
         font-size: 14px;
         letter-spacing: 0.5px;
@@ -352,7 +339,7 @@
           font-size: 15px;
         }
 
-        .options-body {
+        .options-body-inner {
           padding: 14px;
         }
 
@@ -383,7 +370,9 @@
           <button type="button" class="theme-toggle" id="themeToggle"></button>
         </div>
         <div class="options-body">
-          <div class="options-grid" id="optionsGrid"></div>
+          <div class="options-body-inner">
+            <div class="options-grid" id="optionsGrid"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -397,6 +386,12 @@
       const THEME_KEY = 'twelve-winter-summer-theme';
       let currentTheme = localStorage.getItem(THEME_KEY) || 'light';
       const themeChannel = new BroadcastChannel('twelve-winter-summer-theme-sync');
+
+      let optionsAnimator = {
+        animate() {},
+        sync() {},
+        isCollapsed: () => false,
+      };
 
       function applyTheme(theme) {
         currentTheme = theme;
@@ -506,9 +501,86 @@
 
           setTimeout(() => {
             const shell = document.getElementById('shell');
-            shell.classList.add('collapsed');
+            if (shell && !shell.classList.contains('collapsed')) {
+              shell.classList.add('collapsed');
+              optionsAnimator.animate(true);
+            }
           }, 400);
         }, 150);
+      }
+
+      function createOptionsAnimator(body, bodyInner, indicator) {
+        if (!body || !bodyInner) {
+          return {
+            animate() {},
+            sync() {},
+            isCollapsed: () => false,
+          };
+        }
+
+        const duration = 360;
+        const easeOut = t => 1 - Math.pow(1 - t, 3);
+        let frameId = 0;
+        let currentRotation = 0;
+        let collapsedState = false;
+
+        const apply = (height, opacity, rotation) => {
+          body.style.height = `${Math.max(0, height)}px`;
+          body.style.opacity = opacity;
+          if (indicator) {
+            indicator.style.transform = `rotate(${rotation}deg)`;
+          }
+        };
+
+        const run = (targetCollapsed) => {
+          collapsedState = targetCollapsed;
+          cancelAnimationFrame(frameId);
+          const startHeight = body.getBoundingClientRect().height;
+          const endHeight = targetCollapsed ? 0 : bodyInner.scrollHeight;
+          const startOpacity = parseFloat(getComputedStyle(body).opacity) || 1;
+          const endOpacity = targetCollapsed ? 0 : 1;
+          const startRotation = currentRotation;
+          const endRotation = targetCollapsed ? 180 : 0;
+          const startTime = performance.now();
+
+          const tick = (now) => {
+            const progress = Math.min((now - startTime) / duration, 1);
+            const eased = easeOut(progress);
+            const height = startHeight + (endHeight - startHeight) * eased;
+            const opacity = startOpacity + (endOpacity - startOpacity) * eased;
+            const rotation = startRotation + (endRotation - startRotation) * eased;
+            apply(height, opacity, rotation);
+            currentRotation = rotation;
+
+            if (progress < 1) {
+              frameId = requestAnimationFrame(tick);
+            } else {
+              if (!targetCollapsed) {
+                body.style.height = 'auto';
+              } else {
+                body.style.height = '0px';
+              }
+            }
+          };
+
+          frameId = requestAnimationFrame(tick);
+        };
+
+        return {
+          animate(targetCollapsed) {
+            run(targetCollapsed);
+          },
+          sync(targetCollapsed) {
+            collapsedState = targetCollapsed;
+            const height = targetCollapsed ? 0 : bodyInner.scrollHeight;
+            apply(height, targetCollapsed ? 0 : 1, targetCollapsed ? 180 : 0);
+            currentRotation = targetCollapsed ? 180 : 0;
+            if (!targetCollapsed) {
+              body.style.height = 'auto';
+            }
+          },
+          isCollapsed: () => collapsedState,
+        };
       }
 
       setTimeout(function () {
@@ -523,6 +595,11 @@
           document.getElementById('modeToggle').addEventListener('click', toggleMode);
 
           const shell = document.getElementById('shell');
+          const body = document.querySelector('.options-body');
+          const bodyInner = body ? body.querySelector('.options-body-inner') : null;
+          const collapseIndicator = document.querySelector('.collapse-indicator');
+          optionsAnimator = createOptionsAnimator(body, bodyInner, collapseIndicator);
+
           document.getElementById('header').addEventListener('click', function (e) {
             if (
               e.target.id !== 'themeToggle' &&
@@ -530,9 +607,14 @@
               !e.target.closest('#modeToggle') &&
               !e.target.closest('#themeToggle')
             ) {
+              const willCollapse = !shell.classList.contains('collapsed');
               shell.classList.toggle('collapsed');
+              optionsAnimator.animate(willCollapse);
             }
           });
+
+          optionsAnimator.sync(shell.classList.contains('collapsed'));
+          window.addEventListener('resize', () => optionsAnimator.sync(shell.classList.contains('collapsed')));
         } catch (error) {
           console.error('初始化失败:', error);
           document.getElementById('optionsGrid').innerHTML =
