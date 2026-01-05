@@ -80,16 +80,17 @@
         contain: content;
       }
 
-      .options-container.removing {
-        animation: removeContainer 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      .options-container.collapsed .options-grid {
+        max-height: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        opacity: 0;
       }
 
-      @keyframes removeContainer {
-        to {
-          opacity: 0;
-          transform: scale(0.95) translateY(-10px);
-          filter: blur(10px);
-        }
+      .options-container.collapsed .option-item {
+        transform: translateY(-6px) scale(0.98);
+        opacity: 0;
+        pointer-events: none;
       }
 
       .options-header {
@@ -99,6 +100,7 @@
         padding: 14px 18px;
         background: linear-gradient(135deg, var(--dark-red) 0%, var(--blood-red) 100%);
         position: relative;
+        cursor: pointer;
       }
 
       .header-left {
@@ -118,7 +120,14 @@
         letter-spacing: 0.5px;
       }
 
-      .theme-toggle {
+      .header-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .theme-toggle,
+      .mode-toggle {
         width: 28px;
         height: 28px;
         background: rgba(0, 0, 0, 0.2);
@@ -133,7 +142,16 @@
         justify-content: center;
       }
 
-      .theme-toggle:hover {
+      .mode-toggle {
+        width: auto;
+        min-width: 72px;
+        padding: 0 8px;
+        font-size: 12px;
+        letter-spacing: 0.5px;
+      }
+
+      .theme-toggle:hover,
+      .mode-toggle:hover {
         background: rgba(255, 255, 255, 0.15);
         transform: scale(1.05);
       }
@@ -143,6 +161,11 @@
         display: grid;
         grid-template-columns: 1fr;
         gap: 10px;
+        max-height: 1000px;
+        overflow: hidden;
+        transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+          padding 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+          opacity 0.25s ease;
       }
 
       @media (min-width: 480px) {
@@ -169,6 +192,25 @@
         animation: fadeIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
       }
 
+      .option-item::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(120deg, rgba(255, 255, 255, 0.45), transparent 55%);
+        opacity: 0;
+        transition: opacity 0.25s ease;
+        pointer-events: none;
+      }
+
+      [data-theme='dark'] .option-item::before {
+        background: linear-gradient(120deg, rgba(255, 255, 255, 0.08), transparent 55%);
+      }
+
+      .option-text {
+        display: inline-block;
+        transition: transform 0.25s ease, letter-spacing 0.25s ease;
+      }
+
       @keyframes fadeIn {
         from {
           opacity: 0;
@@ -180,32 +222,23 @@
         }
       }
 
-      .option-item.sending {
-        animation: sendEffect 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-      }
-
-      @keyframes sendEffect {
-        0% {
-          transform: scale(1);
-        }
-        40% {
-          transform: scale(1.1);
-          background: var(--blood-red);
-          color: #fff;
-          box-shadow: 0 0 20px var(--blood-red);
-        }
-        100% {
-          transform: scale(0);
-          opacity: 0;
-          filter: blur(10px);
-        }
-      }
-
       .option-item:hover {
         background: var(--hover-bg);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        transform: translateX(6px);
         border-color: var(--light-red);
+      }
+
+      .option-item:hover::before {
+        opacity: 1;
+      }
+
+      .option-item:hover .option-text {
+        transform: translateX(2px);
+        letter-spacing: 0.2px;
+      }
+
+      .option-item:active {
+        transform: translateX(3px);
       }
 
       .success-message {
@@ -257,12 +290,15 @@
   <body>
     <div id="options-wrapper">
       <div class="options-container" id="options-container">
-        <div class="options-header">
+        <div class="options-header" id="options-header">
           <div class="header-left">
             <div class="options-icon">💬</div>
             <div class="options-title">快速回复选项</div>
           </div>
-          <button class="theme-toggle" onclick="toggleTheme(event)">🌓</button>
+          <div class="header-controls">
+            <button class="mode-toggle" id="mode-toggle" onclick="toggleMode(event)">直接发送</button>
+            <button class="theme-toggle" onclick="toggleTheme(event)">🌓</button>
+          </div>
         </div>
         <div class="options-grid" id="options-grid"></div>
       </div>
@@ -271,10 +307,21 @@
     <div class="success-message" id="success-message">已发送</div>
 
     <script>
+      let currentMode = 2;
+
       const triggerQuickReply = text => {
         if (!text || ['…', '...'].includes(text.trim()) || text.trim().length === 0) return;
         if (typeof triggerSlash === 'function') {
-          triggerSlash(`/send ${text}|/trigger`);
+          if (currentMode === 1) {
+            triggerSlash(`/send ${text}|/trigger`);
+          } else if (currentMode === 2) {
+            triggerSlash(`/setinput ${text}`);
+          } else if (currentMode === 3) {
+            const $ = window.parent.$;
+            const currentInput = $('#send_textarea').val() || '';
+            const newInput = currentInput ? `${currentInput}\n${text}` : text;
+            triggerSlash(`/setinput ${newInput}`);
+          }
         } else {
           console.log('SillyTavern environment not detected. Would send:', text);
         }
@@ -293,17 +340,47 @@
           const newTheme = e.newValue || 'dark';
           document.documentElement.setAttribute('data-theme', newTheme);
         }
+        if (e.key === 'forum-mode') {
+          initMode(e.newValue);
+        }
       }
 
-      function removeOptionsContainer() {
+      function updateModeButton() {
+        const button = document.getElementById('mode-toggle');
+        if (!button) return;
+        button.textContent =
+          currentMode === 1 ? '直接发送' : currentMode === 2 ? '仅输入' : '追加输入';
+        button.title =
+          currentMode === 1
+            ? '模式1：直接发送'
+            : currentMode === 2
+              ? '模式2：仅输入覆盖'
+              : '模式3：追加输入';
+      }
+
+      function initMode(savedValue) {
+        const parsed = Number.parseInt(savedValue || localStorage.getItem('forum-mode') || '2', 10);
+        currentMode = [1, 2, 3].includes(parsed) ? parsed : 2;
+        updateModeButton();
+      }
+
+      function toggleMode(event) {
+        event.stopPropagation();
+        currentMode = currentMode % 3 + 1;
+        localStorage.setItem('forum-mode', String(currentMode));
+        updateModeButton();
+      }
+
+      function setOptionsCollapsed(collapsed) {
         const container = document.getElementById('options-container');
-        const wrapper = document.getElementById('options-wrapper');
+        if (!container) return;
+        container.classList.toggle('collapsed', collapsed);
+      }
 
-        container.classList.add('removing');
-
-        setTimeout(() => {
-          wrapper.remove();
-        }, 400);
+      function toggleOptionsCollapsed() {
+        const container = document.getElementById('options-container');
+        if (!container) return;
+        container.classList.toggle('collapsed');
       }
 
       function showSuccessMessage() {
@@ -337,7 +414,10 @@
             optionElement.style.fontSize = '13px';
           }
 
-          optionElement.textContent = option;
+          const optionText = document.createElement('span');
+          optionText.className = 'option-text';
+          optionText.textContent = option;
+          optionElement.appendChild(optionText);
           optionElement.style.animationDelay = `${index * 0.05}s`;
           fragment.appendChild(optionElement);
         });
@@ -349,22 +429,27 @@
         const optionItem = event.target.closest('.option-item');
         if (!optionItem) return;
 
-        optionItem.classList.add('sending');
-
         const optionText = optionItem.textContent.trim();
         triggerQuickReply(optionText);
 
         showSuccessMessage();
 
-        setTimeout(() => {
-          removeOptionsContainer();
-        }, 500);
+        if (currentMode !== 3) {
+          setTimeout(() => {
+            setOptionsCollapsed(true);
+          }, 500);
+        }
       });
 
       window.addEventListener('storage', syncThemeFromStorage);
 
       setTimeout(function () {
         initTheme();
+        initMode();
+        document.getElementById('options-header')?.addEventListener('click', event => {
+          if (event.target.closest('.header-controls')) return;
+          toggleOptionsCollapsed();
+        });
         const chat_message = getChatMessages(getCurrentMessageId())[0];
         const match = chat_message.message.match(/<options>((?:(?!<options>).)*?)<\/options>/s);
         const optionsData = match ? match[1] : '';
