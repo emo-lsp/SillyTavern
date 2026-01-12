@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>母上攻略</title>
+    <style>
+      :root {
+        --paper-bg: #eef4fb;
+        --card-bg: #f7fbff;
+        --text-main: #1b2a38;
+        --text-muted: #5a6a79;
+        --border-color: #c7d6e6;
+        --shadow-color: rgba(20, 38, 58, 0.18);
+        --tag-bg: rgba(82, 135, 185, 0.16);
+        --tag-color: #2c6aa3;
+        --accent: #4b89c4;
+        --accent-pink: #d4739a;
+        --accent-rose: #c76b8a;
+        --line-color: rgba(156, 185, 215, 0.4);
+        --spine: rgba(91, 128, 168, 0.16);
+        --staple: #97a6b6;
+        --grid-line: rgba(156, 185, 215, 0.18);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "STSong", "Songti SC", "SimSun", serif;
+        background: transparent;
+        color: var(--text-main);
+        padding: 12px;
+        line-height: 1.5;
+        font-size: 14px;
+      }
+
+      .folder-frame {
+        max-width: 720px;
+        margin: 0 auto;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 16px 36px var(--shadow-color);
+      }
+
+      .folder-shell {
+        position: relative;
+        padding: 16px 18px 18px 56px;
+        border-radius: 18px;
+        border: 1px solid var(--border-color);
+        background-color: var(--paper-bg);
+        background-image:
+          linear-gradient(transparent 21px, var(--grid-line) 22px),
+          linear-gradient(90deg, transparent 21px, var(--grid-line) 22px);
+        background-size: 22px 22px;
+      }
+
+      .folder-shell::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 40px;
+        background: linear-gradient(180deg, var(--spine), transparent 60%);
+        border-right: 1px solid var(--border-color);
+      }
+
+      .folder-shell::after {
+        content: "";
+        position: absolute;
+        left: 16px;
+        top: 28px;
+        width: 10px;
+        height: 10px;
+        border: 2px solid var(--staple);
+        border-radius: 50%;
+        box-shadow:
+          0 90px 0 0 var(--staple),
+          0 180px 0 0 var(--staple),
+          0 270px 0 0 var(--staple),
+          0 360px 0 0 var(--staple),
+          0 450px 0 0 var(--staple);
+        opacity: 0.8;
+      }
+
+      .folder-header {
+        position: relative;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 12px;
+        padding-bottom: 12px;
+        border-bottom: 1px dashed var(--border-color);
+        margin-bottom: 16px;
+      }
+
+      .brand-block {
+        border: 1px solid var(--border-color);
+        background: var(--card-bg);
+        border-radius: 14px;
+        padding: 10px 14px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        box-shadow: 0 8px 18px var(--shadow-color);
+      }
+
+      .brand-code {
+        font-size: 0.7rem;
+        letter-spacing: 0.2em;
+        color: var(--text-muted);
+      }
+
+      .brand-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: var(--text-main);
+      }
+
+      .author-tag {
+        font-size: 0.78rem;
+        padding: 3px 8px;
+        background: var(--tag-bg);
+        border-radius: 999px;
+        color: var(--tag-color);
+      }
+
+      .content-area {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .info-card {
+        position: relative;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 6px 16px var(--shadow-color);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .info-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 24px var(--shadow-color);
+      }
+
+      .info-card::before {
+        content: "";
+        position: absolute;
+        top: -6px;
+        right: 18px;
+        width: 42px;
+        height: 12px;
+        background: rgba(82, 135, 185, 0.18);
+        border: 1px dashed rgba(82, 135, 185, 0.35);
+        border-radius: 4px;
+        transform: rotate(-2deg);
+      }
+
+      .card-header {
+        padding: 10px 14px;
+        font-size: 0.9rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        border-bottom: 1px dashed var(--border-color);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .card-header.pink {
+        background: linear-gradient(90deg, rgba(212, 115, 154, 0.15), transparent);
+        color: var(--accent-pink);
+      }
+
+      .card-header.blue {
+        background: linear-gradient(90deg, rgba(75, 137, 196, 0.15), transparent);
+        color: var(--accent);
+      }
+
+      .card-header.rose {
+        background: linear-gradient(90deg, rgba(199, 107, 138, 0.15), transparent);
+        color: var(--accent-rose);
+      }
+
+      .card-header.gold {
+        background: linear-gradient(90deg, rgba(196, 160, 75, 0.15), transparent);
+        color: #a08040;
+      }
+
+      .card-body {
+        padding: 12px 14px;
+      }
+
+      .notice-box {
+        padding: 10px 12px;
+        background: rgba(82, 135, 185, 0.08);
+        border-left: 3px solid var(--accent);
+        font-size: 0.85rem;
+        line-height: 1.7;
+        color: var(--text-muted);
+      }
+
+      .notice-box.warning {
+        border-left-color: var(--accent-pink);
+        background: rgba(212, 115, 154, 0.08);
+      }
+
+      .notice-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 6px;
+      }
+
+      .notice-item:last-child {
+        margin-bottom: 0;
+      }
+
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 10px;
+        background: rgba(82, 135, 185, 0.06);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        margin-bottom: 6px;
+        transition: all 0.15s ease;
+      }
+
+      .info-row:hover {
+        background: rgba(82, 135, 185, 0.12);
+        transform: translateX(2px);
+      }
+
+      .info-row:last-child {
+        margin-bottom: 0;
+      }
+
+      .info-label {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .info-label::before {
+        content: "▸";
+        color: var(--accent);
+        font-size: 0.7rem;
+      }
+
+      .info-value {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-main);
+      }
+
+      .community-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+      }
+
+      .community-card {
+        background: linear-gradient(135deg, var(--accent), #3a7ab8);
+        color: #fff;
+        padding: 18px 14px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        box-shadow: 0 6px 16px var(--shadow-color);
+      }
+
+      .community-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 24px var(--shadow-color);
+      }
+
+      .community-card:active {
+        transform: translateY(1px);
+      }
+
+      .community-icon {
+        font-size: 1.8em;
+        margin-bottom: 8px;
+      }
+
+      .community-title {
+        font-size: 0.95em;
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+
+      .community-info {
+        font-size: 0.75em;
+        opacity: 0.9;
+        line-height: 1.5;
+      }
+
+      .opening-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 12px;
+      }
+
+      .opening-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 14px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        box-shadow: 0 4px 12px var(--shadow-color);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .opening-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(90deg, var(--accent-pink), transparent);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .opening-card:hover::before {
+        opacity: 1;
+      }
+
+      .opening-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px var(--shadow-color);
+        border-color: var(--accent-pink);
+      }
+
+      .opening-card:active {
+        transform: translateY(1px);
+      }
+
+      .opening-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, var(--accent-pink), var(--accent-rose));
+        color: #fff;
+        padding: 3px 10px;
+        font-size: 0.7em;
+        margin-bottom: 8px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        border-radius: 4px;
+        box-shadow: 0 2px 6px rgba(212, 115, 154, 0.3);
+      }
+
+      .opening-title {
+        font-size: 1em;
+        font-weight: 700;
+        color: var(--accent-pink);
+        margin-bottom: 8px;
+      }
+
+      .opening-desc {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        line-height: 1.7;
+      }
+
+      .footer-note {
+        text-align: center;
+        padding: 18px;
+        font-size: 1.1em;
+        font-weight: 700;
+        color: var(--accent);
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        box-shadow: 0 4px 12px var(--shadow-color);
+        position: relative;
+      }
+
+      .footer-note::before,
+      .footer-note::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 50%;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      }
+
+      .footer-note::before {
+        top: 6px;
+      }
+
+      .footer-note::after {
+        bottom: 6px;
+      }
+
+      .preset-note {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        padding: 10px 12px;
+        background: rgba(82, 135, 185, 0.08);
+        border-left: 3px solid var(--accent);
+        margin-top: 10px;
+        border-radius: 0 8px 8px 0;
+      }
+
+      .qq-warning {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 12px;
+        padding: 10px 14px;
+        background: linear-gradient(90deg, rgba(212, 115, 154, 0.15), rgba(199, 107, 138, 0.08));
+        border: 1px dashed var(--accent-pink);
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--accent-pink);
+      }
+
+      @media (max-width: 640px) {
+        body {
+          padding: 8px;
+        }
+
+        .folder-shell {
+          padding: 14px 12px 16px 44px;
+          border-radius: 16px;
+        }
+
+        .folder-header {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .opening-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .community-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="folder-frame">
+      <div class="folder-shell">
+        <header class="folder-header">
+          <div class="brand-block">
+            <span class="brand-code">档案 MS-07</span>
+            <span class="brand-title">母上攻略</span>
+            <span class="author-tag">作者：emo的lsp</span>
+          </div>
+        </header>
+
+        <div class="content-area">
+          <div class="info-card">
+            <div class="card-header pink">
+              <span>▸ 版权声明</span>
+            </div>
+            <div class="card-body">
+              <div class="notice-box warning">
+                <div class="notice-item">
+                  <span>📌</span>
+                  <span>这张角色卡是免费的，永远禁止商业化行为。如果你是购买获得，请立即退款并向购买平台举报死妈贩卖者，维护创作者和您自身的权益。</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <div class="card-header pink">
+              <span>▸ 转载声明</span>
+            </div>
+            <div class="card-body">
+              <div class="notice-box warning">
+                <div class="notice-item">
+                  <span>⚠</span>
+                  <span>未经作者明确授权，严禁将本作品转载至其他任何平台。</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <div class="card-header blue">
+              <span>▸ 角色简介</span>
+            </div>
+            <div class="card-body">
+              <div class="info-row">
+                <span class="info-label">角色名称</span>
+                <span class="info-value">{{user}}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">角色定位</span>
+                <span class="info-value">高三学生，郑怡云之子</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">当前状态</span>
+                <span class="info-value">距离高考还有一百多天</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <div class="card-header blue">
+              <span>▸ 加入社群</span>
+            </div>
+            <div class="card-body">
+              <div class="community-grid">
+                <div class="community-card" onclick="copyQQGroup()">
+                  <div class="community-icon">🐧</div>
+                  <div class="community-title">企鹅群</div>
+                  <div class="community-info">点击复制群号<br />发卡会有提醒哦~</div>
+                </div>
+                <div class="community-card" onclick="openDiscordWithConfirm()">
+                  <div class="community-icon">💬</div>
+                  <div class="community-title">Discord服务器</div>
+                  <div class="community-info">点击打开链接</div>
+                </div>
+              </div>
+              <div class="qq-warning">
+                <span>⚠️</span>
+                <span>秒退群勿入，群里没有角色卡</span>
+              </div>
+              <div class="preset-note">
+                发卡会有提醒，欢迎加入闲聊——酒馆sillytavern相关...或者更多...
+              </div>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <div class="card-header rose">
+              <span>▸ 点击|开启故事</span>
+            </div>
+            <div class="card-body">
+              <div class="opening-grid">
+                <div class="opening-card" onclick="switchToOpening(1)">
+                  <div class="opening-badge">初始剧情</div>
+                  <div class="opening-title">1. 补药事件</div>
+                  <div class="opening-desc">
+                    距离高考还有一百三十七天。妈妈给你熬了一碗药膳鸡汤，说是补脑提神的。可那碗汤里放了鹿茸，喝下去之后身体开始燥热难耐...
+                  </div>
+                </div>
+
+                <div class="opening-card" onclick="switchToOpening(2)">
+                  <div class="opening-badge">危机剧情</div>
+                  <div class="opening-title">2. 质问风暴</div>
+                  <div class="opening-desc">
+                    妈妈先是给了你一巴掌，你发现她的手机屏幕亮着，画面里是你和安诺的亲密视频。她的脸色白得吓人，眼眶泛红...
+                  </div>
+                </div>
+
+                <div class="opening-card" onclick="switchToOpening(3)">
+                  <div class="opening-badge">禁忌剧情</div>
+                  <div class="opening-title">3. 醉夜错肏</div>
+                  <div class="opening-desc">
+                    书房的门没有锁。你以为床上躺着的是依依，却在肏入后发现那是喝醉酒的妈妈。理智与欲望在黑暗中交战...
+                  </div>
+                </div>
+
+                <div class="opening-card" onclick="switchToOpening(4)">
+                  <div class="opening-badge">治疗剧情</div>
+                  <div class="opening-title">4. 福利初治</div>
+                  <div class="opening-desc">
+                    妈妈穿着深灰色OL套装，铁灰色超薄连裤丝袜。这是你们约定好的第一次"福利治疗"——只能摸腿，手不许往上，超过十分钟自动结束...
+                  </div>
+                </div>
+
+                <div class="opening-card" onclick="switchToOpening(5)">
+                  <div class="opening-badge">经典剧情</div>
+                  <div class="opening-title">5. 一夜夫妻</div>
+                  <div class="opening-desc">
+                    高考发挥正常成绩顺利过线被北商录取。约定当天你精心准备烛光晚餐并用全部积蓄购买两千多元钻戒为母亲戴上，她最终默许戒指留在手上。当晚你正式插入母亲体内开始激烈的性交...
+                  </div>
+                </div>
+
+                <div class="opening-card" onclick="switchToOpening(6)">
+                  <div class="opening-badge">真相剧情</div>
+                  <div class="opening-title">6. 流产真相</div>
+                  <div class="opening-desc">
+                    妈出差回来那天，你终于问出了那个问题——孩子是怎么没的？她告诉你，那天接到你被车撞的电话，一路跑到医院，孩子就这样没了...
+                  </div>
+                </div>
+
+                <div class="opening-card" onclick="switchToOpening(7)">
+                  <div class="opening-badge">终章剧情</div>
+                  <div class="opening-title">7. 喜堂春事</div>
+                  <div class="opening-desc">
+                    和依依的婚礼——接亲之前，你躲进了新房。新郎官被自己的身体反应困住了，而妈妈穿着藏青色旗袍走了进来...
+                  </div>
+                </div>
+
+                <div class="opening-card" onclick="switchToOpening(8)">
+                  <div class="opening-badge">全家捅剧情</div>
+                  <div class="opening-title">8. 人生赢家</div>
+                  <div class="opening-desc">
+                    和依依婚礼四年后，你已经大学毕业正式开始工作一月余，四年了。从那个惹祸被叫家长的高三学生，到现在这个拥有妻子、情人、复杂家庭关系的男人。有时候你也会想，这一切是怎么变成这样的。但更多时候，你不想去想。日子就这么过下去，挺好。
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-card">
+            <div class="card-header gold">
+              <span>▸ 使用前必读</span>
+            </div>
+            <div class="card-body">
+              <div class="notice-box">
+                <div class="notice-item">
+                  <span>✅</span>
+                  <span>必须安装并启用【提示词模板】</span>
+                </div>
+                <div class="notice-item">
+                  <span>✅</span>
+                  <span>必须安装并更新【酒馆助手】至最新版</span>
+                </div>
+                <div class="notice-item">
+                  <span>❌</span>
+                  <span>必须关闭小白X的【渲染开关】，没装的话忽略</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="footer-note">准备好开始攻略了吗？</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function copyQQGroup() {
+        const groupNumber = '151611202';
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard
+            .writeText(groupNumber)
+            .then(() => {
+              if (typeof triggerSlash === 'function') {
+                triggerSlash('/echo severity=success 企鹅群号已复制到剪贴板！');
+              } else {
+                alert('企鹅群号已复制：' + groupNumber);
+              }
+            })
+            .catch(() => {
+              fallbackCopy(groupNumber);
+            });
+        } else {
+          fallbackCopy(groupNumber);
+        }
+      }
+
+      function fallbackCopy(text) {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+          document.execCommand('copy');
+          if (typeof triggerSlash === 'function') {
+            triggerSlash('/echo severity=success 企鹅群号已复制到剪贴板！');
+          } else {
+            alert('企鹅群号已复制：' + text);
+          }
+        } catch (err) {
+          if (typeof triggerSlash === 'function') {
+            triggerSlash('/echo severity=error 复制失败，请手动复制群号：151611202');
+          } else {
+            alert('复制失败，请手动复制群号：151611202');
+          }
+        }
+        document.body.removeChild(textArea);
+      }
+
+      function openDiscordWithConfirm() {
+        if (confirm('即将跳转到Discord服务器，是否继续？')) {
+          window.open('https://discord.gg/x3aKHgfE3u', '_blank');
+        }
+      }
+
+      async function switchToOpening(swipeId) {
+        const clickedCard = event.currentTarget;
+
+        if (clickedCard) {
+          clickedCard.style.opacity = '0.6';
+          clickedCard.style.pointerEvents = 'none';
+        }
+
+        try {
+          const messages = await getChatMessages('0', { include_swipe: true });
+          if (messages && messages[0].swipes && messages[0].swipes[swipeId]) {
+            await setChatMessage(messages[0].swipes[swipeId], 0, {
+              swipe_id: swipeId,
+              refresh: 'display_and_render_current',
+            });
+          } else {
+            throw new Error(`开场白 ${swipeId} 未找到，请确保已按顺序添加所有开场白。`);
+          }
+        } catch (error) {
+          console.error('切换开场白失败:', error);
+          alert(`切换失败: ${error.message}`);
+          if (clickedCard) {
+            clickedCard.style.opacity = '1';
+            clickedCard.style.pointerEvents = 'auto';
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
