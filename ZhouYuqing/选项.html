@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>行动选项</title>
+  <style>
+    :root {
+      --paper-base: #f5efe4;
+      --paper-ink: #1e1e1e;
+      --paper-soft: #f0f0f0;
+      --paper-line: rgba(0, 0, 0, 0.2);
+      --paper-shadow: rgba(0, 0, 0, 0.18);
+      --paper-accent: #222222;
+      --paper-ink-soft: #4a4a4a;
+      --paper-chip: #e2e2e2;
+      --option-ink: #1f1f1f;
+    }
+
+    [data-theme='night'] {
+      --paper-base: #161616;
+      --paper-ink: #d9d9d9;
+      --paper-soft: #202020;
+      --paper-line: rgba(255, 255, 255, 0.2);
+      --paper-shadow: rgba(0, 0, 0, 0.45);
+      --paper-accent: #d5d5d5;
+      --paper-ink-soft: #b4b4b4;
+      --paper-chip: #2a2a2a;
+      --option-ink: #cfcfcf;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "STSong", "Songti SC", "SimSun", serif;
+      background: transparent;
+      color: var(--paper-ink);
+      padding: 6px 10px 0;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: auto;
+      font-weight: 400;
+    }
+
+    .options-wrapper {
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    .collapsed-toggle {
+      display: none;
+      padding: 10px 16px;
+      background: var(--paper-soft);
+      border: 1px solid var(--paper-line);
+      border-radius: 14px 10px 16px 12px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: var(--paper-ink);
+      text-align: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 16px var(--paper-shadow);
+    }
+
+    .collapsed-toggle:hover {
+      background: var(--paper-chip);
+      transform: translateY(-2px);
+    }
+
+    .options-wrapper.collapsed .collapsed-toggle {
+      display: block;
+      animation: fadeSlideIn 0.35s ease;
+    }
+
+    .options-container {
+      position: relative;
+      background: var(--paper-base);
+      border: 1px solid var(--paper-line);
+      border-radius: 16px 12px 18px 14px;
+      padding: 12px 14px 8px;
+      box-shadow: 0 18px 36px var(--paper-shadow);
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 22px, rgba(0, 0, 0, 0.06) 23px),
+        repeating-linear-gradient(90deg, transparent, transparent 18px, rgba(0, 0, 0, 0.03) 19px);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      max-height: 600px;
+      opacity: 1;
+      overflow: hidden;
+    }
+
+    .options-wrapper.collapsed .options-container {
+      max-height: 0;
+      opacity: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      margin-top: 0;
+      border-color: transparent;
+      box-shadow: none;
+    }
+
+    .options-container::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.25), transparent 40%),
+        repeating-linear-gradient(0deg, rgba(80, 80, 90, 0.06) 0, rgba(80, 80, 90, 0.06) 1px, transparent 1px, transparent 28px);
+      pointer-events: none;
+      border-radius: inherit;
+    }
+
+    .options-header {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 10px;
+      margin-bottom: 10px;
+      background: linear-gradient(120deg, rgba(127, 154, 175, 0.12), transparent 50%);
+      border: 1px solid var(--paper-line);
+      border-radius: 10px;
+      z-index: 1;
+    }
+
+    .options-title {
+      font-size: 0.78rem;
+      letter-spacing: 0.2em;
+      color: var(--paper-ink-soft);
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ctrl-btn {
+      min-width: 34px;
+      height: 34px;
+      padding: 0 8px;
+      border-radius: 9px;
+      border: 1px solid var(--paper-line);
+      background: var(--paper-chip);
+      cursor: pointer;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease, background 0.2s ease;
+      color: var(--paper-ink);
+    }
+
+    .ctrl-btn:hover {
+      transform: translateY(-1px);
+      background: var(--paper-soft);
+    }
+
+    .mode-btn {
+      min-width: 60px;
+      font-size: 0.7rem;
+      white-space: nowrap;
+    }
+
+    .mode-btn.active {
+      background: var(--paper-accent);
+      color: var(--paper-base);
+      border-color: var(--paper-accent);
+    }
+
+    .fold-icon {
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .options-grid {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      z-index: 1;
+    }
+
+    @media (max-width: 480px) {
+      .options-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .option-card {
+      position: relative;
+      padding: 10px 14px;
+      background: var(--paper-soft);
+      border: 1px solid var(--paper-line);
+      border-radius: 12px 8px 14px 10px;
+      cursor: pointer;
+      font-size: 0.84rem;
+      color: var(--option-ink);
+      transition: all 0.25s ease;
+      animation: fadeIn 0.35s ease both;
+    }
+
+    .option-card:nth-child(1) { animation-delay: 0.05s; }
+    .option-card:nth-child(2) { animation-delay: 0.1s; }
+    .option-card:nth-child(3) { animation-delay: 0.15s; }
+    .option-card:nth-child(4) { animation-delay: 0.2s; }
+    .option-card:nth-child(5) { animation-delay: 0.25s; }
+
+    .option-card::before {
+      content: "";
+      position: absolute;
+      top: -4px;
+      left: 16px;
+      width: 32px;
+      height: 8px;
+      border-radius: 3px;
+      background: rgba(0, 0, 0, 0.15);
+      border: 1px dashed rgba(0, 0, 0, 0.25);
+      transform: rotate(-2deg);
+    }
+
+    .option-card:hover {
+      transform: translateX(6px);
+      background: rgba(127, 154, 175, 0.15);
+      border-color: var(--paper-accent);
+    }
+
+    .option-card:active {
+      transform: translateX(3px);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      padding: 10px 20px;
+      background: var(--paper-accent);
+      color: var(--paper-base);
+      border-radius: 8px;
+      font-size: 0.82rem;
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 100;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .force-redraw {
+      opacity: 0.999;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="options-wrapper" class="options-wrapper" data-theme="day">
+    <div class="collapsed-toggle" onclick="toggleCollapse()">展开选项 ▼</div>
+    <div class="options-container">
+      <div class="options-header">
+        <div class="options-title">行动选项</div>
+        <div class="header-controls">
+          <button type="button" class="ctrl-btn mode-btn" id="modeBtn" onclick="cycleMode()">发送</button>
+          <button type="button" class="ctrl-btn" onclick="toggleTheme()" id="themeBtn">☀️</button>
+          <button type="button" class="ctrl-btn" onclick="toggleCollapse()">
+            <span class="fold-icon">▲</span>
+          </button>
+        </div>
+      </div>
+      <div class="options-grid" id="optionsGrid"></div>
+    </div>
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <script>
+    const THEME_KEY = 'son-wife-status-theme';
+    const MODE_KEY = 'son-wife-options-mode';
+    const COLLAPSED_KEY = 'son-wife-options-collapsed';
+
+    const MODES = [
+      { id: 'send', label: '发送', desc: '直接发送' },
+      { id: 'input', label: '输入', desc: '填充输入框' },
+      { id: 'append', label: '追加', desc: '追加到输入框' }
+    ];
+
+    let currentMode = 0;
+    let isCollapsed = false;
+
+    const chat_message = getChatMessages(getCurrentMessageId())[0];
+    const match = chat_message.message.match(/<options>([\s\S]*?)<\/options>/);
+    const optionsData = match ? match[1] : '';
+
+    function initTheme() {
+      const saved = localStorage.getItem(THEME_KEY);
+      const wrapper = document.getElementById('options-wrapper');
+      const btn = document.getElementById('themeBtn');
+      if (saved === 'night') {
+        wrapper.setAttribute('data-theme', 'night');
+        btn.textContent = '🌙';
+      } else {
+        wrapper.setAttribute('data-theme', 'day');
+        btn.textContent = '☀️';
+      }
+    }
+
+    function toggleTheme() {
+      const wrapper = document.getElementById('options-wrapper');
+      const btn = document.getElementById('themeBtn');
+      const current = wrapper.getAttribute('data-theme');
+      const next = current === 'night' ? 'day' : 'night';
+      wrapper.setAttribute('data-theme', next);
+      btn.textContent = next === 'night' ? '🌙' : '☀️';
+      localStorage.setItem(THEME_KEY, next);
+    }
+
+    function applyTheme(theme) {
+      const wrapper = document.getElementById('options-wrapper');
+      const btn = document.getElementById('themeBtn');
+      wrapper.setAttribute('data-theme', theme);
+      btn.textContent = theme === 'night' ? '🌙' : '☀️';
+    }
+
+    window.addEventListener('storage', function(e) {
+      if (e.key === THEME_KEY && e.newValue) {
+        applyTheme(e.newValue);
+      }
+    });
+
+    let lastTheme = localStorage.getItem(THEME_KEY) || 'day';
+    setInterval(function() {
+      const currentTheme = localStorage.getItem(THEME_KEY) || 'day';
+      if (currentTheme !== lastTheme) {
+        lastTheme = currentTheme;
+        applyTheme(currentTheme);
+      }
+    }, 300);
+
+    function initMode() {
+      const saved = localStorage.getItem(MODE_KEY);
+      if (saved !== null) {
+        const idx = parseInt(saved, 10);
+        if (idx >= 0 && idx < MODES.length) {
+          currentMode = idx;
+        }
+      }
+      updateModeBtn();
+    }
+
+    function cycleMode() {
+      currentMode = (currentMode + 1) % MODES.length;
+      localStorage.setItem(MODE_KEY, currentMode.toString());
+      updateModeBtn();
+      showToast(MODES[currentMode].desc);
+    }
+
+    function updateModeBtn() {
+      const btn = document.getElementById('modeBtn');
+      btn.textContent = MODES[currentMode].label;
+      btn.classList.toggle('active', currentMode > 0);
+    }
+
+    function initCollapsed() {
+      isCollapsed = false;
+      const wrapper = document.getElementById('options-wrapper');
+      wrapper.classList.remove('collapsed');
+      localStorage.setItem(COLLAPSED_KEY, 'false');
+    }
+
+    function toggleCollapse() {
+      isCollapsed = !isCollapsed;
+      document.getElementById('options-wrapper').classList.toggle('collapsed', isCollapsed);
+      localStorage.setItem(COLLAPSED_KEY, isCollapsed ? 'true' : 'false');
+    }
+
+    function collapseOptions() {
+      isCollapsed = true;
+      document.getElementById('options-wrapper').classList.add('collapsed');
+      localStorage.setItem(COLLAPSED_KEY, 'true');
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1500);
+    }
+
+    function forceTextRedraw() {
+      const wrapper = document.getElementById('options-wrapper');
+      wrapper.classList.add('force-redraw');
+      requestAnimationFrame(() => wrapper.classList.remove('force-redraw'));
+      document.body.style.visibility = 'hidden';
+      void document.body.offsetHeight;
+      document.body.style.visibility = '';
+    }
+
+    function triggerAction(text) {
+      if (typeof triggerSlash !== 'function') {
+        showToast('环境不支持');
+        return;
+      }
+
+      const mode = MODES[currentMode].id;
+
+      if (mode === 'send') {
+        triggerSlash(`/send ${text}|/trigger`);
+        collapseOptions();
+      } else if (mode === 'input') {
+        triggerSlash(`/setinput ${text}`);
+        collapseOptions();
+      } else if (mode === 'append') {
+        const $ = window.parent.$;
+        const currentInput = $('#send_textarea').val() || '';
+        const newInput = currentInput ? `${currentInput}\n${text}` : text;
+        triggerSlash(`/setinput ${newInput}`);
+      }
+
+      showToast(MODES[currentMode].desc + ': ' + text.slice(0, 10) + (text.length > 10 ? '...' : ''));
+    }
+
+    function createOptions(optionsString) {
+      const grid = document.getElementById('optionsGrid');
+      grid.innerHTML = '';
+
+      const options = optionsString
+        .split('|')
+        .map(opt => opt.trim())
+        .filter(opt => opt.length > 0);
+
+      if (options.length === 0) {
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--paper-ink-soft);padding:20px;">暂无选项</div>';
+        return;
+      }
+
+      options.forEach((option, index) => {
+        const card = document.createElement('div');
+        card.className = 'option-card';
+        card.textContent = option;
+        card.onclick = () => triggerAction(option);
+        grid.appendChild(card);
+      });
+    }
+
+    setTimeout(function() {
+      initTheme();
+      initMode();
+      initCollapsed();
+      createOptions(optionsData);
+      forceTextRedraw();
+    }, 0);
+  </script>
+</body>
+</html>
