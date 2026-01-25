@@ -108,6 +108,26 @@
         transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         font-size: 14px;
       }
+      .info-button {
+        height: 28px;
+        padding: 0 10px;
+        border-radius: 6px;
+        background: rgba(0, 0, 0, 0.22);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .info-button:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateY(-1px);
+      }
       .theme-toggle:hover,
       .collapse-toggle:hover {
         background: rgba(255, 255, 255, 0.15);
@@ -124,6 +144,75 @@
       .status-body.collapsed {
         max-height: 0;
         opacity: 0;
+      }
+      .info-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 1200;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
+      }
+      .info-modal.is-open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .info-modal-backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+      }
+      .info-modal-panel {
+        position: relative;
+        width: calc(100% - 32px);
+        max-width: 360px;
+        background: var(--gray);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+        padding: 16px 18px 18px;
+        z-index: 1;
+        transform: translateY(8px);
+        transition: transform 0.25s ease;
+      }
+      .info-modal.is-open .info-modal-panel {
+        transform: translateY(0);
+      }
+      .info-modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 8px;
+      }
+      .info-modal-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text-main);
+      }
+      .info-modal-close {
+        width: 26px;
+        height: 26px;
+        border-radius: 6px;
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-main);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+      }
+      .info-modal-close:hover {
+        background: rgba(255, 255, 255, 0.12);
+      }
+      .info-modal-body {
+        font-size: 13px;
+        line-height: 1.6;
+        color: var(--text-main);
       }
       .status-section {
         border-bottom: 1px solid var(--border);
@@ -519,6 +608,9 @@
             <div class="status-title">妻悦论坛</div>
           </div>
           <div class="header-right">
+            <button class="info-button" onclick="openInfoModal(event)">
+              必看说明
+            </button>
             <button class="theme-toggle" onclick="toggleTheme(event)">
               🌓
             </button>
@@ -702,7 +794,50 @@
         </div>
       </div>
     </div>
+    <div class="info-modal" id="info-modal" aria-hidden="true">
+      <div class="info-modal-backdrop" onclick="closeInfoModal(event)"></div>
+      <div
+        class="info-modal-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="info-modal-title"
+      >
+        <div class="info-modal-header">
+          <div class="info-modal-title" id="info-modal-title">必看说明</div>
+          <button class="info-modal-close" onclick="closeInfoModal(event)">
+            ✕
+          </button>
+        </div>
+        <div class="info-modal-body">
+          图片只会在论坛前端结构中出现，正文没有图片。
+        </div>
+      </div>
+    </div>
     <script>
+      function openInfoModal(event) {
+        if (event) event.stopPropagation();
+        const modal = document.getElementById("info-modal");
+        if (!modal) return;
+        modal.classList.add("is-open");
+        modal.setAttribute("aria-hidden", "false");
+      }
+
+      function closeInfoModal(event) {
+        if (event) event.stopPropagation();
+        const modal = document.getElementById("info-modal");
+        if (!modal) return;
+        modal.classList.remove("is-open");
+        modal.setAttribute("aria-hidden", "true");
+      }
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return;
+        const modal = document.getElementById("info-modal");
+        if (modal && modal.classList.contains("is-open")) {
+          closeInfoModal();
+        }
+      });
+
       function SafeGetValue(obj, path, defaultValue = "N/A") {
         let keys = Array.isArray(path) ? path : path.split(".");
         let current = obj;
