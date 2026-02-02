@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>穿越渣爹 · 开场介绍</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Varela+Round&family=Nunito+Sans:wght@300;400;600;700&family=ZCOOL+XiaoWei&family=Space+Mono:wght@400;700&display=swap');
+
+      :root {
+        color-scheme: light;
+        --bg: #f7f1e8;
+        --bg-soft: #f3ede5;
+        --surface: #fff9f1;
+        --surface-strong: #fff4e7;
+        --border: rgba(140, 120, 100, 0.16);
+        --text: #4b3c2d;
+        --text-muted: #7b6c5f;
+        --primary: #cfa5b8;
+        --primary-strong: #b28598;
+        --mint: #a8c7b4;
+        --accent: #e4b86a;
+        --accent-soft: rgba(228, 184, 106, 0.18);
+        --shadow: 0 24px 60px rgba(112, 85, 60, 0.18);
+        --radius-xl: 28px;
+        --radius-l: 20px;
+        --radius-m: 14px;
+        --radius-s: 10px;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Nunito Sans', 'Varela Round', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+        background: transparent;
+        color: var(--text);
+        line-height: 1.6;
+        padding: 16px;
+        font-size: 14px;
+      }
+
+      .intro-shell {
+        max-width: 860px;
+        margin: 0 auto;
+        background: linear-gradient(140deg, var(--bg), var(--bg-soft));
+        border-radius: var(--radius-xl);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        position: relative;
+      }
+
+      .intro-shell::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 10% 10%, rgba(255, 255, 255, 0.6), transparent 55%);
+        pointer-events: none;
+      }
+
+      .intro-header {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        align-items: center;
+        padding: 20px 24px;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        position: relative;
+        z-index: 1;
+      }
+
+      .brand {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+
+      .brand-kicker {
+        font-size: 12px;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+      }
+
+      .brand-title {
+        font-size: 22px;
+        font-weight: 700;
+        font-family: 'ZCOOL XiaoWei', 'Noto Serif SC', serif;
+        color: var(--text);
+      }
+
+      .brand-sub {
+        font-size: 13px;
+        color: var(--text-muted);
+      }
+
+      .author-tag {
+        font-size: 12px;
+        padding: 4px 10px;
+        background: var(--accent-soft);
+        border-radius: 999px;
+        color: var(--text-muted);
+        border: 1px dashed var(--border);
+        display: inline-block;
+      }
+
+      .status-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        font-size: 12px;
+        color: var(--text);
+        font-family: 'Space Mono', 'Nunito Sans', monospace;
+      }
+
+      .intro-body {
+        padding: 20px 24px 28px;
+        display: grid;
+        gap: 16px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .card {
+        background: var(--surface-strong);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-l);
+        box-shadow: 0 12px 26px rgba(112, 85, 60, 0.12);
+        overflow: hidden;
+      }
+
+      .card-header {
+        padding: 10px 16px;
+        font-size: 0.88rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        color: var(--text);
+        background: rgba(207, 165, 184, 0.18);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .card-header.warn {
+        background: linear-gradient(90deg, rgba(180, 100, 100, 0.18), transparent);
+        color: #8b4513;
+      }
+
+      .card-body {
+        padding: 14px 16px 16px;
+      }
+
+      .notice-box {
+        padding: 10px 12px;
+        background: rgba(255, 255, 255, 0.6);
+        border-left: 3px solid var(--text-muted);
+        font-size: 0.84rem;
+        line-height: 1.7;
+        color: var(--text-muted);
+        border-radius: 0 var(--radius-s) var(--radius-s) 0;
+      }
+
+      .notice-box.warning {
+        border-left-color: #8b4513;
+        background: rgba(139, 69, 19, 0.08);
+      }
+
+      .notice-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 6px;
+      }
+
+      .notice-item:last-child {
+        margin-bottom: 0;
+      }
+
+      .info-row {
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        gap: 12px;
+        padding: 10px 12px;
+        border-radius: var(--radius-s);
+        background: rgba(255, 255, 255, 0.6);
+        border: 1px solid var(--border);
+        margin-bottom: 8px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .info-row:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 18px rgba(112, 85, 60, 0.14);
+      }
+
+      .info-row:last-child {
+        margin-bottom: 0;
+      }
+
+      .info-label {
+        color: var(--text-muted);
+        font-size: 12px;
+      }
+
+      .info-value {
+        font-weight: 600;
+        color: var(--text);
+      }
+
+      .character-image {
+        width: 100%;
+        border-radius: var(--radius-m);
+        display: block;
+        border: 1px solid var(--border);
+        box-shadow: 0 10px 22px rgba(112, 85, 60, 0.14);
+      }
+
+      .image-caption {
+        margin-top: 10px;
+        font-size: 12px;
+        color: var(--text-muted);
+        text-align: center;
+      }
+
+      .opening-card {
+        background: #fffdf9;
+        border-radius: var(--radius-m);
+        border: 1px solid var(--border);
+        padding: 14px;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      }
+
+      .opening-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(207, 165, 184, 0.6);
+        box-shadow: 0 16px 30px rgba(112, 85, 60, 0.16);
+      }
+
+      .opening-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        background: rgba(207, 165, 184, 0.2);
+        color: var(--primary-strong);
+        font-weight: 600;
+      }
+
+      .opening-title {
+        margin-top: 8px;
+        font-size: 16px;
+        font-weight: 700;
+        font-family: 'ZCOOL XiaoWei', 'Noto Serif SC', serif;
+        color: var(--text);
+      }
+
+      .opening-desc {
+        margin-top: 6px;
+        font-size: 13px;
+        color: var(--text-muted);
+      }
+
+      .opening-stats {
+        margin-top: 10px;
+        display: grid;
+        gap: 6px;
+        font-size: 12px;
+        color: var(--text);
+      }
+
+      .opening-stats .stat-value {
+        font-family: 'Space Mono', 'Nunito Sans', monospace;
+        color: var(--primary-strong);
+        font-weight: 700;
+      }
+
+      .community-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+      }
+
+      .community-card {
+        border-radius: var(--radius-m);
+        border: 1px solid var(--border);
+        padding: 14px 12px;
+        background: rgba(255, 255, 255, 0.7);
+        text-align: center;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      }
+
+      .community-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(168, 199, 180, 0.8);
+        box-shadow: 0 14px 26px rgba(112, 85, 60, 0.14);
+      }
+
+      .community-icon {
+        font-size: 24px;
+      }
+
+      .community-title {
+        margin-top: 6px;
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .community-info {
+        margin-top: 4px;
+        font-size: 12px;
+        color: var(--text-muted);
+        line-height: 1.5;
+      }
+
+      .notice-tip {
+        margin-top: 10px;
+        padding: 8px 10px;
+        border-radius: var(--radius-s);
+        background: rgba(228, 184, 106, 0.12);
+        border: 1px dashed rgba(228, 184, 106, 0.5);
+        font-size: 12px;
+        color: var(--text-muted);
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+
+      .footer-note {
+        text-align: center;
+        font-size: 12px;
+        color: var(--text-muted);
+        padding: 10px 0 6px;
+        letter-spacing: 0.12em;
+      }
+
+      @media (max-width: 640px) {
+        .intro-header {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+
+        .brand {
+          gap: 4px;
+        }
+
+        .author-tag {
+          margin-top: 2px;
+        }
+
+        .status-chip {
+          justify-self: start;
+          padding: 6px 12px;
+          font-size: 11px;
+        }
+
+        .info-row {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="intro-shell">
+      <header class="intro-header">
+        <div class="brand">
+          <div class="brand-kicker">Opening / Introduction</div>
+          <div class="brand-title">穿越渣爹</div>
+          <span class="author-tag">作者：emo的lsp</span>
+        </div>
+        <div class="status-chip">LIGHT · 2026</div>
+      </header>
+
+      <div class="intro-body">
+        <section class="card">
+          <div class="card-header warn">▸ 版权声明</div>
+          <div class="card-body">
+            <div class="notice-box warning">
+              <div class="notice-item">
+                <span>📌</span>
+                <span>这张角色卡是免费的，永远禁止商业化行为。如果你是购买获得，请立即退款并向购买平台举报死妈贩卖者，维护创作者和您自身的权益。</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header warn">▸ 转载声明</div>
+          <div class="card-body">
+            <div class="notice-box warning">
+              <div class="notice-item">
+                <span>⚠</span>
+                <span>未经作者明确授权，严禁将本作品转载至其他任何平台。</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">▸ 角色简介</div>
+          <div class="card-body">
+            <div class="info-row">
+              <span class="info-label">角色名称</span>
+              <span class="info-value">{{user}}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">身份定位</span>
+              <span class="info-value">穿越而来的“父亲”身份</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">剧情关键词</span>
+              <span class="info-value">命运改写 · 家族关系 · 逆风翻盘</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">▸ 白诗涵</div>
+          <div class="card-body">
+            <img
+              class="character-image"
+              src="https://gitgud.io/opus5/other/-/raw/master/CG/%E7%99%BD%E8%AF%97%E6%B6%B52.png"
+              alt="角色主视觉"
+            />
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">▸ 加入社群</div>
+          <div class="card-body">
+            <div class="community-grid">
+              <div class="community-card" onclick="copyQQGroup()">
+                <div class="community-icon">🐧</div>
+                <div class="community-title">企鹅群</div>
+                <div class="community-info">点击复制群号<br />发卡会有提醒哦~</div>
+              </div>
+              <div class="community-card" onclick="openDiscordWithConfirm()">
+                <div class="community-icon">💬</div>
+                <div class="community-title">Discord 服务器</div>
+                <div class="community-info">点击打开链接</div>
+              </div>
+            </div>
+            <div class="notice-tip">
+              <span>⚠️</span>
+              <span>秒退群勿入，群里没有角色卡。</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">▸ 点击 | 开启故事</div>
+          <div class="card-body">
+            <div class="opening-card" onclick="switchToOpening(1)">
+              <div class="opening-badge">开局一</div>
+              <div class="opening-title">逆转开端</div>
+              <div class="opening-desc">
+                你从混乱的记忆中醒来，意识到自己穿越成了“渣爹”。是顺势沉沦，还是改写命运，一切从这一刻开始。
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="footer-note">穿越渣爹 · 开场引导</div>
+      </div>
+    </div>
+
+    <script>
+      function copyQQGroup() {
+        const groupNumber = '151611202';
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard
+            .writeText(groupNumber)
+            .then(() => {
+              if (typeof triggerSlash === 'function') {
+                triggerSlash('/echo severity=success 企鹅群号已复制到剪贴板！');
+              } else {
+                alert('企鹅群号已复制：' + groupNumber);
+              }
+            })
+            .catch(() => {
+              fallbackCopy(groupNumber);
+            });
+        } else {
+          fallbackCopy(groupNumber);
+        }
+      }
+
+      function fallbackCopy(text) {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+          document.execCommand('copy');
+          if (typeof triggerSlash === 'function') {
+            triggerSlash('/echo severity=success 企鹅群号已复制到剪贴板！');
+          } else {
+            alert('企鹅群号已复制：' + text);
+          }
+        } catch (err) {
+          if (typeof triggerSlash === 'function') {
+            triggerSlash('/echo severity=error 复制失败，请手动复制群号：151611202');
+          } else {
+            alert('复制失败，请手动复制群号：151611202');
+          }
+        }
+        document.body.removeChild(textArea);
+      }
+
+      function openDiscordWithConfirm() {
+        if (confirm('即将跳转到 Discord 服务器，是否继续？')) {
+          window.open('https://discord.gg/x3aKHgfE3u', '_blank');
+        }
+      }
+
+      async function switchToOpening(swipeId) {
+        const clickedCard = event.currentTarget;
+        if (clickedCard) {
+          clickedCard.style.opacity = '0.6';
+          clickedCard.style.pointerEvents = 'none';
+        }
+
+        try {
+          const messages = await getChatMessages('0', { include_swipe: true });
+          if (messages && messages[0].swipes && messages[0].swipes[swipeId]) {
+            await setChatMessage(messages[0].swipes[swipeId], 0, {
+              swipe_id: swipeId,
+              refresh: 'display_and_render_current',
+            });
+          } else {
+            throw new Error(`开场白 ${swipeId} 未找到，请确保已添加对应开场白。`);
+          }
+        } catch (error) {
+          const message = error instanceof Error ? error.message : '开场白切换失败，请检查配置。';
+          if (typeof triggerSlash === 'function') {
+            triggerSlash(`/echo severity=error ${message}`);
+          } else {
+            alert(message);
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
