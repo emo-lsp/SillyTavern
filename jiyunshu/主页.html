@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>我的师尊是论坛榜一大姐</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --paper: #fdfbf7;
+        --paper-deep: #f4f1ea;
+        --paper-dark: #e8e1d6;
+        --ink: #1c2420;
+        --ink-soft: #4a5a52;
+        --ink-dim: #7c8b84;
+        --line: rgba(46, 139, 87, 0.18);
+        --jade: #2e8b57;
+        --jade-light: #4bb07a;
+        --gold: #c8a34a;
+        --gold-dim: #b7923d;
+        --hot: #b44a3a;
+        --shadow: 0 18px 40px rgba(20, 35, 28, 0.12);
+        --font-serif: 'Noto Serif SC', 'Songti SC', 'STSong', serif;
+        --font-sans: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      }
+
+      [data-theme='dark'] {
+        --paper: #101814;
+        --paper-deep: #16201b;
+        --paper-dark: #1b2721;
+        --ink: #e7efe9;
+        --ink-soft: #b6c4bb;
+        --ink-dim: #94a39a;
+        --line: rgba(107, 194, 150, 0.22);
+        --jade: #6bc296;
+        --jade-light: #9adab6;
+        --gold: #e1c36a;
+        --gold-dim: #cdb25d;
+        --hot: #ff7a66;
+        --shadow: 0 20px 42px rgba(0, 0, 0, 0.46);
+      }
+
+      body {
+        font-family: var(--font-serif);
+        background: transparent;
+        color: var(--ink);
+        line-height: 1.6;
+        padding: 8px;
+        font-size: 15px;
+      }
+
+      /* ── 主框架 ── */
+      .letter-frame {
+        max-width: 900px;
+        margin: 0 auto;
+        background: var(--paper);
+        border: 1.5px solid var(--line);
+        box-shadow: var(--shadow);
+        position: relative;
+        border-radius: 18px;
+        overflow: hidden;
+      }
+
+      .letter-frame::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(180deg, rgba(46, 139, 87, 0.06), transparent 40%),
+          repeating-linear-gradient(
+            0deg,
+            rgba(46, 139, 87, 0.03) 0,
+            rgba(46, 139, 87, 0.03) 1px,
+            transparent 1px,
+            transparent 28px
+          );
+        pointer-events: none;
+      }
+
+      /* ── 顶部标题栏 ── */
+      .frame-header {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 20px;
+        border-bottom: 1.5px solid var(--line);
+        background: linear-gradient(120deg, rgba(46, 139, 87, 0.08), transparent 60%);
+      }
+
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .seal {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: var(--paper-deep);
+        border: 1.5px solid var(--line);
+        display: grid;
+        place-items: center;
+        font-size: 23px;
+      }
+
+      .header-title {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .title-main {
+        font-size: 22px;
+        letter-spacing: 2px;
+        color: var(--ink);
+        position: relative;
+      }
+
+      .title-main::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: -6px;
+        width: 48px;
+        height: 2px;
+        background: var(--jade);
+        opacity: 0.6;
+      }
+
+      .title-sub {
+        font-size: 13px;
+        color: var(--ink-soft);
+        letter-spacing: 2px;
+        padding-top: 4px;
+      }
+
+      .author-info {
+        font-size: 12px;
+        color: var(--ink-soft);
+        letter-spacing: 1px;
+      }
+
+      /* ── 内容区域 ── */
+      .content-area {
+        position: relative;
+        z-index: 1;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      /* ── 卡片通用 ── */
+      .note-card {
+        border: 1.5px solid var(--line);
+        background: rgba(255, 255, 255, 0.6);
+        position: relative;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        border-radius: 18px;
+        overflow: hidden;
+      }
+
+      .note-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(20, 35, 28, 0.1);
+      }
+
+      .card-header {
+        padding: 10px 14px;
+        border-bottom: 1px dashed var(--line);
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 2px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--ink);
+      }
+
+      .card-header.jade {
+        background: linear-gradient(90deg, rgba(46, 139, 87, 0.1), transparent);
+      }
+
+      .card-header.gold {
+        background: linear-gradient(90deg, rgba(200, 163, 74, 0.12), transparent);
+      }
+
+      .card-body {
+        padding: 14px;
+      }
+
+      /* ── 通知框 ── */
+      .notice-box {
+        padding: 12px 14px;
+        background: var(--paper-deep);
+        border: 1px dashed var(--line);
+        font-size: 14px;
+        line-height: 1.8;
+        color: var(--ink-soft);
+        border-radius: 12px;
+      }
+
+      .notice-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 6px;
+      }
+
+      .notice-item:last-child {
+        margin-bottom: 0;
+      }
+
+      .notice-item span:first-child {
+        flex-shrink: 0;
+      }
+
+      /* ── 信息行 ── */
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 12px;
+        background: var(--paper-deep);
+        border: 1px dashed var(--line);
+        margin-bottom: 8px;
+        transition: all 0.2s ease;
+        border-radius: 12px;
+      }
+
+      .info-row:hover {
+        background: rgba(46, 139, 87, 0.06);
+        transform: translateX(4px);
+      }
+
+      .info-row:last-child {
+        margin-bottom: 0;
+      }
+
+      .info-label {
+        font-size: 13px;
+        color: var(--ink-soft);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .info-label::before {
+        content: '◇';
+        color: var(--jade);
+        font-size: 11px;
+      }
+
+      .info-value {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--ink);
+      }
+
+      /* ── Discord 卡片 ── */
+      .discord-card {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 16px;
+        background: linear-gradient(135deg, var(--jade), var(--jade-light));
+        color: #fff;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        border: 1.5px solid var(--line);
+      }
+
+      .discord-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(46, 139, 87, 0.25);
+      }
+
+      .discord-card:active {
+        transform: translateY(1px);
+        box-shadow: none;
+      }
+
+      .discord-icon {
+        font-size: 1.8em;
+        flex-shrink: 0;
+      }
+
+      .discord-title {
+        font-size: 1.05em;
+        font-weight: 600;
+        margin-bottom: 2px;
+      }
+
+      .discord-info {
+        font-size: 0.8em;
+        opacity: 0.9;
+      }
+
+      /* ── 图片展示框 ── */
+      .gallery-item {
+        position: relative;
+        border-radius: 14px;
+        overflow: hidden;
+        border: 1.5px solid var(--line);
+        background: var(--paper-deep);
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .gallery-item:hover {
+        box-shadow: 0 10px 24px rgba(20, 35, 28, 0.15);
+        border-color: var(--jade);
+      }
+
+      .gallery-item img {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .gallery-caption {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 8px 12px;
+        background: linear-gradient(transparent, rgba(28, 36, 32, 0.75));
+        color: #fff;
+        font-size: 12px;
+        letter-spacing: 1px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .gallery-item:hover .gallery-caption {
+        opacity: 1;
+      }
+
+      /* ── 开场白选择 ── */
+      .opening-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .opening-card {
+        background: var(--paper-deep);
+        border: 1.5px solid var(--line);
+        padding: 14px 16px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        display: flex;
+        gap: 14px;
+        align-items: flex-start;
+        border-radius: 14px;
+      }
+
+      .opening-card:hover {
+        transform: translateX(6px);
+        background: rgba(46, 139, 87, 0.06);
+        border-color: var(--jade);
+      }
+
+      .opening-num {
+        width: 28px;
+        height: 28px;
+        background: var(--jade);
+        color: #fff;
+        display: grid;
+        place-items: center;
+        font-size: 13px;
+        font-weight: 700;
+        flex-shrink: 0;
+        border-radius: 8px;
+      }
+
+      .opening-content {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .opening-title {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--ink);
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .opening-badge {
+        display: inline-block;
+        background: var(--gold);
+        color: #fff;
+        padding: 2px 8px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        border-radius: 4px;
+      }
+
+      .opening-badge.hot {
+        background: var(--hot);
+      }
+
+      .opening-desc {
+        font-size: 13px;
+        color: var(--ink-soft);
+        line-height: 1.6;
+      }
+
+      .opening-meta {
+        font-size: 12px;
+        color: var(--jade);
+        margin-top: 6px;
+        display: flex;
+        gap: 12px;
+      }
+
+      /* ── 底部 ── */
+      .footer-note {
+        text-align: center;
+        padding: 20px;
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--jade);
+        background: var(--paper-deep);
+        border: 1.5px solid var(--line);
+        position: relative;
+        border-radius: 14px;
+      }
+
+      .footer-note::before,
+      .footer-note::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40%;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--line), transparent);
+      }
+
+      .footer-note::before { top: 8px; }
+      .footer-note::after { bottom: 8px; }
+
+      /* ── 响应式 ── */
+      @media (max-width: 600px) {
+        .frame-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+        }
+
+        .author-info {
+          align-self: flex-end;
+        }
+
+        .opening-card {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .opening-num {
+          width: 24px;
+          height: 24px;
+          font-size: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="letter-frame">
+      <div class="frame-header">
+        <div class="header-left">
+          <div class="seal">🏔️</div>
+          <div class="header-title">
+            <span class="title-main">我的师尊是论坛榜一大姐</span>
+            <span class="title-sub">太上峰上的漫长岁月</span>
+          </div>
+        </div>
+        <div class="author-info">作者：emo的lsp</div>
+      </div>
+
+      <div class="content-area">
+        <!-- 版权声明 -->
+        <div class="note-card">
+          <div class="card-header gold">
+            <span>📜</span>
+            <span>版权声明</span>
+          </div>
+          <div class="card-body">
+            <div class="notice-box">
+              <div class="notice-item">
+                <span>📌</span>
+                <span>这张角色卡是免费的，永远禁止商业化行为。如果你是购买获得，请立即退款并向购买平台举报死妈贩卖者，维护创作者和您自身的权益。</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 转载声明 -->
+        <div class="note-card">
+          <div class="card-header gold">
+            <span>⚠️</span>
+            <span>转载声明</span>
+          </div>
+          <div class="card-body">
+            <div class="notice-box">
+              <div class="notice-item">
+                <span>🚫</span>
+                <span>未经作者明确授权，严禁将本作品转载至其他任何平台。</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 故事简介 -->
+        <div class="note-card">
+          <div class="card-header jade">
+            <span>📖</span>
+            <span>故事简介</span>
+          </div>
+          <div class="card-body">
+            <div class="info-row">
+              <span class="info-label">角色名称</span>
+              <span class="info-value">{{user}}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">故事背景</span>
+              <span class="info-value">九州·天道宗·太上峰</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">核心人物</span>
+              <span class="info-value">姬云舒（师尊 / 帝尊境）</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">故事主题</span>
+              <span class="info-value">十六年养成，师徒禁忌之恋</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Discord -->
+        <div class="note-card">
+          <div class="card-header jade">
+            <span>💬</span>
+            <span>加入社群</span>
+          </div>
+          <div class="card-body">
+            <div class="discord-card" onclick="openDiscordWithConfirm()">
+              <div class="discord-icon">💬</div>
+              <div class="discord-text">
+                <div class="discord-title">Discord 服务器</div>
+                <div class="discord-info">点击打开链接，欢迎加入交流</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 图片展示 -->
+        <div class="note-card">
+          <div class="card-header jade">
+            <span>🖼️</span>
+            <span>角色立绘</span>
+          </div>
+          <div class="card-body">
+            <div class="gallery-item" onclick="previewImage(this)">
+              <img
+                src="https://gitgud.io/opus5/other/-/raw/master/CG/姬云舒1.jpg"
+                alt="姬云舒"
+                referrerpolicy="no-referrer"
+              />
+              <div class="gallery-caption">姬云舒 · 寒玉殿</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 开场白选择 -->
+        <div class="note-card">
+          <div class="card-header jade">
+            <span>✨</span>
+            <span>点击·开启故事</span>
+          </div>
+          <div class="card-body">
+            <div class="opening-grid">
+              <div class="opening-card" onclick="switchToOpening(1)">
+                <div class="opening-num">1</div>
+                <div class="opening-content">
+                  <div class="opening-title">
+                    生辰宴
+                    <span class="opening-badge">起点</span>
+                  </div>
+                  <div class="opening-desc">
+                    天元历3847年三月初七，太上峰寒玉殿。十六岁的生辰，师尊备下了能撑起三个宗门一年伙食的排场。宗主领着十二位长老在殿外恭候，而你只想安静地喝完那碗灵米粥。
+                  </div>
+                  <div class="opening-meta">
+                    <span>📍 太上峰·寒玉殿</span>
+                    <span>🗓️ 三月初七</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="opening-card" onclick="switchToOpening(2)">
+                <div class="opening-num">2</div>
+                <div class="opening-content">
+                  <div class="opening-title">归山</div>
+                  <div class="opening-desc">
+                    在外界辗转三个月，从蛮荒秘境打到万妖山脉。传书令被师尊发来的八百多条消息塞爆了，最后一条只有四个字——"你到哪了"。踏入寒玉殿时，她正一瞬不瞬地盯着门口。
+                  </div>
+                  <div class="opening-meta">
+                    <span>📍 太上峰·寒玉殿</span>
+                    <span>🗓️ 六月十四</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="opening-card" onclick="switchToOpening(3)">
+                <div class="opening-num">3</div>
+                <div class="opening-content">
+                  <div class="opening-title">
+                    议事殿
+                    <span class="opening-badge hot">暧昧</span>
+                  </div>
+                  <div class="opening-desc">
+                    议事大殿上，帝尊冷若冰霜地听着宗务汇报。而你的传书令不断震动——「云舒想要抱抱」正在给你发撒娇表情包，问你今天的仙裙好不好看。
+                  </div>
+                  <div class="opening-meta">
+                    <span>📍 天道宗·议事大殿</span>
+                    <span>🗓️ 九月初二</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 使用前必读 -->
+        <div class="note-card">
+          <div class="card-header gold">
+            <span>📋</span>
+            <span>使用前必读</span>
+          </div>
+          <div class="card-body">
+            <div class="notice-box">
+              <div class="notice-item">
+                <span>✅</span>
+                <span>必须安装并启用【提示词模板】</span>
+              </div>
+              <div class="notice-item">
+                <span>✅</span>
+                <span>必须安装并更新【酒馆助手】至最新版</span>
+              </div>
+              <div class="notice-item">
+                <span>❌</span>
+                <span>必须关闭小白X的【渲染开关】，没装的话忽略</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-note">🏔️ 太上峰上，十六年养成 🏔️</div>
+      </div>
+    </div>
+
+    <!-- 图片预览遮罩 -->
+    <div id="imageOverlay" style="
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(0, 0, 0, 0.85);
+      align-items: center;
+      justify-content: center;
+      cursor: zoom-out;
+      padding: 20px;
+    " onclick="this.style.display='none'">
+      <img id="overlayImg" src="" style="
+        max-width: 90%;
+        max-height: 90%;
+        border-radius: 12px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        object-fit: contain;
+      " />
+    </div>
+
+    <script>
+      function previewImage(el) {
+        const img = el.querySelector('img');
+        if (!img || !img.src) return;
+        const overlay = document.getElementById('imageOverlay');
+        const overlayImg = document.getElementById('overlayImg');
+        overlayImg.src = img.src;
+        overlay.style.display = 'flex';
+      }
+
+      function openDiscordWithConfirm() {
+        if (confirm('即将跳转到Discord服务器，是否继续？')) {
+          window.open('https://discord.gg/x3aKHgfE3u', '_blank');
+        }
+      }
+
+      async function switchToOpening(swipeId) {
+        const clickedCard = event.currentTarget;
+
+        if (clickedCard) {
+          clickedCard.style.opacity = '0.6';
+          clickedCard.style.pointerEvents = 'none';
+        }
+
+        try {
+          const messages = await getChatMessages('0', { include_swipe: true });
+          if (messages && messages[0].swipes && messages[0].swipes[swipeId]) {
+            await setChatMessage(messages[0].swipes[swipeId], 0, {
+              swipe_id: swipeId,
+              refresh: 'display_and_render_current',
+            });
+          } else {
+            throw new Error(`开场白 ${swipeId + 1} 未找到，请确保已按顺序添加所有开场白。`);
+          }
+        } catch (error) {
+          console.error('切换开场白失败:', error);
+          alert(`切换失败: ${error.message}`);
+          if (clickedCard) {
+            clickedCard.style.opacity = '1';
+            clickedCard.style.pointerEvents = 'auto';
+          }
+        }
+      }
+
+      /* ── 主题同步（三层机制） ── */
+      var THEME_KEY = 'shizhun-theme';
+      var THEME_EVENT = 'shizhun-theme-change';
+      var themeChannel = typeof BroadcastChannel !== 'undefined'
+        ? new BroadcastChannel('shizhun-theme-sync') : null;
+
+      function applyTheme(theme) {
+        if (theme === 'dark') {
+          document.body.setAttribute('data-theme', 'dark');
+        } else {
+          document.body.removeAttribute('data-theme');
+        }
+      }
+
+      function syncTheme(theme) {
+        localStorage.setItem(THEME_KEY, theme);
+        applyTheme(theme);
+        window.dispatchEvent(new CustomEvent(THEME_EVENT, { detail: theme }));
+        if (themeChannel) themeChannel.postMessage(theme);
+      }
+
+      // 监听其他页面的主题变化
+      window.addEventListener('storage', function(e) {
+        if (e.key === THEME_KEY) applyTheme(e.newValue || 'light');
+      });
+      window.addEventListener(THEME_EVENT, function(e) {
+        applyTheme((e && e.detail) || 'light');
+      });
+      if (themeChannel) {
+        themeChannel.addEventListener('message', function(e) {
+          applyTheme((e && e.data) || 'light');
+        });
+      }
+
+      // 初始化时读取当前主题
+      applyTheme(localStorage.getItem(THEME_KEY) || 'light');
+    </script>
+  </body>
+</html>
