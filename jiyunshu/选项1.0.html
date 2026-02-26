@@ -452,7 +452,17 @@
       setTimeout(function() {
         bindThemeSync();
         applyTheme(localStorage.getItem(THEME_KEY) || 'light');
-        createOptions('$1');
+
+        // 云注入方式：从当前消息内容中提取 <options> 数据
+        try {
+          var chat_message = getChatMessages(getCurrentMessageId())[0];
+          var match = chat_message.message.match(/<options>([\s\S]*?)<\/options>/);
+          var optionsText = match ? match[1] : '';
+          createOptions(optionsText);
+        } catch (e) {
+          console.error('选项数据提取失败:', e);
+          createOptions('');
+        }
       }, 0);
     </script>
   </body>
