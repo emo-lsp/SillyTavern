@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        background: transparent;
+        -webkit-font-smoothing: antialiased;
+        padding: 6px;
+        font-size: 14px;
+      }
+
+      /* ── 主题变量 (与状态栏同步) ── */
+      :root {
+        --card: rgba(255, 255, 255, 0.97);
+        --card-soft: #f5f3f0;
+        --surface: #f0edea;
+        --line: #e0dbd5;
+        --text: #2a2520;
+        --text-muted: #8a8279;
+        --accent: #c26558;
+        --accent-soft: rgba(194, 101, 88, 0.1);
+        --shadow: rgba(42, 37, 32, 0.12);
+      }
+
+      [data-theme='dark'] {
+        --card: rgba(32, 28, 26, 0.97);
+        --card-soft: #2a2522;
+        --surface: #332e2a;
+        --line: #4a4440;
+        --text: #c8c0b6;
+        --text-muted: #8a8078;
+        --accent: #c4756a;
+        --accent-soft: rgba(196, 117, 106, 0.1);
+        --shadow: rgba(0, 0, 0, 0.35);
+      }
+
+      /* ── 主容器 ── */
+      .options-shell {
+        max-width: 420px;
+        margin: 0 auto;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 16px 12px 18px 14px;
+        box-shadow: 0 10px 30px var(--shadow);
+        overflow: hidden;
+        position: relative;
+      }
+
+      .options-shell::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.15), transparent 40%),
+          repeating-linear-gradient(0deg, rgba(80, 80, 90, 0.03) 0, rgba(80, 80, 90, 0.03) 1px, transparent 1px, transparent 28px);
+        pointer-events: none;
+        border-radius: inherit;
+      }
+
+      [data-theme='dark'] .options-shell::before {
+        background-image:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 40%),
+          repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.02) 0, rgba(255, 255, 255, 0.02) 1px, transparent 1px, transparent 28px);
+      }
+
+      /* ── 头部 ── */
+      .options-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 16px;
+        background: var(--card-soft);
+        border-bottom: 1px solid var(--line);
+        position: relative;
+        z-index: 1;
+        user-select: none;
+      }
+
+      .options-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .options-title::before {
+        content: '▸';
+        color: var(--accent);
+        font-size: 11px;
+      }
+
+      .header-controls {
+        display: flex;
+        gap: 6px;
+      }
+
+      .ctrl-btn {
+        width: 30px;
+        height: 30px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background: var(--card);
+        color: var(--text);
+        font-size: 13px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+      }
+
+      .ctrl-btn:hover {
+        background: var(--accent-soft);
+        border-color: var(--accent);
+      }
+
+      .ctrl-btn:active {
+        transform: scale(0.94);
+      }
+
+      /* ── 模式按钮 ── */
+      .mode-label {
+        font-size: 9px;
+        line-height: 1;
+      }
+
+      /* ── 选项主体 ── */
+      .options-body {
+        padding: 12px;
+        position: relative;
+        z-index: 1;
+        max-height: 600px;
+        opacity: 1;
+        overflow: hidden;
+        transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                    opacity 0.25s ease,
+                    padding 0.3s ease;
+      }
+
+      .options-shell.collapsed .options-body {
+        max-height: 0;
+        opacity: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+
+      .collapse-icon {
+        display: inline-block;
+        font-size: 10px;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .options-shell.collapsed .collapse-icon {
+        transform: rotate(180deg);
+      }
+
+      /* ── 选项网格 ── */
+      .options-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .option-card {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        position: relative;
+        opacity: 0;
+        animation: fadeSlideIn 0.3s ease forwards;
+      }
+
+      .option-card:hover {
+        background: var(--accent-soft);
+        border-color: var(--accent);
+        box-shadow: 0 3px 10px var(--shadow);
+      }
+
+      .option-card:active {
+        box-shadow: none;
+        opacity: 0.7;
+      }
+
+      .option-card.sent {
+        border-color: var(--accent);
+      }
+
+      .option-num {
+        flex-shrink: 0;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--accent);
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        border-radius: 7px;
+      }
+
+      .option-text {
+        flex: 1;
+        font-size: 13px;
+        color: var(--text);
+        line-height: 1.5;
+      }
+
+      .option-arrow {
+        flex-shrink: 0;
+        font-size: 11px;
+        color: var(--text-muted);
+        opacity: 0.5;
+        transition: opacity 0.2s;
+      }
+
+      .option-card:hover .option-arrow {
+        opacity: 1;
+        color: var(--accent);
+      }
+
+      /* ── 空状态 ── */
+      .empty-msg {
+        text-align: center;
+        padding: 16px;
+        color: var(--text-muted);
+        font-size: 13px;
+      }
+
+      /* ── 提示 ── */
+      .toast-msg {
+        position: fixed;
+        top: 12px;
+        left: 50%;
+        transform: translateX(-50%) translateY(-40px);
+        background: var(--accent);
+        color: #fff;
+        padding: 8px 16px;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: 600;
+        z-index: 999;
+        opacity: 0;
+        transition: all 0.3s ease;
+        pointer-events: none;
+        white-space: nowrap;
+      }
+
+      .toast-msg.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      @keyframes fadeSlideIn {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 1ms !important;
+          transition-duration: 1ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="options-root" data-theme="light">
+      <div class="options-shell" id="optionsShell">
+        <div class="options-header">
+          <div class="options-title">行动选项</div>
+          <div class="header-controls">
+            <button class="ctrl-btn" id="modeBtn" title="切换模式" onclick="cycleMode()">
+              <span class="mode-label" id="modeLabel">追加</span>
+            </button>
+            <button class="ctrl-btn" id="themeBtn" onclick="toggleTheme()">☽</button>
+            <button class="ctrl-btn" id="collapseBtn" onclick="toggleCollapse()">
+              <span class="collapse-icon" id="collapseIcon">▲</span>
+            </button>
+          </div>
+        </div>
+        <div class="options-body" id="optionsBody">
+          <div class="options-grid" id="optionsGrid"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast-msg" id="toastMsg"></div>
+
+    <script>
+      var THEME_KEY = 'linnuan-status-theme';
+      var COLLAPSE_KEY = 'linnuan-options-collapsed';
+      var MODE_KEY = 'linnuan-options-mode';
+
+      // 模式: 0=直接发送, 1=仅输入(覆盖), 2=追加输入
+      var modes = [
+        { label: '发送', desc: '直接发送' },
+        { label: '输入', desc: '仅输入(覆盖)' },
+        { label: '追加', desc: '追加输入' }
+      ];
+      var currentMode = 2;
+
+      // ── 主题 ──
+      function getTheme() {
+        return localStorage.getItem(THEME_KEY) === 'dark' ? 'dark' : 'light';
+      }
+
+      function applyTheme(theme) {
+        document.getElementById('options-root').setAttribute('data-theme', theme);
+        document.getElementById('themeBtn').textContent = theme === 'dark' ? '☀' : '☽';
+      }
+
+      function toggleTheme() {
+        var current = getTheme();
+        var next = current === 'dark' ? 'light' : 'dark';
+        localStorage.setItem(THEME_KEY, next);
+        applyTheme(next);
+        // 广播给其他 iframe (状态栏等)
+        broadcastThemeChange(next);
+      }
+
+      function broadcastThemeChange(theme) {
+        // 通知父窗口和兄弟 iframe
+        try {
+          var frames = window.parent.document.querySelectorAll('iframe');
+          for (var i = 0; i < frames.length; i++) {
+            try {
+              var fw = frames[i].contentWindow;
+              if (fw && fw !== window && typeof fw.onThemeChanged === 'function') {
+                fw.onThemeChanged(theme);
+              }
+            } catch(e) {}
+          }
+        } catch(e) {}
+      }
+
+      // 供其他 iframe 调用
+      window.onThemeChanged = function(theme) {
+        localStorage.setItem(THEME_KEY, theme);
+        applyTheme(theme);
+      };
+
+      // 监听 storage 事件 (跨标签页同步)
+      window.addEventListener('storage', function(e) {
+        if (e.key === THEME_KEY) {
+          applyTheme(e.newValue === 'dark' ? 'dark' : 'light');
+        }
+      });
+
+      // ── 折叠 ──
+      function toggleCollapse() {
+        var shell = document.getElementById('optionsShell');
+        var isCollapsed = shell.classList.toggle('collapsed');
+        localStorage.setItem(COLLAPSE_KEY, isCollapsed ? 'true' : 'false');
+      }
+
+      function loadCollapse() {
+        if (localStorage.getItem(COLLAPSE_KEY) === 'true') {
+          document.getElementById('optionsShell').classList.add('collapsed');
+        }
+      }
+
+      // ── 模式 ──
+      function cycleMode() {
+        currentMode = (currentMode + 1) % 3;
+        localStorage.setItem(MODE_KEY, String(currentMode));
+        updateModeUI();
+        showToast(modes[currentMode].desc);
+      }
+
+      function updateModeUI() {
+        document.getElementById('modeLabel').textContent = modes[currentMode].label;
+      }
+
+      function loadMode() {
+        var saved = localStorage.getItem(MODE_KEY);
+        if (saved !== null) {
+          var n = parseInt(saved, 10);
+          if (n >= 0 && n <= 2) currentMode = n;
+        }
+        updateModeUI();
+      }
+
+      // ── Toast ──
+      function showToast(text) {
+        var el = document.getElementById('toastMsg');
+        el.textContent = text;
+        el.classList.add('show');
+        clearTimeout(el._timer);
+        el._timer = setTimeout(function() {
+          el.classList.remove('show');
+        }, 1200);
+      }
+
+      // ── 选项处理 ──
+      function triggerQuickReply(text) {
+        if (typeof triggerSlash !== 'function') return;
+
+        if (currentMode === 0) {
+          // 直接发送
+          triggerSlash('/send ' + text + '|/trigger');
+        } else if (currentMode === 1) {
+          // 仅输入(覆盖)
+          triggerSlash('/setinput ' + text);
+        } else {
+          // 追加输入
+          var $ = window.parent.$;
+          var currentInput = $('#send_textarea').val() || '';
+          var newInput = currentInput ? currentInput + '\n' + text : text;
+          triggerSlash('/setinput ' + newInput);
+        }
+      }
+
+      function handleOptionClick(text, el) {
+        triggerQuickReply(text);
+        el.classList.add('sent');
+        showToast(modes[currentMode].label + ': ' + text.substring(0, 20) + (text.length > 20 ? '...' : ''));
+
+        // 模式0和1点击后自动折叠，模式2(追加)不折叠
+        if (currentMode !== 2) {
+          setTimeout(function() {
+            var shell = document.getElementById('optionsShell');
+            if (!shell.classList.contains('collapsed')) {
+              shell.classList.add('collapsed');
+              localStorage.setItem(COLLAPSE_KEY, 'true');
+            }
+          }, 300);
+        }
+      }
+
+      function createOptions(optionsString) {
+        var grid = document.getElementById('optionsGrid');
+        var options = optionsString
+          .split('|')
+          .map(function(opt) { return opt.trim(); })
+          .filter(function(opt) { return opt.length > 0; });
+
+        if (options.length === 0) {
+          grid.innerHTML = '<div class="empty-msg">暂无可用选项</div>';
+          return;
+        }
+
+        grid.innerHTML = '';
+        options.forEach(function(option, index) {
+          var card = document.createElement('div');
+          card.className = 'option-card';
+          card.style.animationDelay = (index * 0.06) + 's';
+          card.innerHTML =
+            '<div class="option-num">' + (index + 1) + '</div>' +
+            '<div class="option-text">' + option + '</div>' +
+            '<div class="option-arrow">▸</div>';
+          card.onclick = function() { handleOptionClick(option, card); };
+          grid.appendChild(card);
+        });
+      }
+
+      // ── 初始化 (云注入方式) ──
+      setTimeout(function() {
+        try {
+          applyTheme(getTheme());
+          loadCollapse();
+          loadMode();
+
+          var chat_message = getChatMessages(getCurrentMessageId())[0];
+          var match = chat_message.message.match(/<options>([\s\S]*?)<\/options>/);
+          createOptions(match ? match[1] : '');
+        } catch (error) {
+          console.error('行动选项渲染失败:', error);
+          document.getElementById('optionsGrid').innerHTML =
+            '<div class="empty-msg">选项加载失败，请重roll当前消息</div>';
+        }
+      }, 0);
+    </script>
+  </body>
+</html>
