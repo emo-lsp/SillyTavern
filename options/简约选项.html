@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>快速回复选项</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      html, body { width: 100%; background: transparent; }
+
+      :root {
+        --th-bg: var(--SmartThemeBlurTintColor, rgba(24,24,24,0.9));
+        --th-border: var(--SmartThemeBorderColor, rgba(255,255,255,0.15));
+        --th-text: var(--SmartThemeBodyColor, #cdd6f4);
+        --th-accent: var(--SmartThemeQuoteColor, rgba(140,160,255,0.35));
+        --th-item-bg: rgba(255,255,255,0.02);
+        --th-item-hover: rgba(255,255,255,0.06);
+      }
+
+      [data-theme="light"] {
+        --th-bg: rgba(248,248,250,0.96);
+        --th-border: rgba(0,0,0,0.12);
+        --th-text: #1a1a2e;
+        --th-accent: rgba(80,100,220,0.4);
+        --th-item-bg: rgba(0,0,0,0.02);
+        --th-item-hover: rgba(0,0,0,0.05);
+      }
+
+      body {
+        color: var(--th-text);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        font-size: 14px;
+        padding: 4px 6px 6px;
+        -webkit-font-smoothing: antialiased;
+        transition: color 200ms ease;
+      }
+
+      /* ── 容器 ── */
+      .options-shell {
+        border: 1px solid var(--th-border);
+        border-radius: 6px;
+        background: var(--th-bg);
+        overflow: hidden;
+        transition: background 200ms ease, border-color 200ms ease;
+      }
+
+      /* ── 头部 ── */
+      .options-header {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 10px;
+        border-bottom: 1px solid var(--th-border);
+        cursor: pointer;
+        user-select: none;
+        transition: border-color 200ms ease;
+      }
+
+      .header-title {
+        flex: 1;
+        font-size: 13px;
+        font-weight: 600;
+        opacity: 0.85;
+      }
+
+      .header-summary {
+        font-size: 11px;
+        opacity: 0.45;
+      }
+
+      /* ── 控制按钮 ── */
+      .header-controls {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .ctrl-btn {
+        height: 26px;
+        padding: 0 8px;
+        border: 1px solid var(--th-border);
+        border-radius: 4px;
+        background: transparent;
+        color: var(--th-text);
+        font-size: 11px;
+        font-weight: 500;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: opacity 120ms, background 120ms, border-color 200ms, color 200ms;
+        white-space: nowrap;
+      }
+
+      .ctrl-btn:hover { opacity: 1; background: var(--th-item-hover); }
+      .ctrl-btn:active { opacity: 0.8; }
+
+      .ctrl-btn.icon-btn {
+        width: 26px;
+        padding: 0;
+        font-size: 13px;
+        text-align: center;
+      }
+
+      .collapse-icon {
+        display: inline-block;
+        transition: transform 180ms ease;
+        font-style: normal;
+      }
+
+      .options-shell.collapsed .collapse-icon { transform: rotate(-180deg); }
+
+      /* ── 主体 ── */
+      .options-body {
+        padding: 6px 8px 8px;
+        overflow: hidden;
+        max-height: 600px;
+        transition: max-height 240ms ease, padding 240ms ease, opacity 200ms ease;
+        opacity: 1;
+      }
+
+      .options-shell.collapsed .options-body {
+        max-height: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        opacity: 0;
+      }
+
+      /* ── 选项列表 ── */
+      .options-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .option-item {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        padding: 7px 10px;
+        border: 1px solid var(--th-border);
+        border-radius: 4px;
+        background: var(--th-item-bg);
+        cursor: pointer;
+        text-align: left;
+        transition: background 120ms, border-color 120ms, color 200ms;
+      }
+
+      .option-item:hover {
+        background: var(--th-item-hover);
+        border-color: var(--th-accent);
+      }
+
+      .option-item:active { background: var(--th-item-bg); }
+
+      .option-item.sending {
+        background: var(--th-item-hover);
+        border-color: var(--th-accent);
+      }
+
+      .option-num {
+        flex-shrink: 0;
+        font-size: 11px;
+        opacity: 0.35;
+        font-variant-numeric: tabular-nums;
+        min-width: 14px;
+      }
+
+      .option-text {
+        font-size: 13px;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        word-break: break-word;
+        opacity: 0.9;
+      }
+
+      .options-empty {
+        font-size: 12px;
+        opacity: 0.4;
+        padding: 8px 2px;
+      }
+
+      /* ── Toast ── */
+      .toast {
+        position: fixed;
+        right: 10px;
+        bottom: 10px;
+        z-index: 20;
+        padding: 7px 12px;
+        border: 1px solid var(--th-border);
+        border-radius: 4px;
+        background: var(--th-bg);
+        color: var(--th-text);
+        font-size: 12px;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(6px);
+        transition: opacity 150ms, transform 150ms, background 200ms, color 200ms;
+      }
+
+      .toast.show { opacity: 1; transform: translateY(0); }
+
+      /* ── 移动端 ── */
+      @media (max-width: 520px) {
+        body { padding: 3px 4px 5px; }
+        .options-header { padding: 6px 8px; }
+        .options-body { padding: 5px 6px 7px; }
+        .toast { left: 8px; right: 8px; bottom: 8px; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { animation: none !important; transition: none !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="options-shell" id="options-shell">
+      <div class="options-header" id="options-header">
+        <span class="header-title">快速回复选项</span>
+        <span class="header-summary" id="header-summary"></span>
+        <div class="header-controls" id="header-controls">
+          <button class="ctrl-btn" id="mode-btn" type="button">直接发送</button>
+          <button class="ctrl-btn icon-btn" id="theme-btn" type="button" aria-label="切换主题">☾</button>
+          <button class="ctrl-btn icon-btn" id="collapse-btn" type="button" aria-label="折叠">
+            <i class="collapse-icon">⌃</i>
+          </button>
+        </div>
+      </div>
+      <div class="options-body" id="options-body">
+        <div class="options-grid" id="options-grid"></div>
+        <div class="options-empty" id="options-empty" hidden>当前楼层没有可用选项。</div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <div id="options-source" hidden>$1</div>
+
+    <script>
+      var mode = 'send';
+      var collapsed = false;
+      var theme = 'dark';
+
+      var MODES = ['send', 'setinput', 'append'];
+      var MODE_META = {
+        send:     { label: '直接发送', hint: '点击选项后直接发送并触发回复。',         toast: '已发送' },
+        setinput: { label: '仅输入',   hint: '点击选项后填入输入框，不立即发送。',     toast: '已填入' },
+        append:   { label: '追加输入', hint: '点击选项后追加到输入框末尾，不发送。',   toast: '已追加' },
+      };
+
+      function applyTheme(t) {
+        theme = t;
+        document.documentElement.setAttribute('data-theme', t);
+        document.getElementById('theme-btn').textContent = t === 'dark' ? '☾' : '☀';
+      }
+
+      function toggleTheme() {
+        var next = theme === 'dark' ? 'light' : 'dark';
+        localStorage.setItem('optionTheme', next);
+        applyTheme(next);
+      }
+
+      function parseOptions(s) {
+        return String(s || '').split('|').map(function(o) { return o.trim(); }).filter(Boolean);
+      }
+
+      function esc(s) {
+        return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+      }
+
+      function updateModeUi() {
+        document.getElementById('mode-btn').textContent = MODE_META[mode].label;
+      }
+
+      function toggleMode() {
+        mode = MODES[(MODES.indexOf(mode) + 1) % MODES.length];
+        localStorage.setItem('optionMode', mode);
+        updateModeUi();
+      }
+
+      function setCollapsed(v) {
+        collapsed = !!v;
+        document.getElementById('options-shell').classList.toggle('collapsed', collapsed);
+      }
+
+      function toggleCollapsed() { setCollapsed(!collapsed); }
+
+      function showToast(text) {
+        var el = document.getElementById('toast');
+        el.textContent = text;
+        el.classList.add('show');
+        setTimeout(function() { el.classList.remove('show'); }, 1100);
+      }
+
+      function triggerOption(text) {
+        if (!text || !text.trim() || ['…','...'].indexOf(text.trim()) !== -1) return;
+        if (typeof triggerSlash !== 'function') {
+          console.log('[options] mode:', mode, 'text:', text);
+          return;
+        }
+        if (mode === 'send') {
+          triggerSlash('/send ' + text + '|/trigger');
+        } else if (mode === 'setinput') {
+          triggerSlash('/setinput ' + text);
+        } else {
+          var $ = window.parent && window.parent.$ ? window.parent.$ : null;
+          var cur = $ ? ($('#send_textarea').val() || '') : '';
+          triggerSlash('/setinput ' + (cur ? cur + '\n' + text : text));
+        }
+      }
+
+      function renderOptions(src) {
+        var grid = document.getElementById('options-grid');
+        var empty = document.getElementById('options-empty');
+        var opts = parseOptions(src);
+        var summary = document.getElementById('header-summary');
+
+        summary.textContent = opts.length ? opts.length + ' 项' : '';
+        grid.innerHTML = '';
+
+        if (!opts.length) { empty.hidden = false; return; }
+        empty.hidden = true;
+
+        var html = '';
+        for (var i = 0; i < opts.length; i++) {
+          html += '<div class="option-item" data-text="' + esc(opts[i]) + '" tabindex="0">' +
+            '<span class="option-num">' + (i + 1) + '</span>' +
+            '<span class="option-text">' + esc(opts[i]) + '</span>' +
+            '</div>';
+        }
+        grid.innerHTML = html;
+      }
+
+      document.getElementById('options-grid').addEventListener('click', function(e) {
+        var item = e.target.closest('.option-item');
+        if (!item) return;
+        var text = item.getAttribute('data-text') || '';
+        triggerOption(text);
+        showToast(MODE_META[mode].toast);
+        if (mode !== 'append') {
+          item.classList.add('sending');
+          setTimeout(function() { item.classList.remove('sending'); }, 300);
+          setTimeout(function() { setCollapsed(true); }, 250);
+        }
+      });
+
+      document.getElementById('options-grid').addEventListener('keydown', function(e) {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        var item = e.target.closest('.option-item');
+        if (!item) return;
+        e.preventDefault();
+        item.click();
+      });
+
+      document.getElementById('theme-btn').addEventListener('click', function(e) {
+        e.stopPropagation();
+        toggleTheme();
+      });
+
+      document.getElementById('mode-btn').addEventListener('click', function(e) {
+        e.stopPropagation();
+        toggleMode();
+      });
+
+      document.getElementById('collapse-btn').addEventListener('click', function(e) {
+        e.stopPropagation();
+        toggleCollapsed();
+      });
+
+      document.getElementById('options-header').addEventListener('click', function(e) {
+        if (e.target.closest('#header-controls')) return;
+        toggleCollapsed();
+      });
+
+      setTimeout(function() {
+        var savedTheme = localStorage.getItem('optionTheme') || 'dark';
+        applyTheme(savedTheme);
+
+        var saved = localStorage.getItem('optionMode');
+        if (MODE_META[saved]) mode = saved;
+        updateModeUi();
+
+        var src = document.getElementById('options-source');
+        var inline = src ? (src.textContent || '').trim() : '';
+        if (!inline || inline === '$1') {
+          try {
+            var msgs = getChatMessages(getCurrentMessageId());
+            var raw = msgs && msgs[0] ? msgs[0].message : '';
+            var m = raw.match(/<options>([\s\S]*?)<\/options>/i);
+            inline = m ? m[1] : '';
+          } catch(e) { inline = ''; }
+        }
+        renderOptions(inline);
+        setCollapsed(false);
+      }, 0);
+    </script>
+  </body>
+</html>
