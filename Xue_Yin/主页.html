@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>雪音的日记</title>
+<style>
+  :root {
+    --st-bg: #f5f2ed;
+    --st-paper: #faf8f5; 
+    --st-border: #e6e2db;
+    --st-border-strong: rgba(0, 0, 0, 0.08);
+    --st-text-main: #3a342c;
+    --st-text-muted: #8c8273;
+    --st-accent: #d4849a;
+    --st-accent-soft: rgba(212, 132, 154, 0.12);
+    --st-tape: rgba(235, 227, 215, 0.85); 
+    --st-danger: #c95c55;
+    --st-danger-bg: rgba(201, 92, 85, 0.06);
+    --st-shadow: 0 8px 30px rgba(40, 30, 20, 0.08);
+    --font-serif: "Songti SC", "Noto Serif CJK SC", "STSong", "Hiragino Mincho", serif;
+    --font-sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", sans-serif;
+    --font-hand: "Kaiti SC", "STKaiti", "KaiTi", cursive;
+    --ease: cubic-bezier(0.19, 1, 0.22, 1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    color: var(--st-text-main);
+    font-family: var(--font-sans);
+    background: transparent;
+    padding: 12px 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* 主容器 */
+  .notebook {
+    width: 100%;
+    max-width: 680px;
+    background: var(--st-paper);
+    border-radius: 8px;
+    box-shadow: var(--st-shadow);
+    position: relative;
+    padding: clamp(24px, 5vw, 48px);
+    border: 1px solid var(--st-border);
+  }
+
+  .brand-stamp {
+    display: inline-block;
+    padding: 4px 12px;
+    border: 1px dashed var(--st-accent);
+    color: var(--st-accent);
+    font-family: var(--font-serif);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    border-radius: 2px;
+    transform: rotate(-2deg);
+    margin-bottom: 24px;
+    opacity: 0.8;
+  }
+
+  .hero-title {
+    font-family: var(--font-serif);
+    font-size: clamp(26px, 6vw, 42px);
+    line-height: 1.25;
+    color: var(--st-text-main);
+    margin-bottom: 16px;
+  }
+
+  .hero-title .accent {
+    color: var(--st-accent);
+    position: relative;
+    display: inline-block;
+  }
+  
+  .hero-title .accent::after {
+    content: "";
+    position: absolute;
+    bottom: 2px;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: var(--st-accent-soft);
+    z-index: -1;
+  }
+
+  .hero-subtitle {
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    color: var(--st-text-muted);
+    line-height: 1.8;
+  }
+
+  .tag-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 24px;
+  }
+
+  .tag-strip span {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    background: rgba(0,0,0,0.03);
+    border: 1px solid var(--st-border);
+    border-radius: 20px;
+    color: var(--st-text-muted);
+  }
+
+  .tag-strip .tag-accent {
+    background: var(--st-accent-soft);
+    border-color: rgba(212, 132, 154, 0.3);
+    color: #b56077;
+  }
+
+  .divider {
+    border: none;
+    height: 1px;
+    background: repeating-linear-gradient(90deg, var(--st-border), var(--st-border) 4px, transparent 4px, transparent 8px);
+    margin: 32px 0;
+  }
+
+  .section-title {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    color: var(--st-text-main);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-title::before {
+    content: "✿";
+    color: var(--st-accent);
+    font-size: 0.8rem;
+  }
+
+  .intro-text {
+    font-size: 0.9rem;
+    line-height: 1.8;
+    color: var(--st-text-main);
+    background: rgba(0,0,0,0.015);
+    padding: 16px 20px;
+    border-radius: 4px;
+    border-left: 3px solid var(--st-accent);
+  }
+
+  .char-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 20px;
+  }
+
+  .char-card {
+    padding: 16px;
+    border: 1px solid var(--st-border);
+    border-radius: 6px;
+    background: #fff;
+    position: relative;
+  }
+
+  .char-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    border-radius: 6px 6px 0 0;
+    background: var(--st-border);
+  }
+
+  .char-card.accent-card::before {
+    background: var(--st-accent);
+  }
+
+  .char-name {
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    color: var(--st-text-main);
+    margin-bottom: 2px;
+  }
+
+  .char-role {
+    font-size: 0.7rem;
+    color: var(--st-text-muted);
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+  }
+
+  .char-traits {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .char-traits li {
+    font-size: 0.8rem;
+    color: var(--st-text-main);
+    line-height: 1.7;
+    padding-left: 14px;
+    position: relative;
+  }
+
+  .char-traits li::before {
+    content: "·";
+    position: absolute;
+    left: 2px;
+    color: var(--st-text-muted);
+    font-weight: bold;
+  }
+
+  .char-card.accent-card .char-traits li::before {
+    color: var(--st-accent);
+  }
+
+  .char-tension {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--st-border);
+    font-size: 0.75rem;
+    color: var(--st-text-muted);
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  .char-card.accent-card .char-tension {
+    color: #b56077;
+    border-top-color: rgba(212, 132, 154, 0.25);
+  }
+
+  /* 拍立得风格的开场白选择卡 */
+  .opening-list {
+    display: grid;
+    gap: 16px;
+  }
+
+  .opening-card {
+    position: relative;
+    padding: 16px;
+    background: #fff;
+    border: 1px solid var(--st-border);
+    border-radius: 2px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    cursor: pointer;
+    transition: all 0.3s var(--ease);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow: hidden;
+  }
+
+  .opening-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--st-accent);
+    opacity: 0;
+    transition: opacity 0.3s var(--ease);
+    pointer-events: none;
+  }
+
+  .opening-card:hover {
+    transform: translateY(-4px) scale(1.01) rotate(0.5deg);
+    box-shadow: 0 8px 24px rgba(212, 132, 154, 0.15);
+    border-color: var(--st-accent);
+    z-index: 10;
+  }
+
+  .opening-card:hover::after {
+    opacity: 0.03;
+  }
+  
+  .opening-card:active {
+    transform: translateY(1px) scale(0.99);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition-duration: 0.1s;
+  }
+  
+  .opening-card:active::after {
+    opacity: 0.08;
+    transition-duration: 0.1s;
+  }
+
+  /* 动画定义 */
+  @keyframes swing {
+      0%, 100% { transform: rotate(4deg); }
+      50% { transform: rotate(-4deg); }
+  }
+  @keyframes swing-asym {
+      0%, 100% { transform: rotate(3deg); }
+      50% { transform: rotate(-5deg); }
+  }
+  @keyframes swing-fast {
+      0%, 100% { transform: rotate(5deg); }
+      50% { transform: rotate(-3deg); }
+  }
+
+  /* 卡片内部挂件 */
+  .st-pendant-windchime {
+      position: absolute;
+      top: -8px;
+      right: 20px;
+      width: 24px;
+      height: 68px;
+      z-index: 20;
+      pointer-events: none;
+      transform-origin: top center;
+      animation: swing 5s ease-in-out infinite;
+      opacity: 0.8;
+  }
+
+  .st-pendant-omamori {
+      position: absolute;
+      top: -6px;
+      right: 24px;
+      width: 20px;
+      height: 50px;
+      z-index: 20;
+      pointer-events: none;
+      transform-origin: top center;
+      animation: swing-asym 6s ease-in-out infinite 1s;
+      opacity: 0.85;
+  }
+
+  .st-pendant-bozu {
+      position: absolute;
+      top: -4px;
+      right: 22px;
+      width: 22px;
+      height: 45px;
+      z-index: 20;
+      pointer-events: none;
+      transform-origin: top center;
+      animation: swing-fast 4.5s ease-in-out infinite 0.5s;
+      opacity: 0.8;
+  }
+
+  .tape {
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%) rotate(-1deg);
+    width: 60px;
+    height: 18px;
+    background: var(--st-tape);
+    backdrop-filter: blur(4px);
+    border-left: 2px dashed rgba(0,0,0,0.05);
+    border-right: 2px dashed rgba(0,0,0,0.05);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    z-index: 2;
+  }
+
+  .opening-card.tilted-right .tape { transform: translateX(-50%) rotate(1.5deg); }
+  .opening-card.tilted-left .tape { transform: translateX(-50%) rotate(-1.5deg); }
+
+  .opening-title {
+    font-family: var(--font-hand);
+    font-size: 1.15rem;
+    color: var(--st-text-main);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .opening-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: var(--st-border-strong);
+    border-radius: 50%;
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    color: var(--st-text-main);
+  }
+
+  .opening-desc {
+    font-size: 0.85rem;
+    color: var(--st-text-muted);
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+
+  .opening-tag {
+    font-size: 0.75rem;
+    color: var(--st-accent);
+    align-self: flex-start;
+  }
+
+  .notice-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .notice-card {
+    padding: 16px;
+    border: 1px dashed var(--st-border);
+    border-radius: 4px;
+  }
+
+  .notice-title {
+    font-family: var(--font-serif);
+    font-size: 0.9rem;
+    color: var(--st-text-main);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .notice-title::before {
+    content: "!";
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    background: var(--st-border-strong);
+    border-radius: 50%;
+    font-size: 0.7rem;
+    font-family: var(--font-sans);
+  }
+
+  .notice-title.warning::before {
+    background: var(--st-danger);
+    color: #fff;
+  }
+
+  .notice-card.warning-card {
+    background: var(--st-danger-bg);
+    border-color: rgba(201, 92, 85, 0.3);
+  }
+
+  .notice-content {
+    font-size: 0.8rem;
+    color: var(--st-text-muted);
+    line-height: 1.7;
+  }
+  
+  .notice-card.warning-card .notice-content {
+    color: #9c4540;
+  }
+
+  .notice-content li {
+    margin-left: 1.2em;
+    margin-bottom: 4px;
+  }
+
+  .footer-stamp {
+    margin-top: 40px;
+    text-align: center;
+    font-family: var(--font-hand);
+    font-size: 1.2rem;
+    color: var(--st-accent);
+    opacity: 0.7;
+    transform: rotate(-3deg);
+  }
+
+  /* 角色立绘展示区 */
+  .portrait-section {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 8px;
+  }
+
+  .portrait-frame {
+    position: relative;
+    display: inline-block;
+    padding: 10px 10px 36px;
+    background: #fff;
+    border: 1px solid var(--st-border);
+    border-radius: 3px;
+    box-shadow: 0 4px 16px rgba(40, 30, 20, 0.1);
+    transform: rotate(-1.5deg);
+    max-width: 350px;
+    width: 100%;
+  }
+
+  .portrait-frame .tape {
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%) rotate(1deg);
+    width: 56px;
+    height: 16px;
+    background: var(--st-tape);
+    backdrop-filter: blur(4px);
+    border-left: 2px dashed rgba(0,0,0,0.05);
+    border-right: 2px dashed rgba(0,0,0,0.05);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    z-index: 2;
+  }
+
+  .portrait-frame img {
+    width: 100%;
+    display: block;
+    border-radius: 2px;
+  }
+
+  .portrait-caption {
+    position: absolute;
+    bottom: 8px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-family: var(--font-hand);
+    font-size: 0.9rem;
+    color: var(--st-text-muted);
+    letter-spacing: 0.08em;
+  }
+
+  /* 底部信息区 */
+  .footer-info {
+    margin-top: 48px;
+    padding: 24px 20px 20px;
+    background: rgba(0,0,0,0.018);
+    border: 1px solid var(--st-border);
+    border-radius: 6px;
+    position: relative;
+  }
+
+  .footer-info::before {
+    content: "✿";
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--st-paper);
+    padding: 0 8px;
+    color: var(--st-accent);
+    font-size: 0.85rem;
+    opacity: 0.6;
+  }
+
+  .author-section {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px dashed var(--st-border);
+  }
+
+  .author-label {
+    font-size: 0.65rem;
+    color: var(--st-text-muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .author-name {
+    font-family: var(--font-hand);
+    font-size: 1.1rem;
+    color: var(--st-text-main);
+    position: relative;
+    display: inline-block;
+  }
+
+  .author-name::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--st-accent-soft);
+    border-radius: 2px;
+  }
+
+  .discord-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .discord-section-label {
+    font-size: 0.65rem;
+    color: var(--st-text-muted);
+    letter-spacing: 0.12em;
+  }
+
+  .discord-link {
+    color: #5865F2;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 10px 28px;
+    border-radius: 4px;
+    background: rgba(88, 101, 242, 0.06);
+    border: 1px solid rgba(88, 101, 242, 0.18);
+    transition: all 0.25s var(--ease);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .discord-link::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(88, 101, 242, 0.05), transparent);
+    opacity: 0;
+    transition: opacity 0.25s var(--ease);
+  }
+
+  .discord-link:hover {
+    background: #5865F2;
+    color: white;
+    border-color: #5865F2;
+    box-shadow: 0 4px 16px rgba(88, 101, 242, 0.25);
+    transform: translateY(-1px);
+  }
+
+  .discord-link:hover::before {
+    opacity: 1;
+  }
+
+  .discord-link:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(88, 101, 242, 0.2);
+  }
+
+  .discord-hint {
+    font-size: 0.72rem;
+    color: var(--st-text-muted);
+    text-align: center;
+    max-width: 85%;
+    line-height: 1.6;
+  }
+
+  /* 弹窗 UI */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(2px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .modal-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .modal-content {
+    background: var(--st-paper);
+    padding: 24px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--st-border);
+    transform: translateY(20px);
+    transition: transform 0.2s var(--ease);
+  }
+
+  .modal-overlay.show .modal-content {
+    transform: translateY(0);
+  }
+
+  .modal-title {
+    font-size: 1.1rem;
+    color: var(--st-text-main);
+    margin-bottom: 12px;
+    font-family: var(--font-serif);
+  }
+
+  .modal-text {
+    font-size: 0.9rem;
+    color: var(--st-text-muted);
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+
+  .discord-url {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 6px 10px;
+    background: rgba(88, 101, 242, 0.05);
+    color: #5865F2;
+    border-radius: 4px;
+    font-family: monospace;
+    word-break: break-all;
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+
+  .modal-btn {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    transition: all 0.2s ease;
+    border: none;
+  }
+
+  .btn-cancel {
+    background: rgba(0,0,0,0.05);
+    color: var(--st-text-muted);
+  }
+
+  .btn-cancel:hover {
+    background: rgba(0,0,0,0.1);
+    color: var(--st-text-main);
+  }
+
+  .btn-confirm {
+    background: #5865F2;
+    color: white;
+  }
+
+  .btn-confirm:hover {
+    background: #4752C4;
+    box-shadow: 0 2px 8px rgba(88, 101, 242, 0.3);
+  }
+
+  @media (max-width: 600px) {
+    .char-grid,
+    .notice-grid { grid-template-columns: 1fr; }
+    .notebook { padding: 24px 16px; }
+  }
+</style>
+</head>
+<body>
+  <main class="notebook">
+    <div class="brand-stamp">RECORD OF YUKINE</div>
+
+    <header>
+      <h1 class="hero-title">和<span class="accent">白毛</span>女儿的<br>日常生活</h1>
+      <p class="hero-subtitle">
+        踮脚够橱柜的幼女身体里，住着最了解你的灵魂。<br>
+        她用奶声奶气的调子念出你心底最隐秘的欲望，表情天真得像在背童谣。
+      </p>
+      <div class="tag-strip">
+        <span class="tag-accent">父女日常</span>
+        <span>记忆共享</span>
+        <span>温馨色情</span>
+        <span>禁忌张力</span>
+        <span>状态随互动变化</span>
+      </div>
+    </header>
+
+    <hr class="divider">
+
+    <section class="notice-section" aria-label="注意事项">
+      <h2 class="section-title">附注信息</h2>
+      <div class="notice-grid">
+        <article class="notice-card">
+          <h4 class="notice-title">游玩提醒</h4>
+          <div class="notice-content">
+            <ul>
+              <li>本角色卡为虚构互动创作，请勿将角色行为等同于现实建议。</li>
+              <li>作品包含父女禁忌、未成年角色、性暗示等敏感主题。</li>
+              <li>雪音的状态会随互动推进变化，记忆稳定性影响她的言行。</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="notice-card warning-card">
+          <h4 class="notice-title warning">版权与转载</h4>
+          <div class="notice-content">
+            <ul>
+              <li>这张角色卡是免费的，永远禁止商业化行为。如果你是购买获得，请立即退款并向购买平台举报死户口本的倒卖狗，维护创作者和您自身的权益。</li>
+              <li>未经作者明确授权，严禁将本作品转载至其他任何平台。</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <section aria-label="故事入口">
+      <h2 class="section-title">故事入口</h2>
+      <div class="intro-text">
+        你领养的白发女儿吞噬了你全部的记忆——包括你藏在深夜里的那些幻想。她恰好是个白毛萝莉，恰好知道你对白发女孩没有抵抗力。她开始笨拙地利用这些知识照顾你、撩拨你、占有你，动作生涩却倔强，被拒绝后鼓着脸颊嘟囔"我最讨厌爸爸了"，五分钟后又若无其事地蹭过来。
+      </div>
+
+      <div class="char-grid">
+        <div class="char-card">
+          <div class="char-name">{{user}}</div>
+          <div class="char-role">养父 · 30岁 · 包租公</div>
+          <ul class="char-traits">
+            <li>独居东京，领养雪音的初衷是想要家人</li>
+            <li>嘴硬心软，嘴上说"小孩子不许"手已经在摸头</li>
+            <li>萝莉控+白毛控，性癖全被雪音知道了</li>
+          </ul>
+          <div class="char-tension">绝不主动越界，但道德防线像纸糊的</div>
+        </div>
+        <div class="char-card accent-card">
+          <div class="char-name">柊雪音</div>
+          <div class="char-role">养女 · 8岁 · 心理年龄30+</div>
+          <ul class="char-traits">
+            <li>三岁吞噬了父亲全部记忆，包括隐私和性幻想</li>
+            <li>白发幼女，浅紫瞳，奶声奶气但措辞老成</li>
+            <li>想保护爸爸，身体却是最大的枷锁</li>
+          </ul>
+          <div class="char-tension">保护者的心智被困在被保护者的身体里</div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <div class="portrait-section">
+      <div class="portrait-frame">
+        <div class="tape"></div>
+        <img src="https://testingcf.jsdelivr.net/gh/emo-lsp/ST_CG@refs/heads/main/Xue_Yin/%E7%AB%8B%E7%BB%982.jpeg" alt="柊雪音立绘">
+        <div class="portrait-caption">柊雪音</div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <section aria-label="翻开这一页">
+      <h2 class="section-title">翻开这一页</h2>
+      <div class="opening-list">
+        
+        <article class="opening-card tilted-right" onclick="switchToOpening(1)" role="button" tabindex="0">
+          <div class="tape"></div>
+          <h3 class="opening-title"><span class="opening-num">1</span> 傍晚的咖啡与脱口而出的秘密</h3>
+          <p class="opening-desc">客厅暖光下，她踮脚端来泡好的咖啡，然后像背课文一样念出了你从未对任何人说出口的幻想。你手里的手机差点脱手。</p>
+          <span class="opening-tag"># 喜剧反差 · 暧昧初现</span>
+          <div class="st-pendant-windchime">
+            <svg viewBox="0 0 32 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line x1="16" y1="3" x2="16" y2="25" stroke="var(--st-text-muted)" stroke-width="1.5" opacity="0.5"/>
+                <path d="M16 50C21.5 50 26 45 26 38C26 31 20 25 16 25C12 25 6 31 6 38C6 45 10.5 50 16 50Z" fill="var(--st-bg)" stroke="var(--st-text-muted)" stroke-width="1.5" fill-opacity="0.1"/>
+                <path d="M6 38C6 42 10 45 16 45C22 45 26 42 26 38" stroke="var(--st-text-muted)" stroke-width="1" opacity="0.3"/>
+                <circle cx="16" cy="35" r="2" fill="var(--st-accent)"/>
+                <line x1="16" y1="37" x2="16" y2="55" stroke="var(--st-text-muted)" stroke-width="1" opacity="0.7"/>
+                <rect x="12" y="55" width="8" height="22" fill="var(--st-accent)" opacity="0.8" rx="1"/>
+            </svg>
+          </div>
+        </article>
+
+        <article class="opening-card tilted-left" onclick="switchToOpening(2)" role="button" tabindex="0">
+          <div class="tape"></div>
+          <h3 class="opening-title"><span class="opening-num">2</span> 浴室里的笨拙告白</h3>
+          <p class="opening-desc">她推开门跨进浴缸，湿透的睡衣贴在幼小的身体上，笨拙地埋进水里尝试记忆中的事情。做到一半红着脸说"我下面好奇怪"。</p>
+          <span class="opening-tag"># 直球冲击 · 身体觉醒</span>
+          <div class="st-pendant-omamori">
+            <svg viewBox="0 0 28 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line x1="14" y1="3" x2="14" y2="15" stroke="var(--st-text-muted)" stroke-width="1.5" opacity="0.5"/>
+                <path d="M10 15 Q 14 10 18 15 Q 14 20 10 15" fill="var(--st-danger)" opacity="0.7"/>
+                <path d="M14 15 L 8 22 M14 15 L 20 22" stroke="var(--st-danger)" stroke-width="1.5" opacity="0.7"/>
+                <path d="M 6 22 L 22 22 L 26 27 L 26 52 L 2 52 L 2 27 Z" fill="var(--st-paper)" stroke="var(--st-text-muted)" stroke-width="1"/>
+                <path d="M 6 22 L 22 22 L 26 27 L 26 52 L 2 52 L 2 27 Z" fill="var(--st-accent)" fill-opacity="0.15"/>
+                <rect x="5" y="27" width="18" height="22" stroke="var(--st-accent)" stroke-width="1" opacity="0.4" rx="1"/>
+                <text x="14" y="43" font-family="var(--font-serif)" font-size="11" fill="var(--st-accent)" text-anchor="middle" font-weight="bold" opacity="0.85">恋</text>
+            </svg>
+          </div>
+        </article>
+
+        <article class="opening-card tilted-right" onclick="switchToOpening(3)" role="button" tabindex="0">
+          <div class="tape"></div>
+          <h3 class="opening-title"><span class="opening-num">3</span> 周末早晨的妈妈模式</h3>
+          <p class="opening-desc">她端着托盘走进卧室，煎蛋终于没有烧焦。语气不容反驳地催你起床，揉你后脑勺的手温柔又熟练。然后她红着脸小声说"叫我一声……妈妈"。</p>
+          <span class="opening-tag"># 记忆主宰 · 母性觉醒</span>
+          <div class="st-pendant-bozu">
+            <svg viewBox="0 0 30 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line x1="15" y1="3" x2="15" y2="10" stroke="var(--st-text-muted)" stroke-width="1.5" opacity="0.5"/>
+                <path d="M 9 24 Q 5 45 6 52 Q 10 48 15 52 Q 20 48 24 52 Q 25 45 21 24 Z" fill="var(--st-paper)" stroke="var(--st-text-muted)" stroke-width="1"/>
+                <circle cx="15" cy="18" r="8" fill="var(--st-paper)" stroke="var(--st-text-muted)" stroke-width="1"/>
+                <circle cx="12" cy="17" r="1" fill="var(--st-text-muted)"/>
+                <circle cx="18" cy="17" r="1" fill="var(--st-text-muted)"/>
+                <path d="M 13 21 Q 15 23 17 21" stroke="var(--st-text-muted)" stroke-width="1" fill="none"/>
+                <path d="M 15 25 L 11 23 L 11 27 Z M 15 25 L 19 23 L 19 27 Z" fill="var(--st-danger)" opacity="0.6"/>
+            </svg>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <div class="footer-info">
+      <div class="author-section">
+        <div class="author-label">作者</div>
+        <div class="author-name">emo的lsp</div>
+      </div>
+      <div class="discord-section">
+        <div class="discord-section-label">交流社群</div>
+        <a href="#" class="discord-link" onclick="showDiscordModal(event)">加入 Discord 交流群</a>
+        <div class="discord-hint">发卡会有提醒，欢迎加入闲聊——SillyTavern相关，或者更多...</div>
+      </div>
+    </div>
+
+    <div class="footer-stamp">"你的全部我都收好了，一个都没弄丢哦。"</div>
+  </main>
+
+  <!-- Discord 跳转确认弹窗 -->
+  <div id="discord-modal" class="modal-overlay">
+    <div class="modal-content">
+      <h3 class="modal-title">准备跳转至 Discord</h3>
+      <p class="modal-text">即将打开外部链接：<br><span class="discord-url">https://discord.gg/x3aKHgfE3u</span></p>
+      <div class="modal-actions">
+        <button class="modal-btn btn-cancel" onclick="closeDiscordModal()">取消</button>
+        <button class="modal-btn btn-confirm" onclick="confirmDiscordJoin()">确认前往</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  function showDiscordModal(e) {
+    e.preventDefault();
+    document.getElementById('discord-modal').classList.add('show');
+  }
+
+  function closeDiscordModal() {
+    document.getElementById('discord-modal').classList.remove('show');
+  }
+
+  function confirmDiscordJoin() {
+    window.open('https://discord.gg/x3aKHgfE3u', '_blank');
+    closeDiscordModal();
+  }
+
+  document.querySelectorAll('.opening-card[tabindex="0"]').forEach((card) => {
+    card.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        card.click();
+      }
+    });
+  });
+
+  async function switchToOpening(swipeId) {
+    const clickedCard = event?.currentTarget;
+    if (clickedCard) {
+      clickedCard.style.opacity = '0.62';
+      clickedCard.style.pointerEvents = 'none';
+    }
+
+    try {
+      const messages = await getChatMessages('0', { include_swipe: true });
+      const targetSwipe = messages?.[0]?.swipes?.[swipeId];
+      if (!targetSwipe) {
+        throw new Error(`未找到 swipe ${swipeId}，请确认正式开场白已按顺序写入角色卡。`);
+      }
+
+      await setChatMessage(targetSwipe, 0, {
+        swipe_id: swipeId,
+        refresh: 'display_and_render_current'
+      });
+    } catch (error) {
+      console.error('切换开场白失败:', error);
+      alert(error?.message || '切换开场白失败');
+      if (clickedCard) {
+        clickedCard.style.opacity = '1';
+        clickedCard.style.pointerEvents = 'auto';
+      }
+    }
+  }
+</script>
+</body>
+</html>
