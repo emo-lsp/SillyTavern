@@ -501,14 +501,22 @@
         function getEmotionBackground(emotion) {
             const emotionStr = String(emotion).trim();
             const map = {
-                '撒娇': 'https://testingcf.jsdelivr.net/gh/emo-lsp/ST_CG@refs/heads/main/Xue_Yin/%E6%92%92%E5%A8%87.jpeg',
-                '委屈': 'https://testingcf.jsdelivr.net/gh/emo-lsp/ST_CG@refs/heads/main/Xue_Yin/%E5%A7%94%E5%B1%88.jpeg',
-                '倔强': 'https://testingcf.jsdelivr.net/gh/emo-lsp/ST_CG@refs/heads/main/Xue_Yin/%E5%80%94%E5%BC%BA.jpeg',
-                '害羞': 'https://testingcf.jsdelivr.net/gh/emo-lsp/ST_CG@refs/heads/main/Xue_Yin/%E5%AE%B3%E7%BE%9E.jpeg',
-                '兴奋': 'https://testingcf.jsdelivr.net/gh/emo-lsp/ST_CG@refs/heads/main/Xue_Yin/%E5%85%B4%E5%A5%8B.jpeg',
-                '安静': 'https://testingcf.jsdelivr.net/gh/emo-lsp/ST_CG@refs/heads/main/Xue_Yin/%E5%AE%89%E9%9D%99.jpeg',
-                '焦虑': 'https://testingcf.jsdelivr.net/gh/emo-lsp/ST_CG@refs/heads/main/Xue_Yin/%E7%84%A6%E8%99%91.jpeg',
-                '开心': 'https://testingcf.jsdelivr.net/gh/emo-lsp/ST_CG@refs/heads/main/Xue_Yin/%E5%BC%80%E5%BF%83.jpeg',
+                '倔强': 'https://testingcf.jsdelivr.net/gh/emo-lsp/ST_CG@refs/heads/main/Xue_Yin/%E5%80%94%E5%BC%BA.jpg',
+                '兴奋': 'https://testingcf.jsdelivr.net/gh/emo-lsp/ST_CG@refs/heads/main/Xue_Yin/%E5%85%B4%E5%A5%8B.jpg',
+                '困惑': 'https://testingcf.jsdelivr.net/gh/emo-lsp/ST_CG@refs/heads/main/Xue_Yin/%E5%9B%B0%E6%83%91.jpg',
+                '委屈': 'https://testingcf.jsdelivr.net/gh/emo-lsp/ST_CG@refs/heads/main/Xue_Yin/%E5%A7%94%E5%B1%88.jpg',
+                '安静': 'https://testingcf.jsdelivr.net/gh/emo-lsp/ST_CG@refs/heads/main/Xue_Yin/%E5%AE%89%E9%9D%99.jpg',
+                '害怕': 'https://testingcf.jsdelivr.net/gh/emo-lsp/ST_CG@refs/heads/main/Xue_Yin/%E5%AE%B3%E6%80%95.jpg',
+                '害羞': 'https://testingcf.jsdelivr.net/gh/emo-lsp/ST_CG@refs/heads/main/Xue_Yin/%E5%AE%B3%E7%BE%9E.jpg',
+                '开心': 'https://testingcf.jsdelivr.net/gh/emo-lsp/ST_CG@refs/heads/main/Xue_Yin/%E5%BC%80%E5%BF%83.jpg',
+                '悲伤': 'https://testingcf.jsdelivr.net/gh/emo-lsp/ST_CG@refs/heads/main/Xue_Yin/%E6%82%B2%E4%BC%A4.jpg',
+                '惊讶': 'https://testingcf.jsdelivr.net/gh/emo-lsp/ST_CG@refs/heads/main/Xue_Yin/%E6%83%8A%E8%AE%B6.jpg',
+                '撒娇': 'https://testingcf.jsdelivr.net/gh/emo-lsp/ST_CG@refs/heads/main/Xue_Yin/%E6%92%92%E5%A8%87.jpg',
+                '无语': 'https://testingcf.jsdelivr.net/gh/emo-lsp/ST_CG@refs/heads/main/Xue_Yin/%E6%97%A0%E8%AF%AD.jpg',
+                '焦虑': 'https://testingcf.jsdelivr.net/gh/emo-lsp/ST_CG@refs/heads/main/Xue_Yin/%E7%84%A6%E8%99%91.jpg',
+                '生气': 'https://testingcf.jsdelivr.net/gh/emo-lsp/ST_CG@refs/heads/main/Xue_Yin/%E7%94%9F%E6%B0%94.jpg',
+                '立绘1': 'https://testingcf.jsdelivr.net/gh/emo-lsp/ST_CG@refs/heads/main/Xue_Yin/%E7%AB%8B%E7%BB%981.jpg',
+                '立绘2': 'https://testingcf.jsdelivr.net/gh/emo-lsp/ST_CG@refs/heads/main/Xue_Yin/%E7%AB%8B%E7%BB%982.jpg',
             };
             const url = map[emotionStr] || map['安静'];
             return `url('${url}')`;
