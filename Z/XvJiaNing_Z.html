@@ -96,7 +96,8 @@
         overflow: hidden;
       }
 
-      body.is-copyright-gated .costume-room {
+      body.is-copyright-gated .costume-room,
+      .costume-room.is-copyright-gated {
         visibility: hidden;
         pointer-events: none;
       }
@@ -119,8 +120,6 @@
         place-items: start center;
         padding: 14px;
         overflow-y: auto;
-        background: rgba(47, 58, 55, 0.2);
-        backdrop-filter: blur(7px);
       }
 
       .copyright-gate[hidden] {
@@ -1288,7 +1287,7 @@
       </div>
     </div>
 
-    <main class="costume-room" data-costume-room="v1">
+    <main class="costume-room is-copyright-gated" data-costume-room="v1">
       <header class="room-header">
         <div class="room-header__brand">衣柜档案</div>
         <div class="room-header__author">作者：emo的lsp</div>
@@ -1482,22 +1481,30 @@
         const openingButtons = [...(home?.querySelectorAll('[data-swipe]') || [])];
         const status = home?.querySelector('[data-opening-status]');
 
+        const lockScroll = () => {
+          const root = document.scrollingElement || document.documentElement;
+          root.style.overflow = 'hidden';
+          if (document.body) document.body.style.overflow = 'hidden';
+        };
+        const unlockScroll = () => {
+          const root = document.scrollingElement || document.documentElement;
+          root.style.overflow = '';
+          if (document.body) document.body.style.overflow = '';
+        };
+
+        lockScroll();
+
         closeCopyrightGate?.addEventListener('click', () => {
           copyrightGate.hidden = true;
           document.body.classList.remove('is-copyright-gated');
-          const scrollTopAll = scope => {
-            if (!scope || typeof scope.scrollTo !== 'function') return;
-            try {
-              scope.scrollTo(0, 0);
-              const doc = scope.document;
-              if (doc) {
-                doc.scrollingElement?.scrollTo?.(0, 0);
-                doc.documentElement.scrollTop = 0;
-                doc.body.scrollTop = 0;
-              }
-            } catch (_) {}
-          };
-          [window, window.parent, window.top].forEach(scrollTopAll);
+          home?.classList.remove('is-copyright-gated');
+          unlockScroll();
+          try {
+            const root = document.scrollingElement || document.documentElement;
+            root.scrollTop = 0;
+            if (document.body) document.body.scrollTop = 0;
+            home?.scrollIntoView?.({ block: 'start', behavior: 'auto' });
+          } catch (_) {}
           portraitButtons[0]?.focus({ preventScroll: true });
         });
 
