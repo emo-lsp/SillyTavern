@@ -669,11 +669,30 @@
         color: var(--plum-deep);
       }
 
+      .portrait-archive {
+        display: grid;
+        gap: 20px;
+      }
+
       .portrait-layout {
         display: grid;
         grid-template-columns: minmax(0, 1.04fr) minmax(210px, 0.96fr);
         align-items: start;
         gap: 16px;
+      }
+
+      .portrait-layout + .portrait-layout {
+        padding-top: 20px;
+        border-top: 1px solid var(--line-strong);
+      }
+
+      /* 洛清秋档案采用“文字在左、立绘在右”的镜像排布。 */
+      .portrait-layout--reversed .portrait-toggle {
+        order: 2;
+      }
+
+      .portrait-layout--reversed .portrait-record {
+        order: 1;
       }
 
       .portrait-toggle {
@@ -885,7 +904,7 @@
 
       .role-grid {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 9px;
       }
 
@@ -938,7 +957,7 @@
 
       .opening-grid {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 9px;
       }
 
@@ -1206,6 +1225,12 @@
           padding-top: 3px;
         }
 
+        /* 移动端按阅读顺序展示：先看立绘，再看角色介绍。 */
+        .portrait-layout--reversed .portrait-toggle,
+        .portrait-layout--reversed .portrait-record {
+          order: initial;
+        }
+
         .community {
           align-items: stretch;
           flex-direction: column;
@@ -1253,8 +1278,14 @@
             <p><strong>本作品由作者 emo的lsp 原创制作。</strong></p>
             <p>任何收费售卖、付费解锁、代购或以作者名义收款的行为，都不是作者授权的，都是未知生物干的事。</p>
             <p><strong>你要是花钱买了，别犹豫，立刻申请退款，再把贩卖死户口本的东西往死里举报。</strong></p>
-            <p>未经作者明确授权，禁止转载、搬运、二次售卖或修改后发布，盗卡、搬运狗和相关平台管理你们妈死了，不对，我忘了盗卡、搬运狗和相关平台管理你们没妈。</p>
-            <p><strong>顺便由衷希望盗卡、搬运狗和相关平台管理你们的女儿、姐姐、妹妹、女友、未婚妻、老婆被卖去非洲让倪哥轮奸。😄</strong></p>
+            <p>
+              未经作者明确授权，禁止转载、搬运、二次售卖或修改后发布，盗卡、搬运狗和相关平台管理你们妈死了，不对，我忘了盗卡、搬运狗和相关平台管理你们没妈。
+            </p>
+            <p>
+              <strong
+                >顺便由衷希望盗卡、搬运狗和相关平台管理你们的女儿、姐姐、妹妹、女友、未婚妻、老婆被卖去非洲让倪哥轮奸。😄</strong
+              >
+            </p>
           </div>
           <div class="copyright-gate__links">
             <a
@@ -1330,62 +1361,111 @@
 
         <section class="section" aria-labelledby="portrait-title">
           <div class="section__head">
-            <h2 class="section__title" id="portrait-title">许佳宁 / 立绘档案</h2>
-            <span class="section__code">立绘 / 001</span>
+            <h2 class="section__title" id="portrait-title">立绘档案</h2>
+            <span class="section__code">立绘 / 002</span>
           </div>
-          <div class="section__body portrait-layout">
-            <button
-              class="portrait-toggle is-loading"
-              type="button"
-              aria-label="切换许佳宁立绘"
-              aria-busy="true"
-              aria-pressed="false"
-              data-portrait-toggle
-            >
-              <span class="portrait-frame">
-                <span class="portrait-card">
-                  <span class="portrait-face portrait-face--front">
-                    <img
-                      class="portrait-image"
-                      src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 800'%3E%3Crect width='600' height='800' fill='%23f3f5f2'/%3E%3Ccircle cx='470' cy='140' r='190' fill='%23fff6b5' opacity='.62'/%3E%3Cpath d='M0 670c150-120 330-65 600-230v360H0z' fill='%23a7c4b2' opacity='.44'/%3E%3C/svg%3E"
-                      data-portrait-src="https://img.emolsp.online/CG/other/CG/%E8%AE%B8%E4%BD%B3%E5%AE%811.jpg"
-                      alt="许佳宁正面立绘占位"
-                      referrerpolicy="no-referrer"
-                    />
-                    <span class="portrait-placeholder"><strong>许佳宁</strong><span>正面立绘地址待接入</span></span>
+          <div class="section__body portrait-archive">
+            <div class="portrait-layout">
+              <button
+                class="portrait-toggle is-loading"
+                type="button"
+                aria-label="切换许佳宁立绘"
+                aria-busy="true"
+                aria-pressed="false"
+                data-portrait-name="许佳宁"
+                data-portrait-toggle
+              >
+                <span class="portrait-frame">
+                  <span class="portrait-card">
+                    <span class="portrait-face portrait-face--front">
+                      <img
+                        class="portrait-image"
+                        src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 800'%3E%3Crect width='600' height='800' fill='%23f3f5f2'/%3E%3Ccircle cx='470' cy='140' r='190' fill='%23fff6b5' opacity='.62'/%3E%3Cpath d='M0 670c150-120 330-65 600-230v360H0z' fill='%23a7c4b2' opacity='.44'/%3E%3C/svg%3E"
+                        data-portrait-src="https://img.emolsp.online/CG/other/CG/%E8%AE%B8%E4%BD%B3%E5%AE%811.jpg"
+                        alt="许佳宁正面立绘占位"
+                        referrerpolicy="no-referrer"
+                      />
+                      <span class="portrait-placeholder"><strong>许佳宁</strong><span>正面立绘地址待接入</span></span>
+                    </span>
+                    <span class="portrait-face portrait-face--back">
+                      <img
+                        class="portrait-image"
+                        src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 800'%3E%3Crect width='600' height='800' fill='%23e6e9e7'/%3E%3Ccircle cx='120' cy='160' r='210' fill='%23a7c4b2' opacity='.48'/%3E%3Cpath d='M0 220c210 110 360 80 600 260v320H0z' fill='%23fff6b5' opacity='.56'/%3E%3C/svg%3E"
+                        data-portrait-src="https://img.emolsp.online/CG/other/CG/%E8%AE%B8%E4%BD%B3%E5%AE%812.jpg"
+                        alt="许佳宁翻转立绘占位"
+                        referrerpolicy="no-referrer"
+                      />
+                      <span class="portrait-placeholder"><strong>角色模式</strong><span>翻转立绘地址待接入</span></span>
+                    </span>
+                    <span class="portrait-card__tag" data-portrait-label>点击翻面</span>
+                    <span class="portrait-card__hint">正面 / 翻转</span>
                   </span>
-                  <span class="portrait-face portrait-face--back">
-                    <img
-                      class="portrait-image"
-                      src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 800'%3E%3Crect width='600' height='800' fill='%23e6e9e7'/%3E%3Ccircle cx='120' cy='160' r='210' fill='%23a7c4b2' opacity='.48'/%3E%3Cpath d='M0 220c210 110 360 80 600 260v320H0z' fill='%23fff6b5' opacity='.56'/%3E%3C/svg%3E"
-                      data-portrait-src="https://img.emolsp.online/CG/other/CG/%E8%AE%B8%E4%BD%B3%E5%AE%812.jpg"
-                      alt="许佳宁翻转立绘占位"
-                      referrerpolicy="no-referrer"
-                    />
-                    <span class="portrait-placeholder"><strong>角色模式</strong><span>翻转立绘地址待接入</span></span>
-                  </span>
-                  <span class="portrait-card__tag" data-portrait-label>点击翻面</span>
-                  <span class="portrait-card__hint">正面 / 翻转</span>
                 </span>
-              </span>
-            </button>
-            <div class="portrait-record">
-              <div class="portrait-record__label">角色档案 / 01</div>
-              <h3 class="portrait-record__name">许佳宁</h3>
-              <div class="portrait-record__line"></div>
-              <p class="portrait-record__text">
-                42 岁，全职主妇，曾经在 Cosplay
-                圈小有名气。她喜欢研究服装、练习姿势，也喜欢观察某个人看见她换装时的反应。
-              </p>
-              <div class="portrait-record__tags"><span>前 Coser</span><span>家庭空间</span><span>角色游戏</span></div>
+              </button>
+              <div class="portrait-record">
+                <div class="portrait-record__label">角色档案 / 01</div>
+                <h3 class="portrait-record__name">许佳宁</h3>
+                <div class="portrait-record__line"></div>
+                <p class="portrait-record__text">
+                  42 岁，全职主妇，曾经在 Cosplay
+                  圈小有名气。她喜欢研究服装、练习姿势，也喜欢观察某个人看见她换装时的反应。
+                </p>
+                <div class="portrait-record__tags"><span>前 Coser</span><span>家庭空间</span><span>角色游戏</span></div>
+              </div>
+            </div>
+
+            <div class="portrait-layout portrait-layout--reversed">
+              <button
+                class="portrait-toggle is-loading"
+                type="button"
+                aria-label="切换洛清秋立绘"
+                aria-busy="true"
+                aria-pressed="false"
+                data-portrait-name="洛清秋"
+                data-portrait-toggle
+              >
+                <span class="portrait-frame">
+                  <span class="portrait-card">
+                    <span class="portrait-face portrait-face--front">
+                      <img
+                        class="portrait-image"
+                        src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 800'%3E%3Crect width='600' height='800' fill='%23eef0f0'/%3E%3Ccircle cx='470' cy='140' r='190' fill='%23c7d5df' opacity='.52'/%3E%3Cpath d='M0 670c150-120 330-65 600-230v360H0z' fill='%238a9aa9' opacity='.34'/%3E%3C/svg%3E"
+                        data-portrait-src="https://img.emolsp.online/CG/other/CG/%E6%B4%9B%E6%B8%85%E7%A7%8B1.jpg"
+                        alt="洛清秋正面立绘"
+                      />
+                      <span class="portrait-placeholder"><strong>洛清秋</strong><span>正面立绘暂留空白</span></span>
+                    </span>
+                    <span class="portrait-face portrait-face--back">
+                      <img
+                        class="portrait-image"
+                        src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 800'%3E%3Crect width='600' height='800' fill='%23e4e7e8'/%3E%3Ccircle cx='120' cy='160' r='210' fill='%238a9aa9' opacity='.36'/%3E%3Cpath d='M0 220c210 110 360 80 600 260v320H0z' fill='%23c7d5df' opacity='.52'/%3E%3C/svg%3E"
+                        data-portrait-src="https://img.emolsp.online/CG/other/CG/%E6%B4%9B%E6%B8%85%E7%A7%8B2.jpg"
+                        alt="洛清秋翻转立绘"
+                      />
+                      <span class="portrait-placeholder"><strong>洛老师</strong><span>翻转立绘暂留空白</span></span>
+                    </span>
+                    <span class="portrait-card__tag" data-portrait-label>点击翻面</span>
+                    <span class="portrait-card__hint">正面 / 翻转</span>
+                  </span>
+                </span>
+              </button>
+              <div class="portrait-record">
+                <div class="portrait-record__label">角色档案 / 02</div>
+                <h3 class="portrait-record__name">洛清秋</h3>
+                <div class="portrait-record__line"></div>
+                <p class="portrait-record__text">
+                  38 岁，市二中高一语文教师兼班主任，执教十五年。离婚三年，独居学校附近，把“可靠”活成了一种职业。
+                </p>
+                <div class="portrait-record__tags"><span>洛老师</span><span>语文教师</span><span>班主任</span></div>
+              </div>
             </div>
           </div>
         </section>
 
         <section class="section" aria-labelledby="roles-title">
           <div class="section__head">
-            <h2 class="section__title" id="roles-title">家庭角色档案</h2>
-            <span class="section__code">角色 / 03</span>
+            <h2 class="section__title" id="roles-title">角色档案</h2>
+            <span class="section__code">角色 / 04</span>
           </div>
           <div class="section__body role-grid">
             <article class="role-card">
@@ -1403,13 +1483,18 @@
               <h3 class="role-card__name">许建国</h3>
               <p class="role-card__info">常年出差的丈夫。缺席的时间，给这间屋子留下了太多空白。</p>
             </article>
+            <article class="role-card">
+              <div class="role-card__index">角色 / 04</div>
+              <h3 class="role-card__name">洛清秋</h3>
+              <p class="role-card__info">市二中高一语文教师兼班主任。她把可靠、规矩和体面都穿在身上，成为 {{user}} 的老师。</p>
+            </article>
           </div>
         </section>
 
         <section class="section" aria-labelledby="opening-title">
           <div class="section__head">
             <h2 class="section__title" id="opening-title">选择开场</h2>
-            <span class="section__code">开场 / 03</span>
+            <span class="section__code">开场 / 04</span>
           </div>
           <div class="section__body">
             <div class="opening-grid">
@@ -1430,6 +1515,12 @@
                 <strong class="opening__title">早安角色</strong>
                 <span class="opening__meta">清晨 · 卧室 · 早餐时间</span>
                 <span class="opening__desc">托盘、女仆装和一句早安，把普通早晨推向了另一条线。</span>
+              </button>
+              <button class="opening" type="button" data-swipe="4">
+                <span class="opening__number">场景 / 04</span>
+                <strong class="opening__title">放学后的办公室</strong>
+                <span class="opening__meta">放学后 · 办公室 · 月考订正</span>
+                <span class="opening__desc">暮色落进空荡的教学楼，洛清秋把一张默写纸推到他面前。</span>
               </button>
             </div>
             <p class="opening-status" data-opening-status aria-live="polite">请选择一条场景记录</p>
@@ -1555,6 +1646,8 @@
         };
 
         portraitButtons.forEach(button => {
+          // 每张立绘按钮独立维护角色名，避免新增档案时复用旧角色文案。
+          const portraitName = button.dataset.portraitName || '角色';
           const label = button.querySelector('[data-portrait-label]');
           const images = [...button.querySelectorAll('img[data-portrait-src]')];
           button.disabled = true;
@@ -1569,7 +1662,10 @@
             if (button.disabled) return;
             const flipped = button.classList.toggle('is-flipped');
             button.setAttribute('aria-pressed', String(flipped));
-            button.setAttribute('aria-label', flipped ? '切换回许佳宁正面立绘' : '切换到许佳宁翻转立绘');
+            button.setAttribute(
+              'aria-label',
+              flipped ? `切换回${portraitName}正面立绘` : `切换到${portraitName}翻转立绘`,
+            );
             if (label) label.textContent = flipped ? '翻转立绘' : '正面立绘';
           });
         });
