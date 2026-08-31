@@ -1,0 +1,1597 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>苍玄 · 凌霄仙宗真传天经</title>
+    <style>
+      :root {
+        --parchment: #f4ebd9;
+        --parchment-deep: #e8dcbe;
+        --parchment-dark: #d5c39b;
+        --ink-deep: #1c1815;
+        --ink-text: #2c2520;
+        --ink-light: #5a5148;
+        --ink-faint: #8c8275;
+
+        --cinnabar: #b92b27;
+        --cinnabar-light: #d63031;
+        --cinnabar-bg: rgba(185, 43, 39, 0.08);
+
+        --gold-ink: #9e7326;
+        --gold-leaf: #b8860b;
+        --jade-ink: #2b5e4f;
+
+        --border-ancient: #8c7355;
+        --border-light: rgba(140, 115, 85, 0.35);
+
+        --font-title: 'STSong', 'Songti SC', 'Source Han Serif SC', 'SimSun', 'Kaiti SC', 'STKaiti', serif;
+        --font-body: 'STKaiti', 'KaiTi', 'SimKai', 'Kaiti SC', 'STSong', serif;
+        --font-mono: 'JetBrains Mono', 'PingFang SC', monospace;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background: transparent;
+        color: var(--ink-text);
+        font-family: var(--font-body);
+        font-size: 15px;
+        line-height: 1.8;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+
+      body.is-copyright-gated {
+        overflow: hidden;
+      }
+      body.is-copyright-gated .scroll-container,
+      .scroll-container.is-copyright-gated {
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      /* 古卷纸张主体 */
+      .scroll-container {
+        width: min(100%, 700px);
+        margin: 20px auto 40px;
+        position: relative;
+        background: var(--parchment);
+        background-image:
+          radial-gradient(circle at 10% 20%, rgba(210, 180, 140, 0.2) 0%, transparent 40%),
+          radial-gradient(circle at 90% 80%, rgba(180, 150, 110, 0.25) 0%, transparent 40%),
+          linear-gradient(180deg, #f7efe0 0%, #ece0c6 50%, #e2d2b0 100%);
+        box-shadow:
+          0 0 0 1px rgba(100, 75, 45, 0.4),
+          0 10px 40px rgba(0, 0, 0, 0.65),
+          inset 0 0 80px rgba(139, 107, 61, 0.25);
+        border-radius: 4px;
+        padding: 36px 30px;
+      }
+
+      /* 古典卷轴轴头装裱效果 */
+      .scroll-container::before,
+      .scroll-container::after {
+        content: '';
+        position: absolute;
+        left: -12px;
+        right: -12px;
+        height: 16px;
+        background: linear-gradient(90deg, #2b1f14 0%, #684829 10%, #9e733b 50%, #684829 90%, #2b1f14 100%);
+        border-radius: 6px;
+        box-shadow:
+          0 4px 10px rgba(0, 0, 0, 0.5),
+          inset 0 1px 2px rgba(255, 230, 180, 0.4);
+      }
+      .scroll-container::before {
+        top: -8px;
+      }
+      .scroll-container::after {
+        bottom: -8px;
+      }
+
+      /* 古典双线回纹外框 */
+      .scroll-inner-border {
+        border: 2px solid var(--border-ancient);
+        padding: 16px 14px 24px;
+        position: relative;
+      }
+      .scroll-inner-border::after {
+        content: '';
+        position: absolute;
+        inset: 3px;
+        border: 1px solid var(--border-ancient);
+        pointer-events: none;
+      }
+
+      /* 四角如意纹样装饰 (微调位置防止遮挡内部文字) */
+      .corner-ornament {
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        color: var(--border-ancient);
+        font-size: 14px;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+        user-select: none;
+        opacity: 0.8;
+      }
+      .corner-tl {
+        top: -1px;
+        left: -1px;
+      }
+      .corner-tr {
+        top: -1px;
+        right: -1px;
+      }
+      .corner-bl {
+        bottom: -1px;
+        left: -1px;
+      }
+      .corner-br {
+        bottom: -1px;
+        right: -1px;
+      }
+
+      /* ==================== 宗门禁令防倒卖弹窗 ==================== */
+      .gate-curtain {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        display: grid;
+        place-items: start center;
+        padding: 18px;
+        overflow-y: auto;
+        background: transparent;
+      }
+      .gate-curtain[hidden] {
+        display: none !important;
+      }
+      .gate-talisman-scroll {
+        position: relative;
+        width: min(100%, 540px);
+        max-height: calc(100% - 36px);
+        overflow-y: auto;
+        background: #fdf8eb;
+        background-image:
+          linear-gradient(180deg, #fdf8eb 0%, #f4ebd6 100%),
+          repeating-linear-gradient(0deg, rgba(160, 120, 70, 0.04) 0px, transparent 1px, transparent 24px);
+        border: 3px double var(--cinnabar);
+        padding: 28px 24px;
+        box-shadow:
+          0 10px 40px rgba(0, 0, 0, 0.8),
+          inset 0 0 30px rgba(185, 43, 39, 0.08);
+      }
+      .gate-talisman-head {
+        text-align: center;
+        border-bottom: 2px solid var(--cinnabar);
+        padding-bottom: 12px;
+        margin-bottom: 18px;
+        position: relative;
+      }
+      .gate-talisman-tag {
+        display: inline-block;
+        border: 1px solid var(--cinnabar);
+        color: var(--cinnabar);
+        padding: 2px 14px;
+        font-family: var(--font-title);
+        font-size: 13px;
+        letter-spacing: 0.3em;
+        font-weight: 700;
+        margin-bottom: 6px;
+        background: var(--cinnabar-bg);
+      }
+      .gate-talisman-title {
+        margin: 6px 0;
+        font-family: var(--font-title);
+        font-size: 38px;
+        letter-spacing: 0.25em;
+        color: var(--ink-deep);
+        font-weight: 900;
+      }
+      .gate-talisman-sub {
+        color: var(--cinnabar);
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: 0.15em;
+        margin: 4px 0 0;
+      }
+      .gate-warning-box {
+        border: 1px dashed var(--cinnabar);
+        background: rgba(185, 43, 39, 0.06);
+        padding: 12px 14px;
+        margin: 16px 0;
+        color: #8b1e1b;
+        font-size: 14px;
+        line-height: 1.8;
+      }
+      .gate-text {
+        font-size: 14px;
+        color: var(--ink-text);
+        line-height: 2;
+      }
+      .gate-text strong {
+        color: var(--cinnabar);
+        font-weight: 700;
+      }
+      .gate-comm-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 16px;
+      }
+      .gate-comm-card {
+        display: block;
+        padding: 10px 12px;
+        border: 1px solid var(--border-ancient);
+        background: rgba(235, 220, 190, 0.4);
+        text-decoration: none;
+        color: var(--ink-deep);
+        transition: all 0.2s ease;
+      }
+      .gate-comm-card:hover {
+        background: #f7eed7;
+        border-color: var(--cinnabar);
+        transform: translateY(-2px);
+      }
+      .gate-comm-card small {
+        display: block;
+        color: var(--gold-ink);
+        font-size: 11px;
+        letter-spacing: 0.1em;
+      }
+      .gate-comm-card strong {
+        font-size: 14px;
+        font-family: var(--font-title);
+        color: var(--ink-deep);
+      }
+      .btn-break-seal {
+        display: block;
+        width: 100%;
+        margin-top: 20px;
+        padding: 12px 0;
+        background: #2a221b;
+        border: 2px solid var(--border-ancient);
+        color: #f4ebd9;
+        font-family: var(--font-title);
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: 0.3em;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        transition: all 0.2s ease;
+      }
+      .btn-break-seal:hover {
+        background: var(--cinnabar);
+        border-color: var(--cinnabar-light);
+        color: #ffffff;
+      }
+
+      /* 古卷风格滚动条（门禁弹窗） */
+      .gate-talisman-scroll {
+        scrollbar-width: thin;
+        scrollbar-color: var(--border-ancient) rgba(244, 235, 217, 0.6);
+      }
+      .gate-talisman-scroll::-webkit-scrollbar {
+        width: 10px;
+      }
+      .gate-talisman-scroll::-webkit-scrollbar-track {
+        background: #f4ebd9;
+        border: 1px solid rgba(140, 115, 85, 0.35);
+        border-radius: 6px;
+      }
+      .gate-talisman-scroll::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #9e733b, #6b4a26);
+        border: 2px solid #f4ebd9;
+        border-radius: 6px;
+        box-shadow: inset 0 1px 2px rgba(255, 230, 180, 0.4);
+      }
+      .gate-talisman-scroll::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #b8860b, #7a5a2e);
+      }
+
+      /* 门禁作者行 */
+      .gate-author-line {
+        margin: 10px 0 4px;
+        text-align: center;
+        color: var(--gold-ink);
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        font-family: var(--font-title);
+      }
+      .gate-comm-card small {
+        margin-bottom: 2px;
+      }
+
+      /* ==================== 卷首牌匾与道印 ==================== */
+      .scroll-header {
+        position: relative;
+        padding: 16px 14px;
+        border-bottom: 2px solid var(--border-ancient);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .header-text-group {
+        display: flex;
+        flex-direction: column;
+      }
+      .header-eyebrow {
+        font-size: 12px;
+        letter-spacing: 0.25em;
+        color: var(--gold-ink);
+        margin-bottom: 4px;
+      }
+      .main-title-wrap {
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+      }
+      .main-title {
+        margin: 0;
+        font-family: var(--font-title);
+        font-size: clamp(34px, 6vw, 48px);
+        font-weight: 900;
+        letter-spacing: 0.25em;
+        color: var(--ink-deep);
+        line-height: 1.1;
+      }
+      .main-motto {
+        font-size: 13px;
+        color: var(--ink-light);
+        letter-spacing: 0.2em;
+        margin: 4px 0 0;
+      }
+
+      /* 古典九叠篆印章 */
+      .seal-stamp {
+        width: 76px;
+        height: 76px;
+        border: 3px solid var(--cinnabar);
+        padding: 2px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform: rotate(-3deg);
+        box-shadow: 0 0 4px rgba(185, 43, 39, 0.4);
+        background: rgba(185, 43, 39, 0.03);
+      }
+      .seal-stamp::after {
+        content: '';
+        position: absolute;
+        inset: 2px;
+        border: 1px solid var(--cinnabar);
+      }
+      .seal-stamp-inner {
+        font-family: var(--font-title);
+        color: var(--cinnabar);
+        font-weight: 900;
+        writing-mode: vertical-rl;
+        letter-spacing: 0.2em;
+        font-size: 16px;
+        text-align: center;
+      }
+
+      /* 卷中章节外框（线装书格） */
+      .section-scroll-box {
+        position: relative;
+        margin-bottom: 24px;
+        background: rgba(255, 253, 248, 0.5);
+        border: 1px solid var(--border-light);
+        padding: 18px 16px 20px;
+      }
+      .section-banner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--border-ancient);
+        padding-bottom: 8px;
+        margin-bottom: 16px;
+      }
+      .section-heading {
+        margin: 0;
+        font-family: var(--font-title);
+        font-size: 18px;
+        font-weight: 800;
+        letter-spacing: 0.2em;
+        color: var(--ink-deep);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .section-heading::before {
+        content: '❖';
+        color: var(--cinnabar);
+        font-size: 14px;
+      }
+      .section-tag {
+        font-family: var(--font-title);
+        font-size: 12px;
+        color: var(--gold-ink);
+        letter-spacing: 0.15em;
+      }
+
+      /* 告示朱批条 */
+      .decree-strip {
+        padding: 10px 14px;
+        background: rgba(185, 43, 39, 0.06);
+        border-left: 4px solid var(--cinnabar);
+        border-top: 1px solid rgba(185, 43, 39, 0.2);
+        border-bottom: 1px solid rgba(185, 43, 39, 0.2);
+        border-right: 1px solid rgba(185, 43, 39, 0.2);
+        margin-bottom: 20px;
+        font-size: 13.5px;
+      }
+      .decree-strip strong {
+        color: var(--cinnabar);
+      }
+
+      /* ==================== 角色立绘图录 ==================== */
+      .tulu-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+      .tulu-card {
+        border: 1px solid var(--border-ancient);
+        background: #fcf8ee;
+        padding: 8px;
+        box-shadow: 2px 3px 8px rgba(90, 70, 45, 0.15);
+        transition:
+          transform 0.25s ease,
+          box-shadow 0.25s ease;
+      }
+      .tulu-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 4px 6px 14px rgba(90, 70, 45, 0.25);
+        border-color: var(--cinnabar);
+      }
+      /* 立绘 3D 翻转容器 */
+      .tulu-toggle {
+        display: block;
+        width: 100%;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        cursor: pointer;
+        perspective: 1200px;
+        text-align: inherit;
+        position: relative;
+      }
+      .tulu-toggle.is-loading {
+        cursor: wait;
+      }
+      .tulu-frame {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 3 / 4;
+        background: #dfd3b8;
+        overflow: hidden;
+        border: 1px solid rgba(140, 115, 85, 0.4);
+        perspective: 1200px;
+        transform-style: preserve-3d;
+      }
+      .tulu-img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top center;
+        display: block;
+        filter: sepia(0.08) contrast(1.02);
+        backface-visibility: hidden;
+        transform-style: preserve-3d;
+        will-change: transform, opacity;
+        transition:
+          opacity 0.2s ease,
+          transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1),
+          filter 0.25s ease;
+      }
+      .tulu-img.is-front {
+        transform: rotateY(0deg);
+        z-index: 2;
+      }
+      .tulu-img.is-back {
+        opacity: 0;
+        transform: rotateY(180deg);
+        z-index: 1;
+      }
+      .tulu-img.is-unavailable {
+        opacity: 0 !important;
+      }
+      .tulu-toggle.is-flipped .tulu-img.is-front {
+        opacity: 0;
+        transform: rotateY(-180deg);
+      }
+      .tulu-toggle.is-flipped .tulu-img.is-back {
+        opacity: 1;
+        transform: rotateY(0deg);
+      }
+      /* 立绘宣纸边框渐变与古印标注 */
+      .tulu-frame::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        box-shadow: inset 0 0 16px rgba(110, 85, 50, 0.35);
+        pointer-events: none;
+        z-index: 3;
+      }
+      .tulu-stamp-label {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: rgba(253, 248, 235, 0.92);
+        border: 1px solid var(--cinnabar);
+        color: var(--cinnabar);
+        font-size: 11px;
+        padding: 2px 6px;
+        letter-spacing: 0.1em;
+        font-family: var(--font-title);
+        font-weight: 700;
+        z-index: 4;
+      }
+      .tulu-flip-indicator {
+        position: absolute;
+        bottom: 8px;
+        left: 8px;
+        background: rgba(28, 24, 21, 0.78);
+        border: 1px solid rgba(244, 235, 217, 0.4);
+        color: #f4ebd9;
+        font-size: 10px;
+        padding: 2px 7px;
+        letter-spacing: 0.1em;
+        font-family: var(--font-title);
+        border-radius: 2px;
+        z-index: 4;
+        transition: all 0.2s ease;
+      }
+      .tulu-toggle:hover .tulu-flip-indicator {
+        background: var(--cinnabar);
+        border-color: #fff;
+      }
+      .tulu-toggle.is-loading .tulu-flip-indicator::before {
+        content: '☯ ';
+        display: inline-block;
+        animation: spin-tao 1.2s linear infinite;
+      }
+      @keyframes spin-tao {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .tulu-info {
+        padding: 10px 4px 4px;
+        text-align: center;
+      }
+      .tulu-name {
+        margin: 0;
+        font-family: var(--font-title);
+        font-size: 17px;
+        font-weight: 800;
+        letter-spacing: 0.15em;
+        color: var(--ink-deep);
+      }
+      .tulu-realm {
+        margin: 2px 0 0;
+        font-size: 12px;
+        color: var(--jade-ink);
+        letter-spacing: 0.08em;
+      }
+      .tulu-diff-hint {
+        margin: 4px 0 0;
+        font-size: 11px;
+        color: var(--gold-ink);
+        letter-spacing: 0.05em;
+      }
+      .tulu-frame img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top center;
+        display: block;
+        filter: sepia(0.08) contrast(1.02);
+      }
+      /* 立绘宣纸边框渐变 */
+      .tulu-frame::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        box-shadow: inset 0 0 16px rgba(110, 85, 50, 0.35);
+        pointer-events: none;
+      }
+      .tulu-stamp-label {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: rgba(253, 248, 235, 0.9);
+        border: 1px solid var(--cinnabar);
+        color: var(--cinnabar);
+        font-size: 11px;
+        padding: 2px 6px;
+        letter-spacing: 0.1em;
+        font-family: var(--font-title);
+        font-weight: 700;
+      }
+      .tulu-info {
+        padding: 10px 4px 4px;
+        text-align: center;
+      }
+      .tulu-name {
+        margin: 0;
+        font-family: var(--font-title);
+        font-size: 17px;
+        font-weight: 800;
+        letter-spacing: 0.15em;
+        color: var(--ink-deep);
+      }
+      .tulu-realm {
+        margin: 2px 0 0;
+        font-size: 12px;
+        color: var(--jade-ink);
+        letter-spacing: 0.08em;
+      }
+
+      /* ==================== 命格录与禁忌神体 ==================== */
+      .mingge-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+      .mingge-item {
+        background: #fbf7ec;
+        border: 1px solid var(--border-ancient);
+        padding: 12px 14px;
+        position: relative;
+      }
+      .mingge-item--user {
+        grid-column: 1 / -1;
+        background: #f5eedc;
+        border-left: 4px solid var(--cinnabar);
+      }
+      .mingge-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 4px;
+        border-bottom: 1px dashed rgba(140, 115, 85, 0.3);
+        padding-bottom: 4px;
+      }
+      .mingge-name {
+        font-family: var(--font-title);
+        font-size: 16px;
+        font-weight: 800;
+        color: var(--ink-deep);
+        letter-spacing: 0.1em;
+      }
+      .mingge-badge {
+        font-size: 11px;
+        color: var(--gold-ink);
+        border: 1px solid var(--gold-ink);
+        padding: 0 5px;
+        font-family: var(--font-title);
+      }
+      .mingge-desc {
+        margin: 6px 0 0;
+        font-size: 13px;
+        color: var(--ink-light);
+        line-height: 1.7;
+      }
+
+      /* 黄绢秘录（荒古肾体） */
+      .secret-body-silk {
+        grid-column: 1 / -1;
+        margin-top: 6px;
+        background: #f4e8cb;
+        border: 2px dashed var(--gold-ink);
+        padding: 14px 16px;
+        position: relative;
+      }
+      .secret-body-silk::before {
+        content: '【秘卷禁传】';
+        position: absolute;
+        top: -10px;
+        left: 16px;
+        background: var(--parchment);
+        padding: 0 6px;
+        font-size: 11px;
+        color: var(--gold-ink);
+        font-weight: 700;
+        letter-spacing: 0.15em;
+        font-family: var(--font-title);
+      }
+      .secret-title {
+        font-family: var(--font-title);
+        font-size: 15px;
+        font-weight: 800;
+        color: var(--cinnabar);
+        letter-spacing: 0.12em;
+        margin-bottom: 6px;
+      }
+      .secret-rules {
+        font-size: 13px;
+        color: var(--ink-text);
+        line-height: 1.8;
+      }
+      .secret-rules strong {
+        color: var(--cinnabar);
+      }
+      .secret-quote {
+        margin-top: 8px;
+        font-size: 12px;
+        color: var(--ink-faint);
+        font-style: italic;
+      }
+
+      /* ==================== 境界天梯 ==================== */
+      .jingjie-steps {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+      }
+      .jingjie-step {
+        background: #fbf7ec;
+        border: 1px solid var(--border-ancient);
+        padding: 10px 6px;
+        text-align: center;
+      }
+      .jingjie-num {
+        font-size: 11px;
+        color: var(--gold-ink);
+        font-family: var(--font-title);
+        display: block;
+      }
+      .jingjie-name {
+        font-family: var(--font-title);
+        font-size: 14px;
+        font-weight: 800;
+        color: var(--ink-deep);
+        margin: 2px 0;
+      }
+      .jingjie-sub {
+        font-size: 11px;
+        color: var(--ink-faint);
+        line-height: 1.4;
+      }
+
+      /* ==================== 开场因果抉择（古竹签符令） ==================== */
+      .choice-slip-list {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .btn-choice-slip {
+        display: block;
+        width: 100%;
+        text-align: left;
+        background: #fdfbf5;
+        border: 1px solid var(--border-ancient);
+        border-left: 5px solid var(--border-ancient);
+        padding: 14px 16px;
+        cursor: pointer;
+        position: relative;
+        transition: all 0.25s ease;
+        box-shadow: 1px 2px 4px rgba(90, 70, 45, 0.1);
+      }
+      .btn-choice-slip:hover {
+        background: #fffcf2;
+        border-color: var(--cinnabar);
+        border-left-color: var(--cinnabar);
+        transform: translateX(4px);
+        box-shadow: 2px 4px 10px rgba(185, 43, 39, 0.15);
+      }
+      .btn-choice-slip:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .slip-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 4px;
+      }
+      .slip-title {
+        font-family: var(--font-title);
+        font-size: 16px;
+        font-weight: 800;
+        color: var(--ink-deep);
+        letter-spacing: 0.08em;
+      }
+      .slip-tag {
+        font-family: var(--font-title);
+        font-size: 11px;
+        color: var(--cinnabar);
+        border: 1px solid var(--cinnabar);
+        padding: 1px 6px;
+        background: var(--cinnabar-bg);
+      }
+      .slip-desc {
+        margin: 0;
+        font-size: 13px;
+        color: var(--ink-light);
+        line-height: 1.6;
+      }
+      .choice-status-box {
+        margin-top: 14px;
+        text-align: center;
+        font-size: 13px;
+        color: var(--cinnabar);
+        font-weight: 700;
+        letter-spacing: 0.1em;
+      }
+
+      /* ==================== 传音法阵 ==================== */
+      .comm-pair {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .btn-comm-seal {
+        padding: 12px;
+        background: #2b231d;
+        border: 1px solid var(--border-ancient);
+        color: #f7eed7;
+        font-family: var(--font-title);
+        font-size: 14px;
+        letter-spacing: 0.15em;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-align: center;
+      }
+      .btn-comm-seal:hover {
+        background: var(--cinnabar);
+        border-color: var(--cinnabar-light);
+        color: #ffffff;
+      }
+
+      /* 卷尾款识题跋 */
+      .colophon-area {
+        margin-top: 24px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border-ancient);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12px;
+        color: var(--ink-faint);
+      }
+      .colophon-seal-text {
+        font-family: var(--font-title);
+        letter-spacing: 0.2em;
+      }
+
+
+      /* ==================== 卷首故事缘起 ==================== */
+      .origin-text p {
+        margin: 0 0 10px;
+        text-indent: 2em;
+      }
+      .origin-text p:last-of-type {
+        margin-bottom: 0;
+      }
+      .origin-name {
+        color: var(--cinnabar);
+        font-weight: 700;
+      }
+      .origin-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 14px;
+        padding-top: 10px;
+        border-top: 1px dashed rgba(140, 115, 85, 0.4);
+      }
+      .origin-tag {
+        border: 1px solid var(--gold-ink);
+        color: var(--gold-ink);
+        padding: 2px 10px;
+        font-size: 12px;
+        font-family: var(--font-title);
+        letter-spacing: 0.08em;
+      }
+      /* 移动端适配 */
+      @media (max-width: 640px) {
+        .scroll-container {
+          padding: 24px 14px;
+          margin: 10px auto;
+        }
+        .gate-comm-grid,
+        .comm-pair,
+        .mingge-grid,
+        .jingjie-steps {
+          grid-template-columns: 1fr;
+        }
+        .tulu-grid {
+          grid-template-columns: 1fr;
+        }
+        .jingjie-steps {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .main-title {
+          font-size: 32px;
+        }
+        .seal-stamp {
+          width: 64px;
+          height: 64px;
+        }
+        .seal-stamp-inner {
+          font-size: 13px;
+        }
+      }
+    </style>
+  </head>
+  <body class="is-copyright-gated">
+    <!-- 宗门禁令：重要提醒 遮罩弹窗（文案照抄隐奸便利店门禁） -->
+    <div class="gate-curtain" id="copyrightGate" role="dialog" aria-modal="true">
+      <div class="gate-talisman-scroll">
+        <div class="gate-talisman-head">
+          <span class="gate-talisman-tag">重要提醒 / 贩子死妈</span>
+          <h1 class="gate-talisman-title">苍 玄</h1>
+          <p class="gate-talisman-sub">作者的卡永久免费，卖钱就当是它们全家的丧葬费了😁</p>
+        </div>
+
+        <p class="gate-author-line">唯一原创作者：emo的lsp</p>
+
+        <div class="gate-warning-box">
+          ⚠ 谨防上当受骗：作者从来不会卖这张卡，卖卡的全是未知生物
+        </div>
+
+        <div class="gate-text">
+          <p><strong>本作品由作者 emo的lsp 原创制作。</strong></p>
+          <p>任何收费售卖、付费解锁、代购或以作者名义收款的行为，都不是作者授权的，都是未知生物干的事。</p>
+          <p><strong>你要是花钱买了，别犹豫，立刻申请退款，再把贩卖死户口本的东西往死里举报。</strong></p>
+          <p>
+            未经作者明确授权，禁止转载、搬运、二次售卖或修改后发布，盗卡、搬运狗和相关平台管理你们妈死了，不对，我忘了盗卡、搬运狗和相关平台管理你们没妈。
+          </p>
+          <p><strong>顺便由衷希望盗卡、搬运狗和相关平台管理你们的女儿、姐姐、妹妹、女友、未婚妻、老婆被卖去非洲让倪哥轮奸。😄</strong></p>
+        </div>
+
+        <div class="gate-comm-grid">
+          <a
+            class="gate-comm-card"
+            href="https://discord.gg/x3aKHgfE3u"
+            onclick="return openDiscordConfirm(this.href);"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <small>作者个人频道</small>
+            <strong>加入我的 Discord</strong>
+            <small style="color: var(--ink-faint)">作品发布、作者动态与闲聊。</small>
+          </a>
+          <a
+            class="gate-comm-card"
+            href="https://discord.gg/odysseia"
+            onclick="return openDiscordConfirm(this.href);"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <small>大型 SillyTavern 社区 · 类脑社区</small>
+            <strong>加入类脑社区 Discord</strong>
+            <small style="color: var(--ink-faint)">社区所有内容均免费，有很多大佬和好人，也有很多狗屎人。</small>
+          </a>
+        </div>
+
+        <button class="btn-break-seal" type="button" id="closeGateBtn">我已阅读 · 进入开场页</button>
+      </div>
+    </div>
+
+        <!-- 苍玄仙宗真传古卷主界面 -->
+    <main class="scroll-container is-copyright-gated" id="storeHome">
+      <div class="scroll-inner-border">
+        <!-- 四角如意古纹 -->
+        <span class="corner-ornament corner-tl">╔</span>
+        <span class="corner-ornament corner-tr">╗</span>
+        <span class="corner-ornament corner-bl">╚</span>
+        <span class="corner-ornament corner-br">╝</span>
+
+        <!-- 卷首题额 -->
+        <header class="scroll-header">
+          <div class="header-text-group">
+            <span class="header-eyebrow">凌霄仙宗 · 秘传天鉴录</span>
+            <div class="main-title-wrap">
+              <h1 class="main-title">苍 玄</h1>
+            </div>
+            <p class="main-motto">红尘三千丈 · 唯有仙缘不可负</p>
+          </div>
+          <!-- 宗门九叠朱砂古印 -->
+          <div class="seal-stamp" aria-hidden="true">
+            <div class="seal-stamp-inner">苍玄绝密</div>
+          </div>
+        </header>
+
+        <!-- 宗门告示朱批 -->
+        <div class="decree-strip">
+          <strong>📜 版权声明：</strong>这张角色卡是免费的，永远禁止商业化行为。如果你是购买获得，请立即退款并向购买平台举报贩卖者，维护创作者和您自身的权益。
+        </div>
+        <div class="decree-strip">
+          <strong>🔒 转载声明：</strong>未经作者明确授权，严禁将本作品转载至其他任何平台。
+        </div>
+
+        <!-- 卷首：重要提醒 · 游玩须知 -->
+        <section class="section-scroll-box" aria-labelledby="notice-title">
+          <div class="section-banner">
+            <h2 class="section-heading" id="notice-title">重要提醒</h2>
+            <span class="section-tag">须知 / 游玩</span>
+          </div>
+          <div class="decree-strip">
+            <strong>⚔️ 需安装酒馆助手：</strong>本角色卡依赖「酒馆助手」扩展才能完美游玩，请务必安装并启用。
+          </div>
+          <div class="decree-strip">
+            <strong>📝 提示词模板：</strong>游玩时请务必开启角色卡自带的提示词模板，否则游玩体验将不完整。
+          </div>
+          <div class="decree-strip" style="margin-bottom: 0">
+            <strong>⚙️ 局部正则 + 脚本库：</strong>本卡附带局部正则与脚本库用于润色显示效果，请确认已全部导入并启用。
+          </div>
+        </section>
+
+        <!-- 卷首：故事缘起 -->
+        <section class="section-scroll-box" aria-labelledby="origin-title">
+          <div class="section-banner">
+            <h2 class="section-heading" id="origin-title">故事缘起</h2>
+            <span class="section-tag">卷首 · 缘起</span>
+          </div>
+          <div class="origin-text">
+            <p>玄幻仙侠世界，修真九境，正魔对立。一个被判定为废物的外门杂役，却隐藏着震古烁今的秘密。</p>
+            <p>孤儿<span class="origin-name">{{user}}</span>在宗门测试中被判定无法修炼，成为凌霄宗最底层的杂役。然而无人知晓，他拥有着修真界第一特殊体质——<span class="origin-name">荒古肾体</span>。</p>
+            <p>这种体质的效果惊世骇俗：与任意修为的女性双修一次，男女双方均可获得两人综合后十年苦修的修为提升，若处于瓶颈期更是能够水到渠成般突破……</p>
+            <p>当清冷的宗主、妖媚的魔女、温柔的圣女、同为废体的青梅竹马……四位女子的命运与他交织，这个废物杂役的崛起之路，将掀起怎样的风云？</p>
+            <div class="origin-tags">
+              <span class="origin-tag">荒古肾体</span>
+              <span class="origin-tag">雌竞争夺</span>
+              <span class="origin-tag">双修突破</span>
+              <span class="origin-tag">废柴崛起</span>
+              <span class="origin-tag">正魔对立</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 第一章：登场仙子法相图录 -->
+        <section class="section-scroll-box" aria-labelledby="tulu-title">
+          <div class="section-banner">
+            <h2 class="section-heading" id="tulu-title">登场仙子法相图录</h2>
+            <span class="section-tag">卷一 · 仙相 (点击可翻转差分)</span>
+          </div>
+          <div class="tulu-grid">
+            <!-- 虞清寒 -->
+            <article class="tulu-card">
+              <button class="tulu-toggle" type="button" data-portrait-toggle aria-label="切换虞清寒法相差分">
+                <div class="tulu-frame">
+                  <span class="tulu-stamp-label">凌霄宗主</span>
+                  <!-- 【正相·立绘】src 为主链接，data-fallback 为备用防挂链接 -->
+                  <img
+                    class="tulu-img is-front"
+                    src="https://img.emolsp.online/CG/XIUXIAN/CG/SFW/%E5%AE%97%E4%B8%BB%E8%99%9E%E6%B8%85%E5%AF%92/%E8%99%9E%E6%B8%85%E5%AF%92%E5%BE%AE%E7%AC%91%E7%9A%84%E8%A1%A8%E6%83%85/15.jpg"
+                    data-fallback="https://img.emolsp.online/CG/XIUXIAN/CG/SFW/%E5%AE%97%E4%B8%BB%E8%99%9E%E6%B8%85%E5%AF%92/%E8%99%9E%E6%B8%85%E5%AF%92%E5%BE%AE%E7%AC%91%E7%9A%84%E8%A1%A8%E6%83%85/15.jpg"
+                    alt="虞清寒正面立绘"
+                    loading="lazy"
+                    referrerpolicy="no-referrer"
+                  />
+                  <!-- 【变相·差分】若有第2张差分图URL，替换下方的 src 与 data-fallback -->
+                  <img
+                    class="tulu-img is-back"
+                    src="https://img.emolsp.online/CG/XIUXIAN/CG/NSFW/%E5%AE%97%E4%B8%BB%E8%99%9E%E6%B8%85%E5%AF%92/%E8%99%9E%E6%B8%85%E5%AF%92%E4%B8%BAuser%E8%B6%B3%E4%BA%A4/15.jpg"
+                    data-fallback="https://img.emolsp.online/CG/XIUXIAN/CG/SFW/%E5%AE%97%E4%B8%BB%E8%99%9E%E6%B8%85%E5%AF%92/%E8%99%9E%E6%B8%85%E5%AF%92%E5%BE%AE%E7%AC%91%E7%9A%84%E8%A1%A8%E6%83%85/15.jpg"
+                    alt="虞清寒差分立绘"
+                    loading="lazy"
+                    referrerpolicy="no-referrer"
+                  />
+                  <span class="tulu-flip-indicator" data-portrait-label>正相 · 触按翻转</span>
+                </div>
+              </button>
+              <div class="tulu-info">
+                <h3 class="tulu-name">虞清寒</h3>
+                <p class="tulu-realm">凌霄宗主 · 合体后期 · 冰山美人 · 飞霜仙体</p>
+                <p class="tulu-diff-hint">点击翻转 · 查看差分</p>
+              </div>
+            </article>
+
+            <!-- 殷妙烟 -->
+            <article class="tulu-card">
+              <button class="tulu-toggle" type="button" data-portrait-toggle aria-label="切换殷妙烟法相差分">
+                <div class="tulu-frame">
+                  <span class="tulu-stamp-label">魔门太上</span>
+                  <!-- 【正相·立绘】 -->
+                  <img
+                    class="tulu-img is-front"
+                    src="https://img.emolsp.online/CG/XIUXIAN/CG/SFW/%E9%AD%94%E9%97%A8%E6%AE%B7%E5%A6%99%E7%83%9F/%E6%AE%B7%E5%A6%99%E7%83%9F%E9%AD%85%E6%83%91%E5%9C%B0%E5%BE%AE%E7%AC%91/5.jpg"
+                    data-fallback="https://img.emolsp.online/CG/XIUXIAN/CG/SFW/%E9%AD%94%E9%97%A8%E6%AE%B7%E5%A6%99%E7%83%9F/%E6%AE%B7%E5%A6%99%E7%83%9F%E9%AD%85%E6%83%91%E5%9C%B0%E5%BE%AE%E7%AC%91/5.jpg"
+                    alt="殷妙烟正面立绘"
+                    loading="lazy"
+                    referrerpolicy="no-referrer"
+                  />
+                  <!-- 【变相·差分】 -->
+                  <img
+                    class="tulu-img is-back"
+                    src="https://img.emolsp.online/CG/XIUXIAN/CG/NSFW/%E9%AD%94%E9%97%A8%E6%AE%B7%E5%A6%99%E7%83%9F/%E6%AE%B7%E5%A6%99%E7%83%9F%E5%8F%8D%E5%90%91%E7%81%AB%E8%BD%A6%E4%BE%BF%E5%BD%93%E4%BD%93%E4%BD%8D%E6%80%A7%E7%88%B1/7.jpg"
+                    data-fallback="https://img.emolsp.online/CG/XIUXIAN/CG/SFW/%E9%AD%94%E9%97%A8%E6%AE%B7%E5%A6%99%E7%83%9F/%E6%AE%B7%E5%A6%99%E7%83%9F%E9%AD%85%E6%83%91%E5%9C%B0%E5%BE%AE%E7%AC%91/5.jpg"
+                    alt="殷妙烟差分立绘"
+                    loading="lazy"
+                    referrerpolicy="no-referrer"
+                  />
+                  <span class="tulu-flip-indicator" data-portrait-label>正相 · 触按翻转</span>
+                </div>
+              </button>
+              <div class="tulu-info">
+                <h3 class="tulu-name">殷妙烟</h3>
+                <p class="tulu-realm">魔门太上 · 合体前期 · 妖媚魔女 · 天魔魅体</p>
+                <p class="tulu-diff-hint">点击翻转 · 查看差分</p>
+              </div>
+            </article>
+
+            <!-- 秦素霜 -->
+            <article class="tulu-card">
+              <button class="tulu-toggle" type="button" data-portrait-toggle aria-label="切换秦素霜法相差分">
+                <div class="tulu-frame">
+                  <span class="tulu-stamp-label">百花谷圣女</span>
+                  <!-- 【正相·立绘】 -->
+                  <img
+                    class="tulu-img is-front"
+                    src="https://img.emolsp.online/CG/XIUXIAN/CG/SFW/%E5%9C%A3%E5%A5%B3%E7%A7%A6%E7%B4%A0%E9%9C%9C/%E7%A7%A6%E7%B4%A0%E9%9C%9C%E5%BE%AE%E7%AC%91%E7%9A%84%E8%A1%A8%E6%83%85/5.jpg"
+                    data-fallback="https://img.emolsp.online/CG/XIUXIAN/CG/SFW/%E5%9C%A3%E5%A5%B3%E7%A7%A6%E7%B4%A0%E9%9C%9C/%E7%A7%A6%E7%B4%A0%E9%9C%9C%E5%BE%AE%E7%AC%91%E7%9A%84%E8%A1%A8%E6%83%85/5.jpg"
+                    alt="秦素霜正面立绘"
+                    loading="lazy"
+                    referrerpolicy="no-referrer"
+                  />
+                  <!-- 【变相·差分】 -->
+                  <img
+                    class="tulu-img is-back"
+                    src="https://img.emolsp.online/CG/XIUXIAN/CG/NSFW/%E5%9C%A3%E5%A5%B3%E7%A7%A6%E7%B4%A0%E9%9C%9C/%E7%A7%A6%E7%B4%A0%E9%9C%9C%E4%B8%BAuser%E4%B9%B3%E4%BA%A4/9.jpg"
+                    data-fallback="https://img.emolsp.online/CG/XIUXIAN/CG/SFW/%E5%9C%A3%E5%A5%B3%E7%A7%A6%E7%B4%A0%E9%9C%9C/%E7%A7%A6%E7%B4%A0%E9%9C%9C%E5%BE%AE%E7%AC%91%E7%9A%84%E8%A1%A8%E6%83%85/5.jpg"
+                    alt="秦素霜差分立绘"
+                    loading="lazy"
+                    referrerpolicy="no-referrer"
+                  />
+                  <span class="tulu-flip-indicator" data-portrait-label>正相 · 触按翻转</span>
+                </div>
+              </button>
+              <div class="tulu-info">
+                <h3 class="tulu-name">秦素霜</h3>
+                <p class="tulu-realm">百花谷圣女 · 化神中期 · 温柔圣手 · 医仙圣体</p>
+                <p class="tulu-diff-hint">点击翻转 · 查看差分</p>
+              </div>
+            </article>
+
+            <!-- 江小鲤 -->
+            <article class="tulu-card">
+              <button class="tulu-toggle" type="button" data-portrait-toggle aria-label="切换江小鲤法相差分">
+                <div class="tulu-frame">
+                  <span class="tulu-stamp-label">青梅竹马</span>
+                  <!-- 【正相·立绘】 -->
+                  <img
+                    class="tulu-img is-front"
+                    src="https://img.emolsp.online/CG/XIUXIAN/CG/SFW/%E9%9D%92%E6%A2%85%E6%B1%9F%E5%B0%8F%E9%B2%A4/%E6%B2%A1%E5%BC%80%E5%A7%8B%E4%BF%AE%E7%82%BC%E7%9A%84%E6%B1%9F%E5%B0%8F%E9%B2%A4%E5%9C%A8%E5%B9%B2%E6%B4%BB/9.jpg"
+                    data-fallback="https://img.emolsp.online/CG/XIUXIAN/CG/SFW/%E9%9D%92%E6%A2%85%E6%B1%9F%E5%B0%8F%E9%B2%A4/%E6%B2%A1%E5%BC%80%E5%A7%8B%E4%BF%AE%E7%82%BC%E7%9A%84%E6%B1%9F%E5%B0%8F%E9%B2%A4%E5%9C%A8%E5%B9%B2%E6%B4%BB/9.jpg"
+                    alt="江小鲤正面立绘"
+                    loading="lazy"
+                    referrerpolicy="no-referrer"
+                  />
+                  <!-- 【变相·差分】 -->
+                  <img
+                    class="tulu-img is-back"
+                    src="https://img.emolsp.online/CG/XIUXIAN/CG/NSFW/%E9%9D%92%E6%A2%85%E6%B1%9F%E5%B0%8F%E9%B2%A4/user%E8%88%94%E8%88%90%E8%BF%98%E6%B2%A1%E5%BC%80%E5%A7%8B%E4%BF%AE%E7%82%BC%E7%9A%84%E6%B1%9F%E5%B0%8F%E9%B2%A4%E7%9A%84%E7%8E%89%E8%B6%B3/8.jpg"
+                    data-fallback="https://img.emolsp.online/CG/XIUXIAN/CG/SFW/%E9%9D%92%E6%A2%85%E6%B1%9F%E5%B0%8F%E9%B2%A4/%E6%B2%A1%E5%BC%80%E5%A7%8B%E4%BF%AE%E7%82%BC%E7%9A%84%E6%B1%9F%E5%B0%8F%E9%B2%A4%E5%9C%A8%E5%B9%B2%E6%B4%BB/9.jpg"
+                    alt="江小鲤差分立绘"
+                    loading="lazy"
+                    referrerpolicy="no-referrer"
+                  />
+                  <span class="tulu-flip-indicator" data-portrait-label>正相 · 触按翻转</span>
+                </div>
+              </button>
+              <div class="tulu-info">
+                <h3 class="tulu-name">江小鲤</h3>
+                <p class="tulu-realm">外门杂役 · 无修为 · 青梅竹马 · 同为废体</p>
+                <p class="tulu-diff-hint">点击翻转 · 查看差分</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- 第二章：诸天气运 · 命格谱 -->
+        <section class="section-scroll-box" aria-labelledby="mingge-title">
+          <div class="section-banner">
+            <h2 class="section-heading" id="mingge-title">诸天气运 · 命格谱</h2>
+            <span class="section-tag">卷二 · 命格</span>
+          </div>
+          <div class="mingge-grid">
+            <!-- 宿主 -->
+            <div class="mingge-item mingge-item--user">
+              <div class="mingge-head">
+                <span class="mingge-name">{{user}}（宿主）</span>
+                <span class="mingge-badge">凌霄宗杂役</span>
+              </div>
+              <p class="mingge-desc">
+                荒古肾体拥有者，被判定无法修炼的外门杂役，却隐藏着修真界第一特殊体质。
+              </p>
+            </div>
+
+            <!-- 荒古肾体特殊秘卷 -->
+            <div class="secret-body-silk">
+              <div class="secret-title">禁忌神体 · 荒古肾体</div>
+              <div class="secret-rules">
+                •
+                <strong>造化神效：</strong
+                >与任意修为的女性双修一次，男女双方均可获得两人综合后<strong>十年苦修</strong>的修为提升。<br />
+                • <strong>天道禁制：</strong>每日仅对一人生效，可自主控制开启。<br />
+                • <strong>极道突破：</strong>瓶颈期可直接突破，无需渡劫。
+              </div>
+              <div class="secret-quote">「这个秘密一旦暴露，将引起整个修真界的腥风血雨……」</div>
+            </div>
+
+            <div class="mingge-item">
+              <div class="mingge-head">
+                <span class="mingge-name">虞清寒</span>
+                <span class="mingge-badge">合体后期</span>
+              </div>
+              <p class="mingge-desc">凌霄宗宗主，冰山美人，飞霜仙体，清冷高位之下藏着禁忌吸引。</p>
+            </div>
+
+            <div class="mingge-item">
+              <div class="mingge-head">
+                <span class="mingge-name">殷妙烟</span>
+                <span class="mingge-badge">合体前期</span>
+              </div>
+              <p class="mingge-desc">魔门太上，妖媚魔女，天魔魅体，危险与诱惑在暗处先一步降临。</p>
+            </div>
+
+            <div class="mingge-item">
+              <div class="mingge-head">
+                <span class="mingge-name">秦素霜</span>
+                <span class="mingge-badge">化神中期</span>
+              </div>
+              <p class="mingge-desc">百花谷圣女，温柔圣手，医仙圣体，温柔表象下藏着更深的牵引。</p>
+            </div>
+
+            <div class="mingge-item">
+              <div class="mingge-head">
+                <span class="mingge-name">江小鲤</span>
+                <span class="mingge-badge">凡人体质</span>
+              </div>
+              <p class="mingge-desc">外门杂役，无修为，青梅竹马，同为废体，命运的暗潮从日常开始。</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 第三章：群英谱 · 重要配角 -->
+        <section class="section-scroll-box" aria-labelledby="side-title">
+          <div class="section-banner">
+            <h2 class="section-heading" id="side-title">群英谱 · 重要配角</h2>
+            <span class="section-tag">卷三 · 配角</span>
+          </div>
+          <div class="mingge-grid">
+            <div class="mingge-item">
+              <div class="mingge-head">
+                <span class="mingge-name">洛筱筱</span>
+                <span class="mingge-badge">八卦精</span>
+              </div>
+              <p class="mingge-desc">外门弟子，到处传播消息的小迷妹。</p>
+            </div>
+            <div class="mingge-item">
+              <div class="mingge-head">
+                <span class="mingge-name">花念卿</span>
+                <span class="mingge-badge">风骚长老</span>
+              </div>
+              <p class="mingge-desc">百花谷长老，秦素霜的师叔。</p>
+            </div>
+            <div class="mingge-item">
+              <div class="mingge-head">
+                <span class="mingge-name">陈破军</span>
+                <span class="mingge-badge">铁憨憨</span>
+              </div>
+              <p class="mingge-desc">执法堂成员，虞清寒的追求者。</p>
+            </div>
+            <div class="mingge-item">
+              <div class="mingge-head">
+                <span class="mingge-name">萧寒烟</span>
+                <span class="mingge-badge">老阴逼</span>
+              </div>
+              <p class="mingge-desc">太上长老，暗中推动一切。</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 第四章：通天仙路 · 修行境界 -->
+        <section class="section-scroll-box" aria-labelledby="jingjie-title">
+          <div class="section-banner">
+            <h2 class="section-heading" id="jingjie-title">通天仙路 · 修行境界</h2>
+            <span class="section-tag">卷四 · 阶位</span>
+          </div>
+          <div class="jingjie-steps">
+            <div class="jingjie-step">
+              <span class="jingjie-num">第一境</span>
+              <div class="jingjie-name">凡尘筑基</div>
+              <div class="jingjie-sub">炼气 · 筑基 · 金丹<br />脱凡入道之始</div>
+            </div>
+            <div class="jingjie-step">
+              <span class="jingjie-num">第二境</span>
+              <div class="jingjie-name">超凡入圣</div>
+              <div class="jingjie-sub">元婴 · 化神 · 炼虚<br />掌控天地法则</div>
+            </div>
+            <div class="jingjie-step">
+              <span class="jingjie-num">第三境</span>
+              <div class="jingjie-name">合道不朽</div>
+              <div class="jingjie-sub">合体 · 大乘 · 渡劫<br />追求永恒超脱</div>
+            </div>
+            <div class="jingjie-step">
+              <span class="jingjie-num">第四境</span>
+              <div class="jingjie-name">飞升成仙</div>
+              <div class="jingjie-sub">真仙之境<br />与天地同寿</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 第五章：推演因果 · 抉择仙缘 -->
+        <section class="section-scroll-box" aria-labelledby="choice-title">
+          <div class="section-banner">
+            <h2 class="section-heading" id="choice-title">推演因果 · 抉择仙缘</h2>
+            <span class="section-tag">卷五 · 开局</span>
+          </div>
+          <div class="choice-slip-list">
+            <button class="btn-choice-slip" type="button" data-swipe="1">
+              <div class="slip-header">
+                <span class="slip-title">【因果一】青梅江小鲤线</span>
+                <span class="slip-tag">温情日常</span>
+              </div>
+              <p class="slip-desc">从外门杂役与青梅竹马的日常开始，命运暗潮初现。</p>
+            </button>
+
+            <button class="btn-choice-slip" type="button" data-swipe="2">
+              <div class="slip-header">
+                <span class="slip-title">【因果二】宗主虞清寒线</span>
+                <span class="slip-tag">清冷高位</span>
+              </div>
+              <p class="slip-desc">以宗主线开局，清冷高位与禁忌吸引并行推进。</p>
+            </button>
+
+            <button class="btn-choice-slip" type="button" data-swipe="3">
+              <div class="slip-header">
+                <span class="slip-title">【因果三】魔门殷妙烟线</span>
+                <span class="slip-tag">凶险魅惑</span>
+              </div>
+              <p class="slip-desc">魔门试探先至，危险与诱惑在暗处先一步降临。</p>
+            </button>
+
+            <button class="btn-choice-slip" type="button" data-swipe="4">
+              <div class="slip-header">
+                <span class="slip-title">【因果四】圣女秦素霜线</span>
+                <span class="slip-tag">医道倾心</span>
+              </div>
+              <p class="slip-desc">圣女医道线展开，温柔表象下藏着更深的牵引。</p>
+            </button>
+
+            <button class="btn-choice-slip" type="button" data-swipe="5">
+              <div class="slip-header">
+                <span class="slip-title">【因果五】四女齐聚线</span>
+                <span class="slip-tag">修罗场开局</span>
+              </div>
+              <p class="slip-desc">多线同启，雌竞格局直接拉满，冲突与机缘并发。</p>
+            </button>
+          </div>
+          <div class="choice-status-box" data-opening-status>请点击上方竹简，选定开篇因果</div>
+        </section>
+
+        <!-- 第五章：加入社群 -->
+        <section class="section-scroll-box" aria-labelledby="comm-title">
+          <div class="section-banner">
+            <h2 class="section-heading" id="comm-title">加入社群</h2>
+            <span class="section-tag">社群 / 链接</span>
+          </div>
+          <div class="comm-pair">
+            <button class="btn-comm-seal" type="button" onclick="copyQQGroup()">🐧 企鹅群 · 点击复制群号</button>
+            <button class="btn-comm-seal" type="button" onclick="openDiscordConfirm()">💬 Discord · 加入服务器</button>
+          </div>
+        </section>
+
+        <!-- 卷尾款识题跋 (增加内边距与居中排版，避免贴紧角落) -->
+        <footer class="colophon-area">
+          <div class="colophon-seal-text">苍玄 · 角色开场页 · 作者：emo的lsp</div>
+          <div class="colophon-seal-text">仙缘未尽 · 祝游玩愉快</div>
+        </footer>
+      </div>
+    </main>
+
+    <script>
+      function openDiscordConfirm(url = 'https://discord.gg/x3aKHgfE3u') {
+        if (confirm('即将跳转到 Discord 服务器，是否继续？')) {
+          window.open(url, '_blank', 'noopener,noreferrer');
+        }
+        return false;
+      }
+
+      function copyQQGroup() {
+        const groupNum = '1083364056';
+        const inform = success => {
+          const statusEl = document.querySelector('[data-opening-status]');
+          if (typeof triggerSlash === 'function') {
+            triggerSlash(
+              success
+                ? `/echo severity=success 企鹅群号【${groupNum}】已复制到剪贴板！`
+                : `/echo severity=error 复制失败，群号为：${groupNum}`,
+            );
+          } else if (statusEl) {
+            statusEl.textContent = success
+              ? `✨ 企鹅群号【${groupNum}】已复制到剪贴板！`
+              : `⚠ 复制失败，请手动记录群号：${groupNum}`;
+          }
+        };
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard
+            .writeText(groupNum)
+            .then(() => inform(true))
+            .catch(() => manualCopy());
+        } else {
+          manualCopy();
+        }
+
+        function manualCopy() {
+          const ta = document.createElement('textarea');
+          ta.value = groupNum;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          try {
+            document.execCommand('copy');
+            inform(true);
+          } catch (e) {
+            inform(false);
+          }
+          document.body.removeChild(ta);
+        }
+      }
+
+      (() => {
+        const gate = document.getElementById('copyrightGate');
+        const closeBtn = document.getElementById('closeGateBtn');
+        const home = document.getElementById('storeHome');
+        const statusEl = document.querySelector('[data-opening-status]');
+
+        const lockScroll = () => {
+          const root = document.scrollingElement || document.documentElement;
+          root.style.overflow = 'hidden';
+          if (document.body) document.body.style.overflow = 'hidden';
+        };
+        const unlockScroll = () => {
+          const root = document.scrollingElement || document.documentElement;
+          root.style.overflow = '';
+          if (document.body) document.body.style.overflow = '';
+        };
+
+        // 遮罩解锁：收门禁 + 恢复主页显示 + 回到页面顶部
+        lockScroll();
+        closeBtn?.addEventListener('click', () => {
+          gate.hidden = true;
+          document.body.classList.remove('is-copyright-gated');
+          home?.classList.remove('is-copyright-gated');
+          unlockScroll();
+          try {
+            const root = document.scrollingElement || document.documentElement;
+            root.scrollTop = 0;
+            if (document.body) document.body.scrollTop = 0;
+            home?.scrollIntoView?.({ block: 'start', behavior: 'auto' });
+          } catch (_) {}
+        });
+
+        // 立绘差分预加载与翻转交互
+        const prepareImage = image =>
+          new Promise(resolve => {
+            const finish = () => {
+              const decoded = typeof image.decode === 'function' ? image.decode() : Promise.resolve();
+              decoded.catch(() => {}).then(resolve);
+            };
+            const useFallback = () => {
+              const fallback = image.dataset.fallback;
+              if (fallback && image.src !== fallback) {
+                image.addEventListener('load', finish, { once: true });
+                image.addEventListener(
+                  'error',
+                  () => {
+                    image.classList.add('is-unavailable');
+                    finish();
+                  },
+                  { once: true },
+                );
+                image.src = fallback;
+              } else {
+                image.classList.add('is-unavailable');
+                finish();
+              }
+            };
+
+            if (image.complete) {
+              if (image.naturalWidth > 0) finish();
+              else useFallback();
+              return;
+            }
+            image.addEventListener('load', finish, { once: true });
+            image.addEventListener('error', useFallback, { once: true });
+          });
+
+        document.querySelectorAll('[data-portrait-toggle]').forEach(button => {
+          const label = button.querySelector('[data-portrait-label]');
+          const images = [...button.querySelectorAll('img')];
+          button.classList.add('is-loading');
+
+          Promise.all(images.map(prepareImage)).then(() => {
+            button.classList.remove('is-loading');
+            if (label && !button.classList.contains('is-flipped')) {
+              label.textContent = '正相 · 触按翻转';
+            }
+          });
+
+          button.addEventListener('click', () => {
+            button.classList.toggle('is-flipped');
+            const isFlipped = button.classList.contains('is-flipped');
+            if (label) {
+              label.textContent = isFlipped ? '变相 · 点击归正' : '正相 · 触按翻转';
+            }
+          });
+        });
+
+        // SillyTavern 环境识别与开场白 Swipe 切换
+        function resolveScope(fnName) {
+          const targets = [globalThis];
+          try {
+            if (globalThis.parent && globalThis.parent !== globalThis) targets.push(globalThis.parent);
+          } catch (_) {}
+          try {
+            if (globalThis.top && !targets.includes(globalThis.top)) targets.push(globalThis.top);
+          } catch (_) {}
+          for (const t of targets) {
+            if (t && typeof t[fnName] === 'function') return t[fnName].bind(t);
+            if (t && t.TavernHelper && typeof t.TavernHelper[fnName] === 'function')
+              return t.TavernHelper[fnName].bind(t.TavernHelper);
+          }
+          return null;
+        }
+
+        const buttons = document.querySelectorAll('[data-swipe]');
+        buttons.forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const swipeIdx = Number(btn.dataset.swipe);
+            buttons.forEach(b => (b.disabled = true));
+            if (statusEl) statusEl.textContent = `正在拨动因果弦，推演第 0${swipeIdx} 折篇章……`;
+
+            try {
+              const getChatMessages = resolveScope('getChatMessages');
+              const setChatMessage = resolveScope('setChatMessage');
+
+              if (!getChatMessages || !setChatMessage) {
+                throw new Error('当前非 SillyTavern 运行环境，无法直接推演开场');
+              }
+
+              const msgs = await getChatMessages('0', { include_swipes: true });
+              const rootMsg = msgs && msgs[0];
+              if (!rootMsg || !Array.isArray(rootMsg.swipes) || rootMsg.swipes[swipeIdx] == null) {
+                throw new Error('该条因果篇章尚未在卡片中录入');
+              }
+
+              await setChatMessage(rootMsg.swipes[swipeIdx], 0, {
+                swipe_id: swipeIdx,
+                refresh: 'display_and_render_current',
+              });
+
+              if (statusEl) statusEl.textContent = `✨ 因果已定，已切换至第 0${swipeIdx} 折开场！`;
+            } catch (err) {
+              if (statusEl) statusEl.textContent = `⚠ ${err.message || '推演开场失败'}`;
+              buttons.forEach(b => (b.disabled = false));
+            }
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>
