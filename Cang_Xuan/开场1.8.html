@@ -834,8 +834,9 @@
 
       /* ==================== 传音法阵 ==================== */
       .comm-pair {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
         gap: 12px;
       }
       .btn-comm-seal {
@@ -1389,7 +1390,6 @@
             <span class="section-tag">社群 / 链接</span>
           </div>
           <div class="comm-pair">
-            <button class="btn-comm-seal" type="button" onclick="copyQQGroup()">🐧 企鹅群 · 点击复制群号</button>
             <button class="btn-comm-seal" type="button" onclick="openDiscordConfirm()">💬 Discord · 加入服务器</button>
           </div>
         </section>
@@ -1408,49 +1408,6 @@
           window.open(url, '_blank', 'noopener,noreferrer');
         }
         return false;
-      }
-
-      function copyQQGroup() {
-        const groupNum = '1083364056';
-        const inform = success => {
-          const statusEl = document.querySelector('[data-opening-status]');
-          if (typeof triggerSlash === 'function') {
-            triggerSlash(
-              success
-                ? `/echo severity=success 企鹅群号【${groupNum}】已复制到剪贴板！`
-                : `/echo severity=error 复制失败，群号为：${groupNum}`,
-            );
-          } else if (statusEl) {
-            statusEl.textContent = success
-              ? `✨ 企鹅群号【${groupNum}】已复制到剪贴板！`
-              : `⚠ 复制失败，请手动记录群号：${groupNum}`;
-          }
-        };
-
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard
-            .writeText(groupNum)
-            .then(() => inform(true))
-            .catch(() => manualCopy());
-        } else {
-          manualCopy();
-        }
-
-        function manualCopy() {
-          const ta = document.createElement('textarea');
-          ta.value = groupNum;
-          ta.style.position = 'fixed';
-          ta.style.opacity = '0';
-          document.body.appendChild(ta);
-          ta.select();
-          try {
-            document.execCommand('copy');
-            inform(true);
-          } catch (e) {
-            inform(false);
-          }
-          document.body.removeChild(ta);
-        }
       }
 
       (() => {

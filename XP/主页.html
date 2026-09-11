@@ -465,13 +465,8 @@
 
         <section class="opening-body">
           <div class="section-block" style="animation-delay: 0.1s">
-            <div class="section-title">🐧 社区交流</div>
+            <div class="section-title">💬 社区交流</div>
             <div class="community-grid">
-              <div class="community-item clickable" onclick="copyGroupNumber()">
-                <div class="community-label">lsp的个人交流企鹅群</div>
-                <div class="community-value">点击复制群号</div>
-                <div class="community-desc">发卡会有提醒，欢迎加入闲聊</div>
-              </div>
               <div class="community-item">
                 <div class="community-label">lsp的个人Discord群组</div>
                 <div class="community-value">
@@ -586,18 +581,6 @@
         localStorage.setItem(THEME_KEY, currentTheme);
         applyTheme();
         broadcastTheme();
-      }
-
-      function copyGroupNumber() {
-        const groupNumber = '1083364056';
-        navigator.clipboard
-          .writeText(groupNumber)
-          .then(() => {
-            alert('群号已复制: ' + groupNumber);
-          })
-          .catch(() => {
-            alert('复制失败，群号：' + groupNumber);
-          });
       }
 
       function confirmDiscord() {

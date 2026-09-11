@@ -523,16 +523,11 @@
 
         <div class="note-card">
           <div class="card-header accent">
-            <span>🐧</span>
+            <span>💬</span>
             <span>加入社群</span>
           </div>
           <div class="card-body">
             <div class="community-grid">
-              <div class="community-card" onclick="copyQQGroup()">
-                <div class="community-icon">🐧</div>
-                <div class="community-title">企鹅群</div>
-                <div class="community-info">点击复制群号<br />欢迎加入交流~</div>
-              </div>
               <div class="community-card" onclick="openDiscordWithConfirm()">
                 <div class="community-icon">💬</div>
                 <div class="community-title">Discord服务器</div>
@@ -540,7 +535,6 @@
               </div>
             </div>
             <div class="notice-box" style="margin-top: 12px">
-              ⚠️ 秒退群勿入，群里没有角色卡<br />
               发卡会有提醒，欢迎加入闲聊——酒馆sillytavern相关...或者更多...
             </div>
           </div>
@@ -660,50 +654,6 @@
     </div>
 
     <script>
-      function copyQQGroup() {
-        const groupNumber = '1083364056';
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard
-            .writeText(groupNumber)
-            .then(() => {
-              if (typeof triggerSlash === 'function') {
-                triggerSlash('/echo severity=success 企鹅群号已复制到剪贴板！');
-              } else {
-                alert('企鹅群号已复制：' + groupNumber);
-              }
-            })
-            .catch(() => {
-              fallbackCopy(groupNumber);
-            });
-        } else {
-          fallbackCopy(groupNumber);
-        }
-      }
-
-      function fallbackCopy(text) {
-        const textArea = document.createElement('textarea');
-        textArea.value = text;
-        textArea.style.position = 'fixed';
-        textArea.style.left = '-999999px';
-        document.body.appendChild(textArea);
-        textArea.select();
-        try {
-          document.execCommand('copy');
-          if (typeof triggerSlash === 'function') {
-            triggerSlash('/echo severity=success 企鹅群号已复制到剪贴板！');
-          } else {
-            alert('企鹅群号已复制：' + text);
-          }
-        } catch (err) {
-          if (typeof triggerSlash === 'function') {
-            triggerSlash('/echo severity=error 复制失败，请手动复制群号：1083364056');
-          } else {
-            alert('复制失败，请手动复制群号：1083364056');
-          }
-        }
-        document.body.removeChild(textArea);
-      }
-
       function openDiscordWithConfirm() {
         if (confirm('即将跳转到Discord服务器，是否继续？')) {
           window.open('https://discord.gg/x3aKHgfE3u', '_blank');
