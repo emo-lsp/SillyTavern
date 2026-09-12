@@ -961,6 +961,30 @@
         gap: 9px;
       }
 
+      @media (min-width: 641px) {
+        .role-grid,
+        .opening-grid {
+          grid-template-columns: repeat(6, minmax(0, 1fr));
+        }
+
+        .role-grid > .role-card,
+        .opening-grid > .opening {
+          grid-column: span 2;
+          min-width: 0;
+        }
+
+        /* 每张卡片占两列，末行不足三张时整体居中。 */
+        .role-grid > .role-card:nth-last-child(2):nth-child(3n + 1),
+        .opening-grid > .opening:nth-last-child(2):nth-child(3n + 1) {
+          grid-column: 2 / span 2;
+        }
+
+        .role-grid > .role-card:last-child:nth-child(3n + 1),
+        .opening-grid > .opening:last-child:nth-child(3n + 1) {
+          grid-column: 3 / span 2;
+        }
+      }
+
       .opening {
         position: relative;
         display: flex;
@@ -1362,7 +1386,7 @@
         <section class="section" aria-labelledby="portrait-title">
           <div class="section__head">
             <h2 class="section__title" id="portrait-title">立绘档案</h2>
-            <span class="section__code">立绘 / 002</span>
+            <span class="section__code">立绘 / 003</span>
           </div>
           <div class="section__body portrait-archive">
             <div class="portrait-layout">
@@ -1459,13 +1483,61 @@
                 <div class="portrait-record__tags"><span>洛老师</span><span>语文教师</span><span>班主任</span></div>
               </div>
             </div>
+
+            <div class="portrait-layout">
+              <button
+                class="portrait-toggle is-loading"
+                type="button"
+                aria-label="切换许芸立绘"
+                aria-busy="true"
+                aria-pressed="false"
+                data-portrait-name="许芸"
+                data-portrait-toggle
+              >
+                <span class="portrait-frame">
+                  <span class="portrait-card">
+                    <span class="portrait-face portrait-face--front">
+                      <img
+                        class="portrait-image"
+                        src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 800'%3E%3Crect width='600' height='800' fill='%23f3f5f2'/%3E%3Ccircle cx='470' cy='140' r='190' fill='%23fff6b5' opacity='.62'/%3E%3Cpath d='M0 670c150-120 330-65 600-230v360H0z' fill='%23a7c4b2' opacity='.44'/%3E%3C/svg%3E"
+                        data-portrait-src="https://img.emolsp.online/CG/other/CG/%E8%AE%B8%E8%8A%B81.jpg"
+                        alt="许芸正面立绘"
+                        referrerpolicy="no-referrer"
+                      />
+                      <span class="portrait-placeholder"><strong>许芸</strong><span>正面立绘加载失败</span></span>
+                    </span>
+                    <span class="portrait-face portrait-face--back">
+                      <img
+                        class="portrait-image"
+                        src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 800'%3E%3Crect width='600' height='800' fill='%23e6e9e7'/%3E%3Ccircle cx='120' cy='160' r='210' fill='%23a7c4b2' opacity='.48'/%3E%3Cpath d='M0 220c210 110 360 80 600 260v320H0z' fill='%23fff6b5' opacity='.56'/%3E%3C/svg%3E"
+                        data-portrait-src="https://img.emolsp.online/CG/other/CG/%E8%AE%B8%E8%8A%B82.jpg"
+                        alt="许芸翻转立绘"
+                        referrerpolicy="no-referrer"
+                      />
+                      <span class="portrait-placeholder"><strong>许芸</strong><span>翻转立绘加载失败</span></span>
+                    </span>
+                    <span class="portrait-card__tag" data-portrait-label>点击翻面</span>
+                    <span class="portrait-card__hint">正面 / 翻转</span>
+                  </span>
+                </span>
+              </button>
+              <div class="portrait-record">
+                <div class="portrait-record__label">角色档案 / 03</div>
+                <h3 class="portrait-record__name">许芸</h3>
+                <div class="portrait-record__line"></div>
+                <p class="portrait-record__text">
+                  31 岁，许佳宁的妹妹。因签证续期从东京归来，暂住姐姐家。以“天音雨祢”为笔名的她总说自己只是画插画，却会为一格分镜反复较真。
+                </p>
+                <div class="portrait-record__tags"><span>小姨</span><span>自由创作者</span><span>从日本回国</span></div>
+              </div>
+            </div>
           </div>
         </section>
 
         <section class="section" aria-labelledby="roles-title">
           <div class="section__head">
             <h2 class="section__title" id="roles-title">角色档案</h2>
-            <span class="section__code">角色 / 04</span>
+            <span class="section__code">角色 / 05</span>
           </div>
           <div class="section__body role-grid">
             <article class="role-card">
@@ -1488,13 +1560,18 @@
               <h3 class="role-card__name">洛清秋</h3>
               <p class="role-card__info">市二中高一语文教师兼班主任。她把可靠、规矩和体面都穿在身上，成为 {{user}} 的老师。</p>
             </article>
+            <article class="role-card">
+              <div class="role-card__index">角色 / 05</div>
+              <h3 class="role-card__name">许芸</h3>
+              <p class="role-card__info">许佳宁久别重逢的妹妹。她从东京带着未完成的稿件归来，把工作和心事一并关进客房。</p>
+            </article>
           </div>
         </section>
 
         <section class="section" aria-labelledby="opening-title">
           <div class="section__head">
             <h2 class="section__title" id="opening-title">选择开场</h2>
-            <span class="section__code">开场 / 04</span>
+            <span class="section__code">开场 / 05</span>
           </div>
           <div class="section__body">
             <div class="opening-grid">
@@ -1521,6 +1598,12 @@
                 <strong class="opening__title">放学后的办公室</strong>
                 <span class="opening__meta">放学后 · 办公室 · 月考订正</span>
                 <span class="opening__desc">暮色落进空荡的教学楼，洛清秋把一张默写纸推到他面前。</span>
+              </button>
+              <button class="opening" type="button" data-swipe="5">
+                <span class="opening__number">场景 / 05</span>
+                <strong class="opening__title">机场接机</strong>
+                <span class="opening__meta">傍晚 · 机场 · 久别重逢</span>
+                <span class="opening__desc">{{user}} 去机场接机从日本回来的小姨。</span>
               </button>
             </div>
             <p class="opening-status" data-opening-status aria-live="polite">请选择一条场景记录</p>
